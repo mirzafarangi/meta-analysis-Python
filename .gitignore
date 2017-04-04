@@ -1,4 +1,7 @@
 .DS_Store
+bin/
+include/
+pip-selfcheck.json
 
 # Created by https://www.gitignore.io/api/python
 
