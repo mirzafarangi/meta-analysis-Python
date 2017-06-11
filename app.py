@@ -9,50 +9,86 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('method1.html')
 
-@app.route('/_method2')
+
+@app.route('/result1',methods = ['POST', 'GET'])
+def result():
+    if request.method == 'POST':
+
+        study=request.form.getlist('study')
+
+        g1_sample=request.form.getlist('g1_sample')
+        g1_mean=request.form.getlist('g1_mean')
+        g1_sd=request.form.getlist('g1_sd')
+
+        g2_sample=request.form.getlist('g2_sample')
+        g2_mean=request.form.getlist('g2_mean')
+        g2_sd=request.form.getlist('g2_sd')
+
+        table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd]
+        df=pd.DataFrame(table)
+        df = df.transpose()
+
+        df.index+=1
+
+        df = df.convert_objects(convert_numeric=True)
+
+        df['SE']=(((df[1]-1)*df[3]**2+(df[4]-1)*df[6]**2)/(df[1]+df[4]-2))**0.5
+
+        df['d']=(df[5]-df[2])/df['SE']
+        df['g']=df['d']*(1-(3/(4*(df[1]+df[4])-9)))
+
+        df['n']=df[1]+df[4]
+        df['n_1']=(1/df[1])+(1/df[4])
+
+        df['SEd']=((df['n_1']+(df['d']**2/(2*df['n']))))**0.5
+        df['SEg']=df['SEd']*(1-3/(4*(df['n'])-9))
+
+        df['d_lower']=df['d']-1.96*df['SEd']
+        df['d_upper']=df['d']+1.96*df['SEd']
+
+        df['g_lower']=df['g']-1.96*df['SEg']
+        df['g_upper']=df['g']+1.96*df['SEg']
+
+        df['w_s_d']=1/df['SEd']**2
+        df['d_s']=df['w_s_d']*df['d']
+
+        df['w_s_g']=1/df['SEg']**2
+        df['g_s']=df['w_s_g']*df['g']
+
+
+        d_total=np.sum(df['d_s'])/np.sum(df['w_s_d'])
+        s_total=(1/np.sum(df['w_s_d']))**0.5
+
+        lower_d=d_total-1.96*s_total
+        upper_d=d_total+1.96*s_total
+
+        g_total=np.sum(df['g_s'])/np.sum(df['w_s_g'])
+        sg_total=(1/np.sum(df['w_s_g']))**0.5
+
+        lower_g=g_total-1.96*sg_total
+        upper_g=g_total+1.96*sg_total
+
+
+        q=np.sum(df['w_s_d']*df['d']**2)-((np.sum(df['d_s'])**2)/np.sum(df['w_s_d']))
+        I2=(q-8)/q
+
+
+        writer = pd.ExcelWriter('Meta-Mar_analysis_result.xlsx')
+        df.to_excel(writer,'Sheet1')
+        writer.save()
+
+    return render_template("result1.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
+
+@app.route('/return-file/')
+def return_file():
+    return send_file('Meta-Mar_analysis_result.xlsx')
+
+@app.route('/method2')
 def method2():
     return render_template('method2.html')
 
-@app.route('/_contact')
-def contact():
-    return render_template('contact.html')
-
-@app.route('/_analysis1')
-def analysis1():
-
-
-    study=request.args.get('study')
-
-
-    g1_sample=float(request.args.get('g1_sample'))
-    g1_mean=float(request.args.get('g1_mean'))
-    g1_sd=float(request.args.get('g1_sd'))
-
-    g2_sample=float(request.args.get('g2_sample'))
-    g2_mean=float(request.args.get('g2_mean'))
-    g2_sd=float(request.args.get('g2_sd'))
-
-    SE=(((g1_sample-1)*g1_sd**2+(g2_sample-1)*g2_sd**2)/(g1_sample+g2_sample-2))**0.5
-
-    d=float("{0:.2f}".format((g2_mean-g1_mean)/SE))
-    g=float("{0:.2f}".format(d*(1-(3/(4*(g1_sample+g2_sample)-9)))))
-
-    n=g1_sample+g2_sample
-    n_1=(1/g1_sample)+(1/g2_sample)
-
-    SEd=float("{0:.2f}".format(((n_1+(d**2/(2*n))))**0.5))
-    SEg=float("{0:.2f}".format(SEd*(1-3/(4*(n)-9))))
-
-    d_lower=float("{0:.2f}".format(d-1.96*SEd))
-    d_upper=float("{0:.2f}".format(d+1.96*SEd))
-
-    g_lower=float("{0:.2f}".format(g-1.96*SEg))
-    g_upper=float("{0:.2f}".format(g+1.96*SEg))
-
-
-    return jsonify(study=study, d=d, SEd=SEd, d_lower=d_lower, d_upper=d_upper, g=g, SEg=SEg, g_lower=g_lower, g_upper=g_upper)
 
 @app.route('/uploader', methods = ['GET', 'POST'])
 def upload_file():
@@ -132,10 +168,11 @@ def upload_file():
       I2=(q-8)/q
 
 
+      return render_template("result2.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
 
-
-
-      return render_template("analysis.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 if __name__ == '__main__':
     app.run()
