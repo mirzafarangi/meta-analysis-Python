@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+          rel="stylesheet">
+  <script type=text/javascript>
+    $(function() {
+      $('a#calculate').bind('click', function() {
+        $.getJSON('/_analysis1', {
+          study: $('input[name="study"]').val(),
+          g1_sample: $('input[name="g1_sample"]').val(),
+          g1_mean: $('input[name="g1_mean"]').val(),
+          g1_sd: $('input[name="g1_sd"]').val(),
+          g2_sample: $('input[name="g2_sample"]').val(),
+          g2_mean: $('input[name="g2_mean"]').val(),
+          g2_sd: $('input[name="g2_sd"]').val()
+        }, function(data) {
+          $("#study").text(data.study);
+          $("#d").text(data.d);
+          $("#SEd").text(data.SEd);
+          $("#d_lower").text(data.d_lower);
+          $("#d_upper").text(data.d_upper);
+          $("#g").text(data.g);
+          $("#SEg").text(data.SEg);
+          $("#g_lower").text(data.g_lower);
+          $("#g_upper").text(data.g_upper);
+
+
+        });
+        return false;
+      });
+    });
+  </script>
+  </head>
+  <center><img src="Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
+  <body>
+    <ul class="nav nav-tabs">
+  <li role="presentation" class="active"><a href="http://localhost:5000/">Method1</a></li>
+  <li role="presentation"><a href="http://localhost:5000/_method2">Method2</a></li>
+  <li role="presentation"><a href="http://localhost:5000/_contact"> Contact </a></li>
+</ul>
+    <div class="container">
+      <div class="header">
+        <h3 class="text-muted">Meta Mar</h3>
+      </div>
+      <hr/>
+      <div>
+      <p><div id="app">
+      <table class="table" align="center" border=1>
+        <thead>
+        <tr>
+
+          <td rowspan="2"> <center> <b> <font color="black"> Study </font> </b> </center> </td>
+          <td colspan="3"> <center> <b> <font color="green"> Group 1 </font> </b> </center> </td>
+          <td colspan="3"> <center> <b> <font color="blue"> Group 2 </font> </b> </center> </td>
+        </tr>
+        <tr>
+          <td> <center> <font color="green"> Sample size </font> </center> </td>
+          <td> <center> <font color="green"> Mean </center> </font> </td>
+          <td> <center> <font color="green"> Standar Deviation </font> </center> </td>
+          <td> <center> <font color="blue"> Sample size </center> </font> </td>
+          <td> <center> <font color="blue"> Mean </center> </font> </td>
+          <td> <center> <font color="blue"> Standar Deviation </font> </center> </td>
+          <td rowspan="2"></td>
+          </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in rows">
+          <td> <input type="text" v-model="row.study" name="study" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g1_sample"  name="g1_sample"required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g1_mean" name="g1_mean" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g1_sd" name="g1_sd"  required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g2_sample" name="g2_sample" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g2_mean"  name="g2_mean"required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g2_sd" name="g2_sd" required></td>
+          <td><a @click="removeRow(row)">Remove</a></td>
+        </tr>
+      </tbody>
+      </table>
+      <div>
+        <button class="button btn-primary" @click="addRow">Add row</button>
+        <p></p>
+        <p><a href="javascript:void();" id="calculate">Calculate</a>
+        <hr/>
+
+<table class="table" align="center" border=1>
+  <tr>
+
+    <td rowspan="2"> <center> <b> <font color="black"> study </font> </b> </center> </td>
+    <td colspan="4"> <center> <b> <font color="green"> Cohen's d </font> </b> </center> </td>
+    <td colspan="4"> <center> <b> <font color="blue"> Hedges' g </font> </b> </center> </td>
+  </tr>
+  <tr>
+    <td> <center> <font color="green"> d </font> </center> </td>
+    <td> <center> <font color="green"> SE </font> </center> </td>
+    <td> <center> <font color="green"> d_lower </center> </font> </td>
+    <td> <center> <font color="green"> d_upper </font> </center> </td>
+    <td> <center> <font color="blue"> g </center> </font> </td>
+    <td> <center> <font color="blue"> SE </font> </center> </td>
+    <td> <center> <font color="blue"> g_lower </center> </font> </td>
+    <td> <center> <font color="blue"> g_upper </font> </center> </td>
+  </tr>
+  <tr>
+    <td> <center>  <span id="study"></span> </font> </center> </td>
+    <td> <center>  <span id="d"></span> </font> </center> </td>
+    <td> <center>  <span id="SEd"></span> </font> </center> </td>
+    <td> <center>  <span id="d_lower"></span> </center> </font> </td>
+    <td> <center>  <span id="d_upper"></span> </font> </center> </td>
+    <td> <center> <span id="g"></span> </center> </font> </td>
+    <td> <center>  <span id="SEg"></span> </font> </center> </td>
+    <td> <center> <span id="g_lower"></span> </center> </font> </td>
+    <td> <center> <span id="g_upper"></span> </font> </center> </td>
+
+  </tr>
+</table>
+
+              </div>
+            </div>
+          </body>
+        </html>
+
+      </div>
+      </div>
+      </body>
+      <script scr="vue.js"> </script>
+      <script src="https://unpkg.com/vue@2.3.4/dist/vue.min.js"></script>
+      <script>
+      var select = new Vue({
+        el: '#sel',
+        data: {
+          selected: '',
+          options: [
+            { text: 'Means and Standard Deviation', value: 'Mean - SD' },
+            { text: 'Odds Ratio', value: 'Odds Ratio' },
+            { text: 'Meta Regression', value: 'Meta Regression' }
+          ]
+        }
+      })
+      var app  = new Vue({
+      el: "#app",
+      data: {
+        rows: [
+          {study: "",g1_sample: "", g1_mean: "", g1_sd: "", g2_sample: "", g2_mean: "", g2_sd: ""},
+        ]
+      },
+      methods:{
+        addRow: function(){
+          this.rows.push({study: "",g1_sample: "", g1_mean: "", g1_sd: "", g2_sample: "", g2_mean: "", g2_sd: ""});
+        },
+        removeRow: function(row){
+          //console.log(row);
+          this.rows.$remove(row);
+        }
+      }
+      })
+      </script>
