@@ -1,32 +1,5 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <script src="https://unpkg.com/vue@2.2.6"></script>
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
-
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-    crossorigin="anonymous">
-
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-    crossorigin="anonymous"></script>
-
-
-</head>
-<center><img src="/static/Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
-
-
-<body>
-
-  <ul class="nav nav-tabs">
-    <li role="presentation"><a href="/">Method1</a></li>
-    <li role="presentation" class="active"><a href="/method2">Method2</a></li>
-    <li role="presentation"><a href="/contact"> Contact </a></li>
-  </ul>
+{% extends "layout.html" %}
+{% block app %}
   <form action="/uploader" method="POST" enctype="multipart/form-data">
     <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="analysis.xlsx" download> analysis.xlsx </a>
     <p></p>
@@ -38,8 +11,4 @@
     <p></p>
     &nbsp;<button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
   </form>
-
-
-</body>
-
-</html>
+{% endblock %}
