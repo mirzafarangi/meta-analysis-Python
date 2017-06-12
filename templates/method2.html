@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://unpkg.com/vue@2.2.6"></script>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<head>
+  <script src="https://unpkg.com/vue@2.2.6"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous">
 
-
-  </head>
-  <center><img src="Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
-
-
-  <body>
-
-    <ul class="nav nav-tabs">
-    <li role="presentation"><a href="http://localhost:5000/">Method1</a></li>
-    <li role="presentation" class="active"><a href="http://localhost:5000/method2">Method2</a></li>
-    <li role="presentation"><a href="http://localhost:5000/contact"> Contact </a></li>
-    </ul>
-          <form action = "http://localhost:5000/uploader" method = "POST"
-             enctype = "multipart/form-data">
-            <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="analysis.xlsx" download> analysis.xlsx </a>
-               <p></p>
-            <b>&nbsp;Step2: </b>Now enter your data just like the picture!
-            <p></p>
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="/static/example.png" alt="Data Entry" height="240.8" width="416">
-            <p></p>
-            <b> &nbsp;Step3:</b> Upload your excel file(analysis.xlsx). <input type = "file" name = "file">
-             <p></p>
-             &nbsp;<button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
-          </form>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
 
 
-  </body>
+</head>
+<center><img src="/static/Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
+
+
+<body>
+
+  <ul class="nav nav-tabs">
+    <li role="presentation"><a href="/">Method1</a></li>
+    <li role="presentation" class="active"><a href="/method2">Method2</a></li>
+    <li role="presentation"><a href="/contact"> Contact </a></li>
+  </ul>
+  <form action="/uploader" method="POST" enctype="multipart/form-data">
+    <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="analysis.xlsx" download> analysis.xlsx </a>
+    <p></p>
+    <b>&nbsp;Step2: </b>Now enter your data just like the picture!
+    <p></p>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="/static/example.png" alt="Data Entry" height="240.8" width="416">
+    <p></p>
+    <b> &nbsp;Step3:</b> Upload your excel file(analysis.xlsx). <input type="file" name="file">
+    <p></p>
+    &nbsp;<button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
+  </form>
+
+
+</body>
+
 </html>

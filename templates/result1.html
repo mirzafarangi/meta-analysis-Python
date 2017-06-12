@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
 
-    <meta charset="utf-8">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <meta charset="utf-8">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous">
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
 
-    <title></title>
-  </head>
-  <body>
-    <center><img src="Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
+  <title></title>
+</head>
+
+<body>
+  <center><img src="/static/Marburg.png" alt="Marburg Uni" style="width:450px;height:155.5px;"></center>
   <p></p>
-</hr>
+  </hr>
   <p></p>
 
   The Average Cohen's d is: {{ave_d}}
   <p></p>
-The Standard Error is: {{ave_SEd}}
-<p></p>
-95% CI=[{{lower_dd}},{{upper_dd}}]
-<p></p>
-</hr>
-<p></p>
-The Average Hedges's g is: {{ave_g}}
-<p></p>
-The Standard Error is: {{ave_SEg}}
-<p></p>
-95% CI=[{{lower_gg}},{{upper_gg}}]
-<p></p>
-The Heterogeneity of the analysis is: {{Het}}%
+  The Standard Error is: {{ave_SEd}}
+  <p></p>
+  95% CI=[{{lower_dd}},{{upper_dd}}]
+  <p></p>
+  </hr>
+  <p></p>
+  The Average Hedges's g is: {{ave_g}}
+  <p></p>
+  The Standard Error is: {{ave_SEg}}
+  <p></p>
+  95% CI=[{{lower_gg}},{{upper_gg}}]
+  <p></p>
+  The Heterogeneity of the analysis is: {{Het}}%
 
-<p></p>
-<p></p>
-</hr>
-<p></p>
-    {{total}}
+  <p></p>
+  <p></p>
+  </hr>
+  <p></p>
+  {{total}}
 
   </hr>
   <p>
@@ -49,7 +53,8 @@ The Heterogeneity of the analysis is: {{Het}}%
   <div class="container">
 
   </div>
-<a href="/return-file/" target="blank"><button class="btn btn-default" name="button">Please Click to Download the results as an Excel file</button></a>
+  <a href="/return-file/" target="blank"><button class="btn btn-default" name="button">Please Click to Download the results as an Excel file</button></a>
 
-  </body>
+</body>
+
 </html>
