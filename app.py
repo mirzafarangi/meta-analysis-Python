@@ -4,7 +4,7 @@ import numpy as np
 import copy
 from IPython.display import display, HTML
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 
 @app.route('/')
