@@ -26,15 +26,15 @@ def methods():
 def result():
     if request.method == 'POST':
 
-        study=request.form.getlist('study')
+        study = [row['study'] for row in request.json]
 
-        g1_sample=request.form.getlist('g1_sample')
-        g1_mean=request.form.getlist('g1_mean')
-        g1_sd=request.form.getlist('g1_sd')
+        g1_sample = [row['g1_sample'] for row in request.json]
+        g1_mean = [row['g1_mean'] for row in request.json]
+        g1_sd = [row['g1_sd'] for row in request.json]
 
-        g2_sample=request.form.getlist('g2_sample')
-        g2_mean=request.form.getlist('g2_mean')
-        g2_sd=request.form.getlist('g2_sd')
+        g2_sample = [row['g2_sample'] for row in request.json]
+        g2_mean = [row['g2_mean'] for row in request.json]
+        g2_sd = [row['g2_sd'] for row in request.json]
 
         table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd]
         df=pd.DataFrame(table)
