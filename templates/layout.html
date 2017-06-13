@@ -2,46 +2,45 @@
 <html lang="en">
 
 <head>
-  <title>Meta-Mar</title>
-  <meta charset="utf-8">
-  <meta name="description" content="Meta-Mar Free Online Meta Analysis Service!" />
-  <meta name="keywords" content="meta analysis, meta-analysis, effect size, social science, psychology, psychiatry, marburg, philipps universität marburg, cohen's d, hedges's g, mean and standard deviation effect size, correlation effect size, heterogeneity, forestplot, free meta nalysis. meta analysis online, meta analysis calculator" />
-  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
-  <link rel="stylesheet" type="text/css" href="/static/style/style.css" title="style" />
-  <script src="https://unpkg.com/vue@2.3.4/dist/vue.min.js"></script>
+    <title>Meta-Mar</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Meta-Mar Free Online Meta Analysis Service!" />
+    <meta name="keywords" content="meta analysis, meta-analysis, effect size, social science, psychology, psychiatry, marburg, philipps universität marburg, cohen's d, hedges's g, mean and standard deviation effect size, correlation effect size, heterogeneity, forestplot, free meta nalysis. meta analysis online, meta analysis calculator"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="/static/style/style.css" title="style" />
+    <script src="https://unpkg.com/vue@2.3.4/dist/vue.min.js"></script>
 </head>
 
 <body>
     <div class="container">
 
-<div id="main">
-          <div id="header">
-          <center><img src="/static/Marburg.png" alt="Marburg Uni" style="width:323.1px;height:190.5px;"></center>
+        <div id="main">
+            <div id="header">
+                <center><img src="/static/Marburg.png" alt="Marburg Uni" style="width:323.1px;height:190.5px;"></center>
+                <div id="menubar">
+                    <ul id="menu">
+                        <li {%- if request.path=="/" %} class="selected" {% endif %}><a href="/">Home</a></li>
+                        <li {%- if request.path=="/tutorial" %} class="selected" {% endif %}><a href="/tutorial">Tutorial</a></li>
+                        <li {%- if request.path=="/meta" %} class="selected" {% endif %}><a href="/meta">Meta Analysis</a></li>
+                        <li {%- if request.path=="/contact" %} class="selected" {% endif %}><a href="/contact">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
 
-                  <div id="menubar">
-                  <ul id="menu">
-
-                  <li class="selected"><a href="/">Home</a></li>
-                  <li><a href="/tutorial">Tutorial</a></li>
-                  <li><a href="/meta">Meta Analysis</a></li>
-                  <li><a href="/contact">Contact Us</a></li>
-                  </ul>
-                  </div>
+            <div id="site_content">
+                <div id="content">
+                    <div id="app">
+                        {% block app %}{% endblock %}
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div id="footer">
+            Copyright &copy; Meta-Mar
+            <!--| <a href="my page">My page</a> |-->
+        </div>
+        {% block script %}{% endblock %}
+</body>
 
- <div id="site_content">
-      <div id="content">
-          <div id="app">
-              {% block app %}{% endblock %}
-          </div>
-      </div>
- </div>
-</div>
-
-    <div id="footer">
-Copyright &copy; Meta-Mar | <a href="my page">My page</a> |
-      </div>
-    {% block script %}{% endblock %}
-  </body>
-  </html>
+</html>

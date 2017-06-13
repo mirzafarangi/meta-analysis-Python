@@ -196,7 +196,7 @@ def upload_file():
           I2=0
       else:
           I2=(q-8)/q
-        
+
 
       df.index+=1
 
