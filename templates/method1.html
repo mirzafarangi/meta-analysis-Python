@@ -1,107 +1,114 @@
 {% extends "layout.html" %}
 {% block app %}
-<form action="/result1" method="POST">
-  <table class="table">
-    <thead>
-      <tr>
-        <td rowspan="2">
-          <center> <b> <font color="black"> Study </font> </b> </center>
-        </td>
-        <td colspan="3">
-          <center> <b> <font color="green"> Group 1 </font> </b> </center>
-        </td>
-        <td colspan="3">
-          <center> <b> <font color="blue"> Group 2 </font> </b> </center>
-        </td>
-      </tr>
 
-      <tr>
-        <td>
-          <center>
-            <font color="green"> Sample size </font>
-          </center>
-        </td>
-        <td>
-          <center>
-            <font color="green"> Mean </center>
-          </font>
-        </td>
-        <td>
-          <center>
-            <font color="green"> Standar Deviation </font>
-          </center>
-        </td>
-        <td>
-          <center>
-            <font color="blue"> Sample size </center>
-          </font>
-        </td>
-        <td>
-          <center>
-            <font color="blue"> Mean </center>
-          </font>
-        </td>
-        <td>
-          <center>
-            <font color="blue"> Standar Deviation </font>
-          </center>
-        </td>
-        <td rowspan="2"></td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="row, i in rows">
-        <td> <input type="text" v-model="row.study" name="study" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g1_sample" name="g1_sample" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g1_mean" name="g1_mean" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g1_sd" name="g1_sd" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g2_sample" name="g2_sample" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g2_mean" name="g2_mean" required></td>
-        <td> <input type="number" step="0.00001" v-model="row.g2_sd" name="g2_sd" required></td>
-        <td><a @click="removeRow(i)" class="btn btn-danger">Remove</a></td>
-      </tr>
-    </tbody>
-  </table>
+        <h1>Methods of Data Entry</h1>
+        <form action="/result1" method="POST">
 
-  <div>
-    <button class="btn btn-default" @click="addRow">Add row</button>
-    <p></p>
-    <p></p>
-    <input type="submit" class="btn btn-primary" />
-</form>
-{% endblock %}
+          <table width="100%" class="table">
+            <thead>
+              <tr>
+                <td rowspan="2">
+                  <center> <b> <font color="black"> Study </font> </b> </center>
+                </td>
+                <td colspan="3">
+                  <center> <b> <font color="green"> Group 1 </font> </b> </center>
+                </td>
+                <td colspan="3">
+                  <center> <b> <font color="blue"> Group 2 </font> </b> </center>
+                </td>
+              </tr>
 
-{% block script %}
-<script>
-  var app = new Vue({
-    el: "#app",
-    data: {
-      rows: [{
-        study: "",
-        g1_sample: "",
-        g1_mean: "",
-        g1_sd: "",
-        g2_sample: "",
-        g2_mean: "",
-        g2_sd: ""
-      }, ]
-    },
-    methods: {
-      addRow: function () {
-        this.rows.push({
-          study: "",
-          g1_sample: "",
-          g1_mean: "",
-          g1_sd: "",
-          g2_sample: "",
-          g2_mean: "",
-          g2_sd: ""
-        });
-      },
-      removeRow: function (index) {
-        this.rows.splice(index, 1)
-      }
-    }
-  })
-</script>
-{% endblock %}
+              <tr>
+                <td>
+                  <center>
+                    <font color="green"> Sample size </font>
+                  </center>
+                </td>
+                <td>
+                  <center>
+                    <font color="green"> Mean </center>
+                  </font>
+                </td>
+                <td>
+                  <center>
+                    <font color="green"> Standar Deviation </font>
+                  </center>
+                </td>
+                <td>
+                  <center>
+                    <font color="blue"> Sample size </center>
+                  </font>
+                </td>
+                <td>
+                  <center>
+                    <font color="blue"> Mean </center>
+                  </font>
+                </td>
+                <td>
+                  <center>
+                    <font color="blue"> Standar Deviation </font>
+                  </center>
+                </td>
+                <td rowspan="2"></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row, i in rows">
+
+                <td> <input type="text" v-model="row.study" name="study" required></td>
+
+                <td> <input type="number" step="0.00001" v-model="row.g1_sample" name="g1_sample" required></td>
+
+                <td> <input type="number" step="0.00001" v-model="row.g1_mean" name="g1_mean" required></td>
+                <td> <input type="number" step="0.00001" v-model="row.g1_sd" name="g1_sd" required></td>
+                <td> <input type="number" step="0.00001" v-model="row.g2_sample" name="g2_sample" required></td>
+                <td> <input type="number" step="0.00001" v-model="row.g2_mean" name="g2_mean" required></td>
+                <td> <input type="number" step="0.00001" v-model="row.g2_sd" name="g2_sd" required></td>
+
+                <td><a @click="removeRow(i)" class="btn btn-danger">Remove</a></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div>
+            <button class="btn btn-default" @click="addRow">Add row</button>
+            <p></p>
+            <p></p>
+            <input type="submit" class="btn btn-primary" />
+        </form>
+        {% endblock %}
+
+        {% block script %}
+        <script>
+          var app = new Vue({
+            el: "#app",
+            data: {
+              rows: [{
+                study: "",
+                g1_sample: "",
+                g1_mean: "",
+                g1_sd: "",
+                g2_sample: "",
+                g2_mean: "",
+                g2_sd: ""
+              }, ]
+            },
+            methods: {
+              addRow: function () {
+                this.rows.push({
+                  study: "",
+                  g1_sample: "",
+                  g1_mean: "",
+                  g1_sd: "",
+                  g2_sample: "",
+                  g2_mean: "",
+                  g2_sd: ""
+                });
+              },
+              removeRow: function (index) {
+                this.rows.splice(index, 1)
+              }
+            }
+          })
+        </script>
+        {% endblock %}

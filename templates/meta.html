@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block app %}
+        <h1>Methods of Data Entry</h1>
+        <p>In order to start your analysis you should first choose your preferred data entry method:</p>
+        <p><b>Method1</b>: You can enter data manually.</p>
+        <p><b>Method2</b>: Or you may prefer to upload an already excisting Excel spreadsheet.</p>
+
+        <form action = "/methods" method = "POST">
+          <select required name="method">
+            <option value="method1" name="method1"> Method1 </option>
+            <option value="method2" name="method2"> Method2 </option>
+
+            </select>
+
+            <input type="submit" value="submit">
+{% endblock %}

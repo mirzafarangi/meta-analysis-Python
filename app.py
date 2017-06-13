@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import numpy as np
 import copy
@@ -9,7 +9,17 @@ app = Flask(__name__, static_folder='static')
 
 @app.route('/')
 def index():
-    return render_template('method1.html')
+    return render_template('index.html')
+
+
+@app.route('/methods',methods = ['POST', 'GET'])
+def methods():
+   if request.method == 'POST':
+
+       if request.form['method']=='method1':
+           return render_template('method1.html')
+       if request.form['method']=='method2':
+           return render_template('method2.html')
 
 
 @app.route('/result1',methods = ['POST', 'GET'])
@@ -72,18 +82,31 @@ def result():
 
 
         q=np.sum(df['w_s_d']*df['d']**2)-((np.sum(df['d_s'])**2)/np.sum(df['w_s_d']))
-        I2=(q-8)/q
+        if q==0:
+            print('Q=0 and I^2 is not calculable')
+            I2=0
+        else:
+            I2=(q-8)/q
+
+        df.drop(['n','n_1','SE'], axis=1, inplace=True)
+
+
+        df.columns = ['Study', 'Group1-sample', 'Group1-mean' , 'Group1-sd' , 'Group2-sample', 'Group2-mean' , 'Group2-sd' ,'d'	,'g', 'SEd'	,'SEg','d_lower','d_upper','g_lower', 'g_upper' ,'weight (d)' ,'weighted d', 'weight (g)','weighted g']
+
+
+        df2=df.to_dict(orient="dict")
 
 
         writer = pd.ExcelWriter('Meta-Mar_analysis_result.xlsx')
         df.to_excel(writer,'Sheet1')
         writer.save()
 
+
     return render_template("result1.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
 
 @app.route('/return-file/')
 def return_file():
-    return send_file('Meta-Mar_analysis_result.xlsx')
+    return send_file('Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
 
 @app.route('/method2')
 def method2():
@@ -164,11 +187,34 @@ def upload_file():
 
 
 
+
+
+
       q=np.sum(w_s_d*d_per_study**2)-((np.sum(d_s)**2)/np.sum(w_s_d))
       I2=(q-8)/q
+      if q==0:
+          I2=0
+      else:
+          I2=(q-8)/q
+        
+
+      df.index+=1
+
+      writer = pd.ExcelWriter('Meta-Mar_analysis_result.xlsx')
+      df.to_excel(writer,'Sheet1')
+      writer.save()
 
 
       return render_template("result2.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
+
+
+@app.route('/tutorial')
+def tutorial():
+    return render_template('tutorial.html')
+
+@app.route('/meta')
+def meta():
+    return render_template('meta.html')
 
 @app.route('/contact')
 def contact():
