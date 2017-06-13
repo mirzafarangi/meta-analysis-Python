@@ -153,10 +153,10 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   background: #068900;}
 
 #site_content
-{ width: 837px;
+{ width: 860px;
   overflow: hidden;
   margin: 0 auto 0 auto;
-  padding: 20px 24px 20px 37px;
+  padding: 20px;
   background: transparent url(transparent_light.png) repeat;}
 
 .sidebar
@@ -184,7 +184,7 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 
 #content
 { text-align: left;
-  width: 595px;
+  width: 100%;
   padding: 0;}
 
 #content ul
@@ -292,3 +292,20 @@ table tr td
 { background: #F0EFE2;
   color: #47433F;
   border-top: 1px solid #FFF;}
+
+
+/* custom css */
+#method1 input[type=number],
+#method1 input[type=text]
+{ width: 90%;
+  height: 2em;
+  text-align: center;
+}
+
+#method1 tbody tr td
+{ text-align: center;
+}
+
+#method1 .removelink
+{ cursor: pointer;
+}
