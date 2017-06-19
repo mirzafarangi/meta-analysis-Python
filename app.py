@@ -5,8 +5,8 @@ import copy
 from IPython.display import display, HTML
 from flask_mail import Mail, Message
 
-
-app =Flask(__name__)
+DEBUG = True
+app = Flask(__name__)
 
 app.secret_key = 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502'
 
@@ -249,4 +249,4 @@ def submitcontact():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=DEBUG)
