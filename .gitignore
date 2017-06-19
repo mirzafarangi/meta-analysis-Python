@@ -3,6 +3,7 @@ bin/
 include/
 share/
 pip-selfcheck.json
+*.xlsx
 
 # Created by https://www.gitignore.io/api/python
 
