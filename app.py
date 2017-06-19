@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import copy
 from IPython.display import display, HTML
-from flask.ext.mail import Mail, Message
+from flask_mail import Mail, Message
 
 
 app =Flask(__name__)
