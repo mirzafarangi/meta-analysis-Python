@@ -1,16 +1,200 @@
 {% extends "layout.html" %}
 {% block app %}
+
         <h1>Methods of Data Entry</h1>
         <p>In order to start your analysis you should first choose your preferred data entry method:</p>
         <p><b>Method1</b>: You can enter data manually.</p>
         <p><b>Method2</b>: Or you may prefer to upload an already excisting Excel spreadsheet.</p>
 
-        <form action = "/methods" method = "POST">
-          <select required name="method">
+
+           <select  id="myMethod" onchange="myMethod()">
+            <option value="none" name="none">  </option>
             <option value="method1" name="method1"> Method1 </option>
             <option value="method2" name="method2"> Method2 </option>
 
             </select>
 
-            <input type="submit" value="submit">
+            <p></p>
+            <p></p>
+
+  <div id="myMethod1" style="display:none;">
+
+
+    <form action="/result1" method="POST" v-on:submit.prevent="processData()">
+      <table width="100%" class="table" id="method1">
+        <thead>
+          <tr>
+            <td rowspan="2">
+              <center> <b> <font color="black"> Study </font> </b> </center>
+            </td>
+            <td colspan="3">
+              <center> <b> <font color="green"> Group 1 </font> </b> </center>
+            </td>
+            <td colspan="3">
+              <center> <b> <font color="blue"> Group 2 </font> </b> </center>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <center>
+                <font color="green"> Sample size </font>
+              </center>
+            </td>
+            <td>
+              <center>
+                <font color="green"> Mean </center>
+              </font>
+            </td>
+            <td>
+              <center>
+                <font color="green"> Standar Deviation </font>
+              </center>
+            </td>
+            <td>
+              <center>
+                <font color="blue"> Sample size </center>
+              </font>
+            </td>
+            <td>
+              <center>
+                <font color="blue"> Mean </center>
+              </font>
+            </td>
+            <td>
+              <center>
+                <font color="blue"> Standar Deviation </font>
+              </center>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row, i in rows">
+            <td> <input type="text" v-model="row.study" name="study" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g1_sample" name="g1_sample" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g1_mean" name="g1_mean" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g1_sd" name="g1_sd" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g2_sample" name="g2_sample" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g2_mean" name="g2_mean" required></td>
+            <td> <input type="number" step="0.00001" v-model="row.g2_sd" name="g2_sd" required></td>
+            <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        <button class="btn btn-default" @click="addRow">Add a Study</button>
+        <p></p>
+        <p></p>
+        <button class="btn btn-primary" type="submit">Calculate</button>
+    </form>
+
+    <br>
+    <div id="response-container">
+      <div v-if="error">
+        <h3>Error!</h3>
+        {{error}}
+      </div>
+
+      <div v-if="isLoading"> Loading... </div>
+
+      <div v-if="ajaxResult" v-html="ajaxResult"></div>
+    </div>
+
+  </div>
+    </div>
+
+  <div id="myMethod2" style="display:none;">
+
+    <form action="/uploader" method="POST" enctype="multipart/form-data">
+      <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="analysis.xlsx" download> analysis.xlsx </a>
+      <p></p>
+      <b>&nbsp;Step2: </b>Now enter your data just like the picture!
+      <p></p>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="/static/example.png" alt="Data Entry" height="240.8" width="416">
+      <p></p>
+      <b> &nbsp;Step3:</b> Upload your excel file(analysis.xlsx). <input type="file" name="file">
+      <p></p>
+      &nbsp;<button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
+    </form>
+
+  </div>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+function myMethod() {
+var x = document.getElementById("myMethod").value;
+if(x=='none') {
+  document.getElementById("myMethod1").style.display = "none";
+  document.getElementById("myMethod2").style.display = "none";
+} else if(x=='method1') {
+  document.getElementById("myMethod1").style.display = "block";
+  document.getElementById("myMethod2").style.display = "none";
+} else if(x=='method2') {
+  document.getElementById("myMethod1").style.display = "none";
+  document.getElementById("myMethod2").style.display = "block";
+}
+        }
+</script>
+
+<script>
+  var app = new Vue({
+    el: "#app",
+    data: {
+      error: false,
+      isLoading: false,
+      ajaxResult: null,
+      rows: [{
+        study: "",
+        g1_sample: "",
+        g1_mean: "",
+        g1_sd: "",
+        g2_sample: "",
+        g2_mean: "",
+        g2_sd: ""
+      }, ]
+    },
+    methods: {
+      addRow: function () {
+        this.rows.push({
+          study: "",
+          g1_sample: "",
+          g1_mean: "",
+          g1_sd: "",
+          g2_sample: "",
+          g2_mean: "",
+          g2_sd: ""
+        });
+      },
+      removeRow: function (index) {
+        this.rows.splice(index, 1)
+      },
+
+      processData:function () {
+        // clear error, previous results, ...
+        this.error = false
+        this.isLoading = true
+        this.ajaxResult = null
+
+        // get data from data-model & convert to json string
+        const data = JSON.stringify(this.rows)
+
+        // send ajax request as POST
+        this.$http.post('/result1', data).then(response => {
+          // request was successful, binding the result
+          this.isLoading = false
+          this.ajaxResult = response.body
+        }, error => {
+          // well, sometimes error happens :)
+          this.isLoading = false
+          this.error = error
+        })
+      }
+    }
+  })
+</script>
 {% endblock %}

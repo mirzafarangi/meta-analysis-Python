@@ -3,8 +3,22 @@ import pandas as pd
 import numpy as np
 import copy
 from IPython.display import display, HTML
+from flask.ext.mail import Mail, Message
 
-app = Flask(__name__, static_folder='static')
+
+app =Flask(__name__)
+
+app.secret_key = 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502'
+
+mail=Mail(app)
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 's.ashkan.beheshti@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Freud5639Lacan@!'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 
 @app.route('/')
@@ -219,6 +233,20 @@ def meta():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/submitcontact', methods = ['POST', 'GET'])
+def submitcontact():
+    if request.method == 'POST':
+        your_name = request.form['your_name']
+        your_email = request.form['your_email']
+        your_message = request.form['your_message']
+        msg = Message('Meta_Analysis Client', sender = 's.ashkan.beheshti@gmail.com', recipients = ['s.ashkan.beheshti@gmail.com'])
+        msg.body="Name : "+"\n" + your_name +"\n"+"\n" + "Email :"+"\n" + your_email+ "\n"+"\n" +"Message : " +"\n"+ your_message
+        mail.send(msg)
+        return render_template("sent.html")
+
+
+
 
 if __name__ == '__main__':
     app.run()
