@@ -208,7 +208,7 @@ def upload_file():
         df.to_excel(writer,'Sheet1')
         writer.save()
 
-        study_list=df['Study'].tolist()
+        study_list=map(lambda s: str(s), df['Study'].tolist())
         d_list=df['d'].tolist()
         d_lower_list=df['d_lower'].tolist()
         d_upper_list=df['d_upper'].tolist()

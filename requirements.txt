@@ -33,3 +33,4 @@ six==1.10.0
 traitlets==4.3.2
 wcwidth==0.1.7
 Werkzeug==0.12.2
+xlrd==1.0.0

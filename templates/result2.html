@@ -21,13 +21,6 @@
 
 <div id="forestplot"></div>
 <p></p>
-<div style="display:none;">
-<p id="study_list">{{study_list}}</p>
-<p id="d_list">{{d_list}}</p>
-<p id="d_lower_list">{{d_lower_list}}</p>
-<p id="d_upper_list">{{d_upper_list}}</p>
-</div>
-
 <div id="pash">
 
 </div>
@@ -36,18 +29,18 @@
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
-var study = document.getElementById("study_list").value;
-var d = document.getElementById("d_list").value;
-var d_lower = document.getElementById("d_lower_list").value;
-var d_upper = document.getElementById("d_upper_list").value;
+var study = {{study_list|safe}};
+var d = {{d_list}};
+var d_lower = {{d_lower_list}};
+var d_upper = {{d_upper_list}};
 var list=[];
 
 for (i = 0; i < d.length; i++) {
-list[i] = {
-x: [d_lower[i], d[i], d_upper[i]],
-type: 'box',
-name: study[i]
-};
+  list[i] = {
+    x: [d_lower[i], d[i], d_upper[i]],
+    type: 'box',
+    name: study[i]
+  };
 }
 
 var data = list;
