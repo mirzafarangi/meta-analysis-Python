@@ -8,10 +8,55 @@
   <p>The Average Hedges's g is: {{ave_g}}<br> The Standard Error is: {{ave_SEg}}<br> 95% CI=[{{lower_gg}},{{upper_gg}}]</p>
   <p> </p>
   <p>The Heterogeneity of the analysis is: {{Het}}%</p>
-  {{total}}
+
+
+  <div style="overflow-x:auto;">
+      {{total}}
+  </div>
+
 
   <p></p>
   <p></p>
     <a href="/return-file/" target="blank"><button class="btn btn-default" name="button">Please Click to Download the results as an Excel file</button></a>
 
+<div id="forestplot"></div>
+<p></p>
+<div style="display:none;">
+<p id="study_list">{{study_list}}</p>
+<p id="d_list">{{d_list}}</p>
+<p id="d_lower_list">{{d_lower_list}}</p>
+<p id="d_upper_list">{{d_upper_list}}</p>
+</div>
+
+<div id="pash">
+
+</div>
+{% endblock %}
+{% block script %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+var study = document.getElementById("study_list").value;
+var d = document.getElementById("d_list").value;
+var d_lower = document.getElementById("d_lower_list").value;
+var d_upper = document.getElementById("d_upper_list").value;
+var list=[];
+
+for (i = 0; i < d.length; i++) {
+list[i] = {
+x: [d_lower[i], d[i], d_upper[i]],
+type: 'box',
+name: study[i]
+};
+}
+
+var data = list;
+
+var layout = {
+  title: 'Forest Plot'
+};
+
+Plotly.newPlot('forestplot', data, layout);
+document.getElementById("pash").innerHTML = study;
+</script>
 {% endblock %}
