@@ -2,23 +2,14 @@ from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import numpy as np
 import copy
+import requests
 from IPython.display import display, HTML
-from flask_mail import Mail, Message
 
 DEBUG = True
 app = Flask(__name__)
 
 app.secret_key = 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502'
-
-mail=Mail(app)
-
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 's.ashkan.beheshti@gmail.com'
-app.config['MAIL_PASSWORD'] = '***'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
+MAILGUN_API_KEY = 'key-c49f3aaf0fa51713045b5f6ac0a8c970'
 
 
 @app.route('/')
@@ -234,9 +225,15 @@ def submitcontact():
         your_name = request.form['your_name']
         your_email = request.form['your_email']
         your_message = request.form['your_message']
-        msg = Message('Meta_Analysis Client', sender = 's.ashkan.beheshti@gmail.com', recipients = ['s.ashkan.beheshti@gmail.com'])
-        msg.body="Name : "+"\n" + your_name +"\n"+"\n" + "Email :"+"\n" + your_email+ "\n"+"\n" +"Message : " +"\n"+ your_message
-        mail.send(msg)
+
+        requests.post("https://api.mailgun.net/v3/samples.mailgun.org/messages",
+            auth=("api", MAILGUN_API_KEY),
+            data={
+                "from": "%s <%s>" % (your_name, your_email),
+                "to": ["s.ashkan.beheshti@gmail.com"],
+                "subject": "Meta_Analysis Client",
+                "text": your_message
+            })
         return render_template("sent.html")
 
 
