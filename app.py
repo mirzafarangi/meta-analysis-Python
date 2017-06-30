@@ -239,7 +239,7 @@ def submitcontact():
             auth=("api", MAILGUN_API_KEY),
             data={
                 "from": "%s <%s>" % (your_name, your_email),
-                "to": ["s.ashkan.beheshti@gmail.com"],
+                "to": ["s.ashkan.beheshti@gmail.com", "mousavian.rahman@gmail.com"],
                 "subject": "Meta_Analysis Client",
                 "text": your_message
             })
