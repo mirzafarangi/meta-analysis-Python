@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import numpy as np
