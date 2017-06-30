@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import numpy as np
@@ -241,4 +242,5 @@ def submitcontact():
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG, port=80)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=DEBUG, port=port)
