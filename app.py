@@ -241,4 +241,4 @@ def submitcontact():
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG)
+    app.run(debug=DEBUG, port=80)
