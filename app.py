@@ -206,12 +206,18 @@ def upload_file():
             df.to_excel(writer,'Sheet1')
             writer.save()
 
-            study_list=map(lambda s: str(s), df['Study'].tolist())
-            d_list=df['d'].tolist()
-            d_lower_list=df['d_lower'].tolist()
-            d_upper_list=df['d_upper'].tolist()
+            study_list = df['Study'].tolist()
+            d_list = df['d'].tolist()
+            d_lower_list = df['d_lower'].tolist()
+            d_upper_list = df['d_upper'].tolist()
 
-            return render_template("result2.html", study_list=study_list, d_list=d_list, d_lower_list=d_lower_list , d_upper_list=d_upper_list, total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)),   Het=100*float("{0:.3f}".format(I2)))
+            return render_template("result2.html", study_list=study_list, d_list=d_list, d_lower_list=d_lower_list,
+                                   d_upper_list=d_upper_list, total=HTML(df.to_html()),
+                                   ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),
+                                   lower_dd=float("{0:.2f}".format(lower_d)), upper_dd=float("{0:.2f}".format(upper_d)),
+                                   ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),
+                                   lower_gg=float("{0:.3f}".format(lower_g)), upper_gg=float("{0:.3f}".format(upper_g)),
+                                   Het=100 * float("{0:.3f}".format(I2)))
 
         except:
             return render_template('error.html')
