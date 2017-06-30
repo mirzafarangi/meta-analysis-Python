@@ -43,8 +43,8 @@ h6
 
 a, a:hover
 { outline: none;
-  text-decoration: underline;
-  color: #FD5BFF;}
+  text-decoration: none;
+  color: #28A828;}
 
 a:hover
 { text-decoration: none;}
