@@ -10,8 +10,8 @@ from IPython.display import display, HTML
 DEBUG = True
 app = Flask(__name__)
 
-app.secret_key = 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502'
-MAILGUN_API_KEY = 'key-c49f3aaf0fa51713045b5f6ac0a8c970'
+app.secret_key = os.environ.get('APP_SECRET_KEY', 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502')
+MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY', '')
 
 
 @app.route('/')
