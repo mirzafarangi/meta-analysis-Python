@@ -1,21 +1,34 @@
 {% extends "layout.html" %}
 {% block app %}
 
-        <h1>Methods of Data Entry</h1>
-        <p>In order to start your analysis you should first choose your preferred data entry method:</p>
-        <p><b>Method1</b>: You can enter data manually.</p>
-        <p><b>Method2</b>: Or you may prefer to upload an already excisting Excel spreadsheet.</p>
+<p></p>
+        <h4 align="center">In order to start your analysis please click on your preferred method:</h4>
+        <p></p>
+        <p></p>
+
+</div>
 
 
-           <select  id="myMethod" onchange="myMethod()">
-            <option value="none" name="none">  </option>
-            <option value="method1" name="method1"> Method1 </option>
-            <option value="method2" name="method2"> Method2 </option>
+<table align="center" border="0.5">
+<tr>
+  <th><a href="#" id="Method_1" onclick="Method_1()"> <b>Data Entry</b></a></th>
+  <th><a href="#" id="Method_2" onclick="Method_2()"> <b>Excel Spreadsheet Upload</b></a></th>
+</tr>
+<tr>
+  <th>If you prefer to manually enter data, click on <a href="#" id="Method_1" onclick="Method_1()"><b>Data Entry</b> </a>. Enter your studies!</br>
+   You can also add or remove studies by clicking on <b>"Add a Study"</b> or <b>"Remove"</b>.</br>
+  Receive the results by clicking on <b> "Calculate" </b>. </br> You can also <b> "download the results as an Excel file"</b>.</th>
+  <th>If you prefer to upload your data as an Excel file click on <a href="#" id="Method_2" onclick="Method_2()"> <b>Excel Spreadsheet Upload.</b> </a> </br>
+  Download the empty Excel file and transfer your data to the spreadsheet without changing the lables.</br>
+  Receive the results by clicking on Calculate. </br> You can also  <b> "download the results as an Excel file"</b>.</th>
+</tr>
 
-            </select>
+</table>
 
-            <p></p>
-            <p></p>
+
+  <p></p>
+  <p id="selected_method"></p>
+  <p></p>
 
   <div id="myMethod1" style="display:none;">
 
@@ -28,42 +41,42 @@
               <center> <b> <font color="black"> Study </font> </b> </center>
             </td>
             <td colspan="3">
-              <center> <b> <font color="green"> Group 1 </font> </b> </center>
+              <center> <b> <font color="#2E9AFE"> Group 1 </font> </b> </center>
             </td>
             <td colspan="3">
-              <center> <b> <font color="blue"> Group 2 </font> </b> </center>
+              <center> <b> <font color="#FE642E"> Group 2 </font> </b> </center>
             </td>
           </tr>
 
           <tr>
             <td>
               <center>
-                <font color="green"> Sample size </font>
+                <font color="#2E9AFE"> Sample size </font>
               </center>
             </td>
             <td>
               <center>
-                <font color="green"> Mean </center>
+                <font color="#2E9AFE"> Mean </center>
               </font>
             </td>
             <td>
               <center>
-                <font color="green"> Standar Deviation </font>
+                <font color="#2E9AFE"> Standar Deviation </font>
               </center>
             </td>
             <td>
               <center>
-                <font color="blue"> Sample size </center>
+                <font color="#FE642E"> Sample size </center>
               </font>
             </td>
             <td>
               <center>
-                <font color="blue"> Mean </center>
+                <font color="#FE642E"> Mean </center>
               </font>
             </td>
             <td>
               <center>
-                <font color="blue"> Standar Deviation </font>
+                <font color="#FE642E"> Standar Deviation </font>
               </center>
             </td>
           </tr>
@@ -126,19 +139,16 @@
 {% block script %}
 
 <script>
-function myMethod() {
-var x = document.getElementById("myMethod").value;
-if(x=='none') {
-  document.getElementById("myMethod1").style.display = "none";
-  document.getElementById("myMethod2").style.display = "none";
-} else if(x=='method1') {
+function Method_1() {
   document.getElementById("myMethod1").style.display = "block";
   document.getElementById("myMethod2").style.display = "none";
-} else if(x=='method2') {
-  document.getElementById("myMethod1").style.display = "none";
-  document.getElementById("myMethod2").style.display = "block";
+  document.getElementById("selected_method").innerHTML = "<hr> <p></p> <b>You selected Data entry:</b>";
 }
-        }
+function Method_2() {
+  document.getElementById("myMethod2").style.display = "block";
+  document.getElementById("myMethod1").style.display = "none";
+  document.getElementById("selected_method").innerHTML = "<hr> <p></p> <b> You selected Excel Spreadsheet Upload:</b>";
+}
 </script>
 
 <script>

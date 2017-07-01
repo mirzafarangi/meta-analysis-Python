@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block app %}
+
+<style>
+.about {
+font-size: 120%;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 150%;
+}
+
+</style>
+
+<div class="side">
+<div class="circular--portrait">
+<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><img src="static/dr-christiansen.jpeg" /></a>
+</div>
+<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><h5>Prof. Dr. Hanna Christiansen <br> Supervisor of the project</h5></a>
+</div>
+<div class="side">
+<div class="circular--portrait">
+<a href="#" style="text-decoration:none"><img src="static/beheshti.jpg" /></a>
+</div>
+<a href="#" style="text-decoration:none"><h5>Ashkan Beheshti <br> Developer of the project</h5></a>
+</div>
+
+<div class="about">
+<h4> About the project</h4>
+<p>As I started with my PhD study in the field of children and adolescent clinical psychology under supervision of Prof. Dr. Hanna Christiansen, regarding to my first paper I should run a meta-analysis in order to examine the role of emotion dysregulation in adults with attention deficit hyperactivity disorder (ADHD).</p>
+<p>During the time that I was looking for the methods of statistical calculations I found out that such methods could be considered as the following four overall categories: 1. Using Excel spreadsheets and manually entering the formulas and data. 2. Using statistical softwares 3. Using Cochran meta-analysis facilities and 4. Using Online Websites which offer a meta-analysis service.</p>
+<p>After examining each of the above-mentioned methods, I felt lacking of a free and easy to use method of meta-analysis calculations. Shortly explaining, statistical softwares and Cochran meta-analysis service (Rev man) are not often user friendly or they should be installed first on the clients’ systems to be available for working with and when a researcher needs to quickly calculate something it would be more problematic and finally they are not usually free to use (not true about the Cochran) and are even considerably expensive. The latter fact is valid for many of online websites that offer meta-analysis service too. In addition, although online services are more user friendly and there is no need for installing them, they are not flexible and dynamically responsive to users’ needs.</p>
+<p>Consequently, I found the situation and decided to develop a free and easy to use online service for our department.</p>
+<p>It was a great experience for me, however there is still a long way to improve the options of Meta-Mar. There are several new features that we could define and add to Meta-Mar based on the demands of our working group in the department.  I hope that this very first project could be considered as a useful tool and receive feedbacks.</p>
+</div>
+<style>
+.circular--portrait {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  margin-right: 150px;
+  margin-left: 50px;
+  border-radius: 50%;
+}
+
+.circular--portrait img {
+  width: 100%;
+  height: auto;
+}
+
+.side {
+display:inline-block;
+}
+</style>
+
+
+{% endblock %}

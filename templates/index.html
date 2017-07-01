@@ -1,55 +1,47 @@
 {% extends "layout.html" %}
 {% block app %}
 
+<style>
+.about {
+font-size: 120%;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 150%;
+}
+
+</style>
+
+<style>
+ul.a {list-style-type: circle;}
+</style>
+<div class="about">
 
 
-
-        <h2>Why Meta-Mar?</h2>
-        <p> <b>Meta-Mar</b> is a free online meta-analysis service which is developed for <a href="https://www.uni-marburg.de/fb04/team-christiansen/kj-pam">department of psychology in university of Marburg</a>, make it possible to enter data directly or easily upload an already excisting Microsoft Excel spreadsheet in order to receive the results of the analysis. </p>
+<h3>Meta-Analysis</h3>
+<p> <b> Meta-analysis </b> is a quantitative, formal, epidemiological study design used to systematically assess previous research studies to derive conclusions about that body of research.</p>
+<p>By pooling study-specific estimates of a common effect size and adjusting those estimates for sampling and measurement error, a meta-analyst can generate a weighted mean estimate of the effect size that normally reflects the true population effect size more accurately than any of the individual estimates on which it is based.</p>
+        <h3>Why Meta-Mar?</h3>
+        <p> <b>Meta-Mar</b> is a free online meta-analysis service which is developed for <a href="https://www.uni-marburg.de/fb04/team-christiansen/kj-pam">department of psychology in university of Marburg</a>, makes it possible to enter data directly or easily upload an already excisting Microsoft Excel spreadsheet in order to receive the results of the analysis. </p>
+        <p>Facilities of this primary phase of the project include:
+<ul class="a">
+           <li>Calculation of the effect sizes based on Cohen'd and Hedges' g method for each single study.</li>
+           <li>Calculate the overall effect size of the analysis.</li>
+           <li> Drawing the Forest Plot of the analysis. </li>
+</ul>
+<p></p>
+<p></p>
+      <p>Calculations are based on <b>sample sizes</b>, <b>means</b> and <b>standard deviations</b> of each study.</p>
+      <p>In the second phase of the project, we will develope other calculations of the effect sizes such as <b>ratio odds</b>, <b>correlations</b> and <b>regressions</b>. </p>
 
         <center>
-              <a href="/tutorial"> Tutorial </a>
-            &nbsp&nbsp&nbsp  <a href="/meta"> Start Your Analysis! </a>
+              <a href="/about"> About the Project </a>
+            &nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a href="/meta"> Start Your Analysis! </a>
 
 
         </center>
-
+</div>
         <p></p>
         <p></p>
 
-        <style>
-        .circular--portrait {
-          position: relative;
-          width: 150px;
-          height: 150px;
-          overflow: hidden;
-          margin-bottom: 20px;
-          margin-right: 150px;
-          margin-left: 50px;
-          border-radius: 50%;
-        }
 
-        .circular--portrait img {
-          width: 100%;
-          height: auto;
-        }
-
-        .side {
-   display:inline-block;
-}
-        </style>
-<center>
-<div class="side">
-        <div class="circular--portrait">
-        <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><img src="static/dr-christiansen.jpeg" /></a>
-        </div>
-        <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><h5>Prof. Dr. Hanna Christiansen <br> Supervisor of the project</h5></a>
-</div>
-<div class="side">
-      <div class="circular--portrait">
-      <a href="#" style="text-decoration:none"><img src="static/beheshti.jpg" /></a>
-      </div>
-      <a href="#" style="text-decoration:none"><h5>Ashkan Beheshti <br> Developer of the project</h5></a>
-</div>
-</center>
   {% endblock %}

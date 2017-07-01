@@ -1,23 +1,42 @@
 {% extends "layout.html" %}
 {% block app %}
 
-  <p>The Average Cohen's d is: {{ave_d}}<br> The Standard Error is: {{ave_SEd}}<br> 95% CI=[{{lower_dd}},{{upper_dd}}]</p>
-
+  <h4> <a href="/meta">Back to previous page </a></h4>
   <p></p>
+  <div class="table" align="center">
 
-  <p>The Average Hedges's g is: {{ave_g}}<br> The Standard Error is: {{ave_SEg}}<br> 95% CI=[{{lower_gg}},{{upper_gg}}]</p>
-  <p> </p>
-  <p>The Heterogeneity of the analysis is: {{Het}}%</p>
+<table style="width:100%">
+  <tr>
+    <th><h4>total effect size: Cohen's d</h4></th>
+    <th><h4>total effect size: Hedges' g</h4></th>
+  </tr>
+  <tr>
+    <th><b>The Average Cohen's d is: </b> {{ave_d}}</th>
+    <th><b>The Average Hedges's g is: </b>{{ave_g}}</th>
 
-
-  <div style="overflow-x:auto;">
-      {{total}}
+  </tr>
+  <tr>
+    <th><b> The Standard Error is:</b> {{ave_SEd}}</th>
+    <th><b>The Standard Error is: </b>{{ave_SEg}}</th>
+  </tr>
+  <tr>
+    <th><b>95% CI </b>=[{{lower_dd}},{{upper_dd}}]</th>
+    <th><b> 95% CI </b>= [{{lower_gg}},{{upper_gg}}]</th>
+  </tr>
   </div>
+<p></p>
+<p><b>The Heterogeneity of the analysis is: </b> {{Het}}%</p>
+<p></p>
+<p></p>
+
+<div style="overflow-x:auto;">
+      {{total}}
+</div>
 
 
   <p></p>
   <p></p>
-    <a href="/return-file/" target="blank"><button class="btn btn-default" name="button">Please Click to Download the results as an Excel file</button></a>
+    <a href="/return-file/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
 
 <div id="forestplot"></div>
 <p></p>
