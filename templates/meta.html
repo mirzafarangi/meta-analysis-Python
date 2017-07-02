@@ -7,13 +7,19 @@
   <table border="0">
     <tr>
       <th>
-        <a href="#" id="Method_1" v-on:click="dataEntryMethod = !dataEntryMethod; uploadMethod = !uploadMethod">
-          <h3 style="font-size: 200%; margin-right: 100px"><b>Data Entry</b></h3>
+        <a href="#" id="Method_1" v-on:click="dataEntryMethod = true; uploadMethod = false">
+          <h3 style="font-size: 200%; margin-right: 100px">
+            <b v-if="dataEntryMethod">Data Entry</b>
+            <span v-if="!dataEntryMethod">Data Entry</span>
+          </h3>
         </a>
       </th>
       <th>
-        <a href="#" id="Method_2" v-on:click="uploadMethod = !uploadMethod; dataEntryMethod = !dataEntryMethod">
-          <h3 style="font-size: 200%;"><b>Excel Spreadsheet Upload</b></h3>
+        <a href="#" id="Method_2" v-on:click="uploadMethod = true; dataEntryMethod = false">
+          <h3 style="font-size: 200%;">
+            <b v-if="uploadMethod">Excel Spreadsheet Upload</b>
+            <span v-if="!uploadMethod">Excel Spreadsheet Upload</span>
+          </h3>
         </a>
       </th>
     </tr>
