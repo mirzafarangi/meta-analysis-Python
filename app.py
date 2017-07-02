@@ -11,7 +11,7 @@ DEBUG = True
 app = Flask(__name__)
 
 app.secret_key = os.environ.get('APP_SECRET_KEY', 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502')
-MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY', '')
+ELASTICMAIL_API_KEY = os.environ.get('ELASTICMAIL_API_KEY', '')
 
 
 @app.route('/')
@@ -241,13 +241,14 @@ def submitcontact():
         your_email = request.form['your_email']
         your_message = request.form['your_message']
 
-        requests.post("https://api.mailgun.net/v3/samples.mailgun.org/messages",
-            auth=("api", MAILGUN_API_KEY),
+        requests.post("https://api.elasticemail.com/v2/email/send",
             data={
-                "from": "%s <%s>" % (your_name, your_email),
-                "to": ["s.ashkan.beheshti@gmail.com", "mousavian.rahman@gmail.com"],
-                "subject": "Meta_Analysis Client",
-                "text": your_message
+                "apiKey": ELASTICMAIL_API_KEY,
+                "from": your_email,
+                "fromName": your_name,
+                "to": ["s.ashkan.beheshti@gmail.com"],
+                "subject": "Meta Mar User",
+                "bodyHtml": your_message
             })
         return render_template("sent.html")
 
