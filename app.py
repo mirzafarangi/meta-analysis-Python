@@ -35,7 +35,6 @@ def methods():
 def result():
     if request.method == 'POST':
         try:
-
             study = [row['study'] for row in request.json]
             g1_sample = [row['g1_sample'] for row in request.json]
             g1_mean = [row['g1_mean'] for row in request.json]
@@ -106,7 +105,7 @@ def result():
             ]
 
             df2=df.to_dict(orient="dict")
-            writer = pd.ExcelWriter('static/results/Meta-Mar_analysis_result.xlsx')
+            writer = pd.ExcelWriter('results/Meta-Mar_analysis_result.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
 
@@ -126,11 +125,11 @@ def result():
             return render_template("result1.html", **resultData)
         except Exception as error:
             print(error)
-            return render_template('error.html')
+            return render_template('error_content.html')
 
 @app.route('/return-file/')
 def return_file():
-    return send_file('static/results/Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
+    return send_file('results/Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
 
 @app.route('/method2')
 def method2():
@@ -212,7 +211,7 @@ def upload_file():
 
             df.index+=1
 
-            writer = pd.ExcelWriter('static/results/Meta-Mar_analysis_result.xlsx')
+            writer = pd.ExcelWriter('results/Meta-Mar_analysis_result.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
 

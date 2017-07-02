@@ -164,7 +164,9 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   overflow: hidden;
   margin: 25px auto 0 auto;
   padding: 20px;
-  background: transparent url(transparent_light.png) repeat;}
+  background: transparent url(transparent_light.png) repeat;
+  min-height: 550px;
+}
 
 .sidebar
 { float: right;
