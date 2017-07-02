@@ -128,6 +128,7 @@
     </div>
     <div v-if="isLoading"> Loading... </div>
     <div v-if="ajaxResult" v-html="ajaxResult"></div>
+    <div v-if="ajaxResult" id="forestplot"></div>
   </div>
   </div>
 </div>
@@ -199,14 +200,56 @@
           this.$http.post('/result1', data).then(response => {
             // request was successful, binding the result
             this.isLoading = false
-            this.ajaxResult = response.body
+            this.ajaxResult = response.body.content
+            this.drawChart(response.body)
           }, error => {
             // well, sometimes error happens :)
             this.isLoading = false
             this.error = error
           })
+      },
+
+      drawChart: function (data) {
+        const list = []
+        for (let i = 0; i < data.d_list.length; i++) {
+          const x = [
+            data.d_lower_list[i],
+            data.d_list[i]-0.3,
+            data.d_list[i]-0.2,
+            data.d_list[i]-0.1,
+            data.d_list[i],
+            data.d_list[i]+0.1,
+            data.d_list[i]+0.2,
+            data.d_list[i]+0.3,
+            data.d_upper_list[i]
+          ]
+
+          list[i] = {
+            x: x,
+            type: 'box',
+            name: data.study_list[i]
+          }
+        }
+
+        const ave_d = {
+          x: [data.lower_dd, data.ave_d, data.upper_dd],
+          type: 'box',
+          name: 'Average Effect Size'
+        }
+
+        list.push(ave_d)
+        list.reverse()
+        const layout = {
+            title: 'Forest Plot'
+        }
+
+        this.$nextTick(() => {
+          Plotly.newPlot('forestplot', list, layout)
+        })
       }
     }
   })
+
+
 </script>
 {% endblock %}

@@ -122,7 +122,16 @@ def result():
                 'Het': 100*float("{0:.3f}".format(I2))
             }
 
-            return render_template("result1.html", **resultData)
+            content = render_template("result1.html", **resultData)
+            return jsonify({
+                'content': content,
+                'd_list': df['d'].tolist(),
+                'study_list': df['Study'].tolist(),
+                'd_lower_list': df['d_lower'].tolist(),
+                'd_upper_list': df['d_upper'].tolist(),
+                'ave_g': float("{0:.2f}".format(g_total)),
+            })
+
         except Exception as error:
             print(error)
             return render_template('error_content.html')
@@ -215,16 +224,12 @@ def upload_file():
             df.to_excel(writer,'Sheet1')
             writer.save()
 
-            study_list = df['Study'].tolist()
-            d_list = df['d'].tolist()
-            d_lower_list = df['d_lower'].tolist()
-            d_upper_list = df['d_upper'].tolist()
-
+            study_list = map(lambda x: str(x), df['Study'].tolist())
             resultData = {
                 'study_list': study_list,
-                'd_list': d_list,
-                'd_lower_list': d_lower_list,
-                'd_upper_list': d_upper_list,
+                'd_list': df['d'].tolist(),
+                'd_lower_list': df['d_lower'].tolist(),
+                'd_upper_list': df['d_upper'].tolist(),
                 'total': HTML(df.to_html()),
                 'ave_d': float("{0:.2f}".format(d_total)),
                 'ave_SEd': float("{0:.2f}".format(s_total)),
