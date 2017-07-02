@@ -216,10 +216,8 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   color: #FFF;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  position:fixed;
   left:0px;
   bottom:0px;
-
 }
 
 #footer a
@@ -231,9 +229,9 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   text-decoration: underline;}
 
 * html #footer {
-     position:absolute;
-     top:expression((0-(footer.offsetHeight)+(document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight)+(ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop))+'px');
-  }
+  position:absolute;
+  top:expression((0-(footer.offsetHeight)+(document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight)+(ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop))+'px');
+}
 
 .search
 { color: #5D5D5D;
@@ -311,6 +309,38 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   { background: #F0EFE2;
     color: #47433F;
     border-top: 1px solid #FFF;}
+
+/* Responsive table*/
+.cf:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
+* html .cf { zoom: 1; }
+*:first-child+html .cf { zoom: 1; }
+.rt { width: 100%; font-size: 0.75em;/*12*/ line-height: 1.25em;/*15*/ border-collapse: collapse; border-spacing: 0; }
+.rt th,
+.rt td { margin: 0; padding: 0.4166em;/*10*/ vertical-align: top; border: 1px solid #babcbf; background: #fff; }
+.rt th { text-align: left; background: #fff2b2; }
+@media only screen and (max-width: 40em) { /*640*/
+  .responsive-table-1 { display: block; position: relative; width: 100%; }
+  .responsive-table-1 thead { display: block; float: left; }
+  .responsive-table-1 tbody { display: block; width: auto; position: relative; overflow-x: auto; white-space: nowrap; }
+  .responsive-table-1 thead tr { display: block; }
+  .responsive-table-1 th { display: block; }
+  .responsive-table-1 tbody tr { display: inline-block; vertical-align: top; }
+  .responsive-table-1 td { display: block; min-height: 1.25em; }
+
+  .responsive-table-2 { display: block; position: relative; width: 100%; }
+  .responsive-table-2 thead { display: block; float: left; }
+  .responsive-table-2 tbody { display: -webkit-box; overflow-x: auto; }
+  .responsive-table-2 th,
+  .responsive-table-2 tr,
+  .responsive-table-2 td { display: block; }
+
+  /* sort out borders */
+  .rt th { border-bottom: 0; }
+  .rt td { border-left: 0; border-right: 0; border-bottom: 0; }
+  .rt tbody tr { border-right: 1px solid #babcbf; }
+  .rt th:last-child,
+  .rt td:last-child { border-bottom: 1px solid #babcbf; }
+}
 
 
 /* custom css */

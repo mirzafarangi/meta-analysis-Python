@@ -99,25 +99,38 @@ def result():
 
             df.drop(['n','n_1','SE'], axis=1, inplace=True)
 
-
-            df.columns = ['Study', 'Group1-sample', 'Group1-mean' , 'Group1-sd' , 'Group2-sample', 'Group2-mean' , 'Group2-sd' ,'d'	,'g', 'SEd'	,'SEg','d_lower','d_upper','g_lower', 'g_upper' ,'weight (d)' ,'weighted d', 'weight (g)','weighted g']
-
+            df.columns = [
+                'Study', 'Group1-sample', 'Group1-mean', 'Group1-sd', 'Group2-sample', 'Group2-mean', 'Group2-sd',
+                'd', 'g', 'SEd', 'SEg', 'd_lower', 'd_upper', 'g_lower', 'g_upper',
+                'weight (d)', 'weighted d', 'weight (g)', 'weighted g'
+            ]
 
             df2=df.to_dict(orient="dict")
-
-
-            writer = pd.ExcelWriter('Meta-Mar_analysis_result.xlsx')
+            writer = pd.ExcelWriter('static/results/Meta-Mar_analysis_result.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
 
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+                'ave_d': float("{0:.2f}".format(d_total)),
+                'ave_SEd': float("{0:.2f}".format(s_total)),
+                'lower_dd': float("{0:.2f}".format(lower_d)),
+                'upper_dd': float("{0:.2f}".format(upper_d)),
+                'ave_g': float("{0:.2f}".format(g_total)),
+                'ave_SEg': float("{0:.3f}".format(sg_total)),
+                'lower_gg': float("{0:.3f}".format(lower_g)),
+                'upper_gg': float("{0:.3f}".format(upper_g)),
+                'Het': 100*float("{0:.3f}".format(I2))
+            }
 
-            return render_template("result1.html", total=HTML(df.to_html()), ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),lower_dd=float("{0:.2f}".format(lower_d)),upper_dd=float("{0:.2f}".format(upper_d)),ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),lower_gg=float("{0:.3f}".format(lower_g)),upper_gg=float("{0:.3f}".format(upper_g)), Het=100*float("{0:.3f}".format(I2)))
-        except:
+            return render_template("result1.html", **resultData)
+        except Exception as error:
+            print(error)
             return render_template('error.html')
 
 @app.route('/return-file/')
 def return_file():
-    return send_file('Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
+    return send_file('static/results/Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
 
 @app.route('/method2')
 def method2():
@@ -163,8 +176,6 @@ def upload_file():
             g_lower_per_study=g_per_study-1.96*se_g_per_study
             g_upper_per_study=g_per_study+1.96*se_g_per_study
 
-
-
             w_s_d=1/se_d_per_study**2
             d_s=w_s_d*d_per_study
 
@@ -192,7 +203,6 @@ def upload_file():
             df["g"]=g_per_study
             df["g_upper"]=g_upper_per_study
 
-
             q=np.sum(w_s_d*d_per_study**2)-((np.sum(d_s)**2)/np.sum(w_s_d))
             I2=(q-8)/q
             if q==0:
@@ -202,7 +212,7 @@ def upload_file():
 
             df.index+=1
 
-            writer = pd.ExcelWriter('Meta-Mar_analysis_result.xlsx')
+            writer = pd.ExcelWriter('static/results/Meta-Mar_analysis_result.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
 
@@ -211,14 +221,24 @@ def upload_file():
             d_lower_list = df['d_lower'].tolist()
             d_upper_list = df['d_upper'].tolist()
 
-            return render_template("result2.html", study_list=study_list, d_list=d_list, d_lower_list=d_lower_list,
-                                   d_upper_list=d_upper_list, total=HTML(df.to_html()),
-                                   ave_d=float("{0:.2f}".format(d_total)), ave_SEd=float("{0:.2f}".format(s_total)),
-                                   lower_dd=float("{0:.2f}".format(lower_d)), upper_dd=float("{0:.2f}".format(upper_d)),
-                                   ave_g=float("{0:.2f}".format(g_total)), ave_SEg=float("{0:.3f}".format(sg_total)),
-                                   lower_gg=float("{0:.3f}".format(lower_g)), upper_gg=float("{0:.3f}".format(upper_g)),
-                                   Het=100 * float("{0:.3f}".format(I2)))
+            resultData = {
+                'study_list': study_list,
+                'd_list': d_list,
+                'd_lower_list': d_lower_list,
+                'd_upper_list': d_upper_list,
+                'total': HTML(df.to_html()),
+                'ave_d': float("{0:.2f}".format(d_total)),
+                'ave_SEd': float("{0:.2f}".format(s_total)),
+                'lower_dd': float("{0:.2f}".format(lower_d)),
+                'upper_dd': float("{0:.2f}".format(upper_d)),
+                'ave_g': float("{0:.2f}".format(g_total)),
+                'ave_SEg': float("{0:.3f}".format(sg_total)),
+                'lower_gg': float("{0:.3f}".format(lower_g)),
+                'upper_gg': float("{0:.3f}".format(upper_g)),
+                'Het': 100 * float("{0:.3f}".format(I2))
+            }
 
+            return render_template("result2.html", **resultData)
         except:
             return render_template('error.html')
 
@@ -251,8 +271,6 @@ def submitcontact():
                 "bodyHtml": your_message
             })
         return render_template("sent.html")
-
-
 
 
 if __name__ == '__main__':
