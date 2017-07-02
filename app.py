@@ -224,7 +224,7 @@ def upload_file():
             df.to_excel(writer,'Sheet1')
             writer.save()
 
-            study_list = map(lambda x: str(x), df['Study'].tolist())
+            study_list = list(map(lambda x: str(x), df['Study'].tolist()))
             resultData = {
                 'study_list': study_list,
                 'd_list': df['d'].tolist(),
