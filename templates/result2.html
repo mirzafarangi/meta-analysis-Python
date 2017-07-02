@@ -3,8 +3,8 @@
 
   <h4> <a href="/meta">Back to previous page </a></h4>
   <p></p>
-  <div class="table" align="center">
 
+<div id="table" align="left">
 <table style="width:100%">
   <tr>
     <th><h4>total effect size: Cohen's d</h4></th>
@@ -23,6 +23,7 @@
     <th><b>95% CI </b>=[{{lower_dd}},{{upper_dd}}]</th>
     <th><b> 95% CI </b>= [{{lower_gg}},{{upper_gg}}]</th>
   </tr>
+</table>
   </div>
 <p></p>
 <p><b>The Heterogeneity of the analysis is: </b> {{Het}}%</p>
@@ -40,7 +41,7 @@
 
 <div id="forestplot"></div>
 <p></p>
-<div id="pash">
+
 
 </div>
 {% endblock %}
@@ -87,6 +88,6 @@
     };
 
     Plotly.newPlot('forestplot', data, layout);
-    document.getElementById("forestplot").style.overflowX = "scroll";
+    
 </script>
 {% endblock %}
