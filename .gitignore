@@ -2,6 +2,7 @@
 bin/
 include/
 share/
+results/
 pip-selfcheck.json
 *.xlsx
 

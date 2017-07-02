@@ -46,48 +46,39 @@
 </div>
 {% endblock %}
 {% block script %}
-
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
+    const study = {{study_list | safe}}
+    const d = {{d_list}}
+    const d_lower = {{d_lower_list}}
+    const d_upper = {{d_upper_list}}
+    const list = []
 
-    var study = ["{{study_list |safe}}"];
-    study = study[0].substring(1, study[0].length - 1);
-    study = study.split(",");
-
-    console.log(study);
-    var d = ['{{d_list}}'];
-    d = JSON.parse(d);
-    var d_lower = ['{{d_lower_list}}'];
-    d_lower = JSON.parse(d_lower);
-    var d_upper = ['{{d_upper_list}}'];
-    d_upper = JSON.parse(d_upper);
-
-
-    var list = [];
-
-    for (var i = 0; i < d.length; i++) {
+    for (let i = 0; i < d.length; i++) {
         list[i] = {
             x: [d_lower[i],d[i]-0.3,d[i]-0.2,d[i]-0.1, d[i],d[i]+0.1,d[i]+0.2,d[i]+0.3 ,d_upper[i]],
             type: 'box',
             name: study[i]
-        };
+        }
     }
 
-    var ave_d = {
+    const ave_d = {
       x: [{{lower_dd}}, {{ave_d}}, {{upper_dd}}],
       type: 'box',
       name: 'Average Effect Size'
-    };
+    }
 
-    list.push(ave_d);
+    list.push(ave_d)
     list.reverse()
-    var data = list;
-
-    var layout = {
+    const layout = {
         title: 'Forest Plot'
-    };
+    }
 
+<<<<<<< HEAD
     Plotly.newPlot('forestplot', data, layout);
     
+=======
+    Plotly.newPlot('forestplot', list, layout)
+    document.getElementById("forestplot").style.overflowX = "scroll"
+>>>>>>> d681e31d0e7be95afa96a7f2a9daf2c7d44920de
 </script>
 {% endblock %}
