@@ -314,17 +314,42 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 
 
 /* custom css */
-#method1 input[type=number],
-#method1 input[type=text]
+.data-entry-method.method1 input[type=number],
+.data-entry-method.method1 input[type=text]
 { width: 90%;
   height: 2em;
   text-align: center;
 }
 
-#method1 tbody tr td
-{ text-align: center;
+.data-entry-method.method1 tbody tr td{ text-align: center;}
+.data-entry-method .removelink { cursor: pointer; }
+.helpbox {
+  border:1px;
+  border-style:solid;
+  border-color:#7D973B;
+  padding: 1em;
+  position: absolute;
+  background: white;
 }
 
-#method1 .removelink
-{ cursor: pointer;
+
+
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
 }
