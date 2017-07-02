@@ -2,28 +2,39 @@
 {% block app %}
 
 <p></p>
-        <h4 align="center">In order to start your analysis please click on your preferred method:</h4>
-        <p></p>
+        <h4>In order to start your analysis please click on your preferred method:</h4>
         <p></p>
 
 </div>
 
-
-<table align="center" border="0.5">
+<div id="table" align="left">
+  <table border="0">
 <tr>
-  <th><a href="#" id="Method_1" onclick="Method_1()"> <b>Data Entry</b></a></th>
-  <th><a href="#" id="Method_2" onclick="Method_2()"> <b>Excel Spreadsheet Upload</b></a></th>
+  <th><a href="#" id="Method_1" onclick="Method_1()"> <h3 style="font-size: 200%; margin-right: 100px"><b>Data Entry</b></h3></a></th>
+  <th><a href="#" id="Method_2" onclick="Method_2()"> <h3 style="font-size: 200%;"><b>Excel Spreadsheet Upload</b></h3></a></th>
 </tr>
 <tr>
-  <th>If you prefer to manually enter data, click on <a href="#" id="Method_1" onclick="Method_1()"><b>Data Entry</b> </a>. Enter your studies!</br>
-   You can also add or remove studies by clicking on <b>"Add a Study"</b> or <b>"Remove"</b>.</br>
-  Receive the results by clicking on <b> "Calculate" </b>. </br> You can also <b> "download the results as an Excel file"</b>.</th>
-  <th>If you prefer to upload your data as an Excel file click on <a href="#" id="Method_2" onclick="Method_2()"> <b>Excel Spreadsheet Upload.</b> </a> </br>
-  Download the empty Excel file and transfer your data to the spreadsheet without changing the lables.</br>
-  Receive the results by clicking on Calculate. </br> You can also  <b> "download the results as an Excel file"</b>.</th>
+  <th><a href="#" style="cursor:help;"  onmouseover="help_1()" onmouseout="helpout_1()"> help </a></th>
+  <th><a href="#" style="cursor:help;"  onmouseover="help_2()" onmouseout="helpout_2()"> help </a></th>
 </tr>
+<tr>
+  <th><div id="help1" style="display:none";>
+  <p style="border:1px; border-style:solid; border-color:#7D973B; padding: 1em;"> If you prefer to manually enter data, click on Data Entry. Enter your studies!<br> You can also add or remove studies by clicking on Add a Study or Remove.<br> Receive the results by clicking on Calculate.<br> You can also download the results as an Excel file.<br></p>
 
+  </div></th>
+  <th><div id="help2" style="display:none";>
+  <p style="border:1px; border-style:solid; border-color:#7D973B; padding: 1em;">If you prefer to upload your data as an Excel file click on <b>Excel Spreadsheet Upload</b>.<br> Download the empty Excel file and transfer your data to the spreadsheet without changing the lables.<br> Receive the results by clicking on <b>Calculate</b>.You can also <b>download the results as an Excel file.</b><br></p>
+
+  </div></th>
+</tr>
 </table>
+</div>
+
+<div id="t1">
+</div>
+
+<div id="t2">
+</div>
 
 
   <p></p>
@@ -113,7 +124,6 @@
 
       <div v-if="ajaxResult" v-html="ajaxResult"></div>
     </div>
-
   </div>
     </div>
 
@@ -132,12 +142,14 @@
     </form>
 
   </div>
-
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
 
 {% endblock %}
-
 {% block script %}
-
 <script>
 function Method_1() {
   document.getElementById("myMethod1").style.display = "block";
@@ -149,8 +161,19 @@ function Method_2() {
   document.getElementById("myMethod1").style.display = "none";
   document.getElementById("selected_method").innerHTML = "<hr> <p></p> <b> You selected Excel Spreadsheet Upload:</b>";
 }
+  function help_1(){
+    document.getElementById("help1").style.display="block";
+  }
+  function helpout_1(){
+    document.getElementById("help1").style.display="none";
+  }
+  function help_2(){
+    document.getElementById("help2").style.display="block";
+  }
+  function helpout_2(){
+    document.getElementById("help2").style.display="none";
+  }
 </script>
-
 <script>
   var app = new Vue({
     el: "#app",

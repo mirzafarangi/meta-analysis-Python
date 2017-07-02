@@ -7,6 +7,7 @@ html
 
 body
 { font: normal .80em 'trebuchet ms', arial, sans-serif;
+
   background: #ffffff url() repeat;
   color: #777;}
 
@@ -206,13 +207,18 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 #footer
 { width: 100%;
   font: normal 100% 'lucida sans unicode', arial, sans-serif;
-  height: 33px;
+  height: 30px;
   padding: 24px 0 5px 0;
   text-align: center;
   background: #3A3939;
   color: #FFF;
   text-transform: uppercase;
-  letter-spacing: 0.1em;}
+  letter-spacing: 0.1em;
+  position:fixed;
+  left:0px;
+  bottom:0px;
+
+}
 
 #footer a
 { color: #FFF;
@@ -221,6 +227,11 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 #footer a:hover
 { color: #FFF;
   text-decoration: underline;}
+
+* html #footer {
+     position:absolute;
+     top:expression((0-(footer.offsetHeight)+(document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight)+(ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop))+'px');
+  }
 
 .search
 { color: #5D5D5D;
