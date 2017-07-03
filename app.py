@@ -19,18 +19,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/methods',methods = ['POST', 'GET'])
-def methods():
-    if request.method == 'POST':
-        try:
-            if request.form['method']=='method1':
-                return render_template('method1.html')
-            if request.form['method']=='method2':
-                return render_template('method2.html')
-        except:
-            return render_template('error.html')
-
-
 @app.route('/result1',methods = ['POST', 'GET'])
 def result():
     if request.method == 'POST':
@@ -243,8 +231,9 @@ def upload_file():
             }
 
             return render_template("result2.html", **resultData)
-        except:
-            return render_template('error.html')
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
 
 @app.route('/about')
 def about():
