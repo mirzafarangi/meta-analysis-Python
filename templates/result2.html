@@ -4,29 +4,10 @@
   <h4> <a href="/meta">Back to previous page </a></h4>
   <p></p>
 
-<div id="table" align="left">
-<table style="width:100%">
-  <tr>
-    <th><h4>total effect size: Cohen's d</h4></th>
-    <th><h4>total effect size: Hedges' g</h4></th>
-  </tr>
-  <tr>
-    <th><b>The Average Cohen's d is: </b> {{ave_d}}</th>
-    <th><b>The Average Hedges's g is: </b>{{ave_g}}</th>
 
-  </tr>
-  <tr>
-    <th><b> The Standard Error is:</b> {{ave_SEd}}</th>
-    <th><b>The Standard Error is: </b>{{ave_SEg}}</th>
-  </tr>
-  <tr>
-    <th><b>95% CI </b>=[{{lower_dd}},{{upper_dd}}]</th>
-    <th><b> 95% CI </b>= [{{lower_gg}},{{upper_gg}}]</th>
-  </tr>
-</table>
-  </div>
+
+
 <p></p>
-<p><b>The Heterogeneity of the analysis is: </b> {{Het}}%</p>
 <p></p>
 <p></p>
 
@@ -37,7 +18,63 @@
 
   <p></p>
   <p></p>
-    <a href="/return-file/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Hedges'g (SMD) </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SEg </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
+        <td> <center>{{ave_g_fixed}}</center> </td>
+        <td> <center>{{ave_SEg_fixed}} </center></td>
+        <td> <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center></td>
+        <td> <center>{{Het_fixed}}% </center></td>
+      </tr>
+      <tr>
+        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
+        <td> <center>{{ave_g_random}}</center> </td>
+        <td> <center>{{ave_SEg_random}} </center></td>
+        <td> <center>[{{lower_gg_random}},{{upper_gg_random}}]</center> </td>
+        <td> <center>{{Het_random}}% </center></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+  <p></p>
+  <p></p>
+  <p></p>
+  <p></p>
+
+<a href="/return-file/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
 
 <div id="forestplot"></div>
 <p></p>
@@ -48,26 +85,26 @@
 {% block script %}
 <script>
     const study = {{study_list | safe}}
-    const d = {{d_list}}
-    const d_lower = {{d_lower_list}}
-    const d_upper = {{d_upper_list}}
+    const g = {{g_list}}
+    const g_lower = {{g_lower_list}}
+    const g_upper = {{g_upper_list}}
     const list = []
 
-    for (let i = 0; i < d.length; i++) {
+    for (let i = 0; i < g.length; i++) {
         list[i] = {
-            x: [d_lower[i],d[i]-0.3,d[i]-0.2,d[i]-0.1, d[i],d[i]+0.1,d[i]+0.2,d[i]+0.3 ,d_upper[i]],
+            x: [g_lower[i],g[i] ,g_upper[i]],
             type: 'box',
             name: study[i]
         }
     }
 
-    const ave_d = {
-      x: [{{lower_dd}}, {{ave_d}}, {{upper_dd}}],
+    const ave_g = {
+      x: [{{lower_gg_random}}, {{ave_g_random}}, {{upper_gg_random}}],
       type: 'box',
       name: 'Average Effect Size'
     }
 
-    list.push(ave_d)
+    list.push(ave_g)
     list.reverse()
     const layout = {
         title: 'Forest Plot'
@@ -75,7 +112,7 @@
 
 
     Plotly.newPlot('forestplot', list, layout)
-    
+
 
 </script>
 {% endblock %}
