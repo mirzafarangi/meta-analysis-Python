@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block app %}
+
+<h1>Simple Effect Size Calculator</h1>
+
+<form action="/effectCalculate" method="POST" enctype="multipart/form-data">
+<li>means and standard deviations</li>
+<p></p>
+  <table class="table" id="effectMean">
+      <tr>
+        <td>
+        </td>
+         <td> <center> <b> <font color="black"> Mean </font> </b> </center> </td>
+         <td> <center> <b> <font color="black"> SD </font> </b> </center> </td>
+         <td> <center> <b> <font color="black"> n </font> </b> </center> </td>
+       </tr>
+       <tr>
+         <td> <center> <b> <font color="black"> Group1 </font> </b> </center> </td>
+         <td> <input type="number" step="0.00001" name="g1_mean" required> </td>
+         <td> <input type="number" step="0.00001" name="g1_sd" required> </td>
+         <td> <input type="number" step="0.00001" name="g1_n" required> </td>
+       </tr>
+       <tr>
+         <td> <center> <b> <font color="black"> Group2 </font> </b> </center> </td>
+         <td> <input type="number" step="0.00001" name="g2_mean" required> </td>
+         <td> <input type="number" step="0.00001" name="g2_sd" required> </td>
+         <td> <input type="number" step="0.00001" name="g2_n" required> </td>
+       </tr>
+
+     </table>
+<button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Calculate </button>
+</form>
+
+{% endblock %}
+{% block script %}
+
+
+{% endblock %}

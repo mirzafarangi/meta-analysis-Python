@@ -44,6 +44,16 @@
         </td>
         <td>
           <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
             <font color="#2E9AFE"> Heterogeneity </font>
           </center>
         </td>
@@ -56,13 +66,18 @@
         <td> <center>{{ave_g_fixed}}</center> </td>
         <td> <center>{{ave_SEg_fixed}} </center></td>
         <td> <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center></td>
+        <td> <center>{{z_score_fixed}} </center></td>
+        <td> <center>{{p_value_fixed}} </center></td>
         <td> <center>{{Het_fixed}}% </center></td>
+
       </tr>
       <tr>
         <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
         <td> <center>{{ave_g_random}}</center> </td>
         <td> <center>{{ave_SEg_random}} </center></td>
         <td> <center>[{{lower_gg_random}},{{upper_gg_random}}]</center> </td>
+        <td> <center>{{z_score_random}} </center></td>
+        <td> <center>{{p_value_random}} </center></td>
         <td> <center>{{Het_random}}% </center></td>
       </tr>
     </tbody>
@@ -70,7 +85,11 @@
 </div>
 
   <p></p>
+  <h4>Meta regression results:</h4>
   <p></p>
+  <div style="overflow-x:auto;">
+        {{moder | safe}}
+  </div>
   <p></p>
   <p></p>
 

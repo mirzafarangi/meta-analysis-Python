@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block app %}
 <br>
 
-<h1>Meta-analysis: SMD Model</h1>
+<h1>Meta-analysis: risk ratio Model</h1>
 <h4>In order to start your analysis please click on your preferred method:</h4>
 <br>
 
@@ -53,17 +53,17 @@
 </div>
 
 <div v-if="dataEntryMethod" class="data-entry-method method1">
-  <form action="/result1" method="POST" v-on:submit.prevent="processData()">
+  <form action="/result_ratios" method="POST" v-on:submit.prevent="processData()">
     <table width="100%" class="table" id="method1">
       <thead>
         <tr>
           <td rowspan="2">
             <center> <b> <font color="black"> Study name</font> </b> </center>
           </td>
-          <td colspan="3">
+          <td colspan="2">
             <center> <b> <font color="#2E9AFE"> Group 1 </font> </b> </center>
           </td>
-          <td colspan="3">
+          <td colspan="2">
             <center> <b> <font color="#FE642E"> Group 2 </font> </b> </center>
           </td>
           <td rowspan="2">
@@ -74,45 +74,35 @@
         <tr>
           <td>
             <center>
-              <font color="#2E9AFE"> Sample size </font>
+              <font color="#2E9AFE"> Events </font>
             </center>
           </td>
           <td>
             <center>
-              <font color="#2E9AFE"> Mean </center>
+              <font color="#2E9AFE"> Non-Events </center>
+            </font>
+          </td>
+
+          <td>
+            <center>
+              <font color="#FE642E"> Events </center>
             </font>
           </td>
           <td>
             <center>
-              <font color="#2E9AFE"> Standar Deviation </font>
-            </center>
-          </td>
-          <td>
-            <center>
-              <font color="#FE642E"> Sample size </center>
+              <font color="#FE642E"> Non-Events </center>
             </font>
           </td>
-          <td>
-            <center>
-              <font color="#FE642E"> Mean </center>
-            </font>
-          </td>
-          <td>
-            <center>
-              <font color="#FE642E"> Standar Deviation </font>
-            </center>
-          </td>
+
         </tr>
       </thead>
       <tbody>
         <tr v-for="row, i in rows">
           <td> <input type="text" v-model="row.study" name="study" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g1_sample" name="g1_sample" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g1_mean" name="g1_mean" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g1_sd" name="g1_sd" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g2_sample" name="g2_sample" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g2_mean" name="g2_mean" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.g2_sd" name="g2_sd" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g1_e" name="g1_e" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g1_ne" name="g1_ne" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g2_e" name="g2_e" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.g2_ne" name="g2_ne" required></td>
           <td> <input type="number" step="0.00001" v-model="row.moderator" name="moderator" required></td>
           <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
         </tr>
@@ -143,14 +133,14 @@
 </div>
 
 <div v-if="uploadMethod" class="data-entry-method method2">
-  <form action="/uploader" method="POST" enctype="multipart/form-data">
-    <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="/static/analysis_mean.xlsx" download> analysis_mean.xlsx </a>
+  <form action="/uploader_ratios" method="POST" enctype="multipart/form-data">
+    <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="/static/analysis_ratios.xlsx" download> analysis_ratios.xlsx </a>
     <p></p>
     <b>&nbsp;Step2: </b>Now enter your data just like the picture!
     <p></p>
-    <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="/static/example_mean.png" alt="Data Entry" width="689" height="144.5">
+    <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="/static/example_ratios.png" alt="Data Entry" width="667.5" height="185.5">
     <br><p></p>
-    <b> &nbsp;Step3:</b> Upload your excel file(analysis_mean.xlsx). <input type="file" name="file">
+    <b> &nbsp;Step3:</b> Upload your excel file(analysis_ratios.xlsx). <input type="file" name="file">
     <br> &nbsp;
     <button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
   </form>
@@ -173,12 +163,10 @@
       ajaxResult: null,
       rows: [{
         study: "",
-        g1_sample: "",
-        g1_mean: "",
-        g1_sd: "",
-        g2_sample: "",
-        g2_mean: "",
-        g2_sd: "",
+        g1_e: "",
+        g1_ne: "",
+        g2_e: "",
+        g2_ne: "",
         moderator: ""
       }, ]
     },
@@ -186,12 +174,10 @@
       addRow: function () {
           this.rows.push({
             study: "",
-            g1_sample: "",
-            g1_mean: "",
-            g1_sd: "",
-            g2_sample: "",
-            g2_mean: "",
-            g2_sd: "",
+            g1_e: "",
+            g1_ne: "",
+            g2_e: "",
+            g2_ne: "",
             moderator: ""
           });
       },
@@ -209,7 +195,7 @@
           const data = JSON.stringify(this.rows)
 
           // send ajax request as POST
-          this.$http.post('/result1', data).then(response => {
+          this.$http.post('/result_ratios', data).then(response => {
             // request was successful, binding the result
             this.isLoading = false
             this.ajaxResult = response.body.content
@@ -223,17 +209,17 @@
 
       drawChart: function (data) {
         const list = []
-        for (let i = 0; i < data.g_list.length; i++) {
+        for (let i = 0; i < data.RR_list.length; i++) {
           const x = [
-            data.g_lower_list[i],
-            data.g_list[i]-0.3,
-            data.g_list[i]-0.2,
-            data.g_list[i]-0.1,
-            data.g_list[i],
-            data.g_list[i]+0.1,
-            data.g_list[i]+0.2,
-            data.g_list[i]+0.3,
-            data.g_upper_list[i]
+            data.lower_RR_list[i],
+            data.RR_list[i]-0.3,
+            data.RR_list[i]-0.2,
+            data.RR_list[i]-0.1,
+            data.RR_list[i],
+            data.RR_list[i]+0.1,
+            data.RR_list[i]+0.2,
+            data.RR_list[i]+0.3,
+            data.upper_RR_list[i]
           ]
 
           list[i] = {
@@ -243,13 +229,13 @@
           }
         }
 
-        const ave_g = {
-          x: [data.lower_g_ave, data.ave_g, data.upper_g_ave],
+        const RRave_random = {
+          x: [data.lower_RRave_random, data.RRave_random, data.upper_RRave_random],
           type: 'box',
           name: 'Average Effect Size'
         }
 
-        list.push(ave_g)
+        list.push(RRave_random)
         list.reverse()
         const layout = {
             title: 'Forest Plot'

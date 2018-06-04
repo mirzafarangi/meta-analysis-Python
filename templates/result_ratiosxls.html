@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block app %}
+
+
+<p></p>
+
+<div style="overflow-x:auto;">
+      {{result_table}}
+</div>
+
+
+<p></p>
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Ln(Risk Ratio average) </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Risk Ratio average </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SE </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
+        <td> <center>{{LnRR_total_fixed}}</center> </td>
+        <td> <center>{{RRave_fixed}}</center> </td>
+        <td> <center>{{se_total_fixed}} </center></td>
+        <td> <center>[{{lower_RRave_fixed}},{{upper_RRave_fixed}}] </center></td>
+        <td> <center>{{z_score_fixed}} </center></td>
+        <td> <center>{{p_value_fixed}} </center></td>
+        <td> <center>{{Het_fixed}}% </center></td>
+      </tr>
+      <tr>
+        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
+        <td> <center>{{LnRR_total_random}}</center> </td>
+        <td> <center>{{RRave_random}}</center> </td>
+        <td> <center>{{se_total_random}} </center></td>
+        <td> <center>[{{lower_RRave_random}},{{upper_RRave_random}}] </center></td>
+        <td> <center>{{z_score_random}} </center></td>
+        <td> <center>{{p_value_random}} </center></td>
+        <td> <center>{{Het_random}}% </center></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+  {{moder | safe}}
+
+<br>
+<a href="/return-file/" target="blank">
+  <h4 align="center">Please Click to Download the results as an Excel file</h4>
+</a>
+
+
+{% endblock %}
+{% block script %}
+
+<script>
+    const study = {{study_list | safe}}
+    const RR_list = {{RR_list}}
+    const lower_RR_list = {{lower_RR_list}}
+    const upper_RR_list = {{upper_RR_list}}
+    const list = []
+
+    for (let i = 0; i < RR_list.length; i++) {
+        list[i] = {
+            x: [lower_RR_list[i],RR_list[i] ,upper_RR_list[i]],
+            type: 'box',
+            name: study[i]
+        }
+    }
+
+    const RRave_random = {
+      x: [{{lower_RRave_random}}, {{RRave_random}}, {{upper_RRave_random}}],
+      type: 'box',
+      name: 'Average Effect Size'
+    }
+
+    list.push(RRave_random)
+    list.reverse()
+    const layout = {
+        title: 'Forest Plot'
+    }
+
+
+    Plotly.newPlot('forestplot', list, layout)
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+<p></p>
+
+{{result_table}}
+
+<p></p>
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Fisher Z </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> r </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SE </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z sore </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Results of the analysis </font> </center> </td>
+        <td> <center>{{ave_z}}</center> </td>
+        <td> <center>{{ave_r}} </center></td>
+        <td> <center>{{ave_SE}} </center></td>
+        <td> <center>[{{lower_r}},{{upper_r}}] </center></td>
+        <td> <center>{{z_score}} </center></td>
+        <td> <center>{{p_value}} </center></td>
+        <td> <center>{{Het}}% </center></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+  <p></p>
+  <p></p>
+  <div style="overflow-x:auto;">
+        {{moder | safe}}
+  </div>
+  <p></p>
+  <p></p>
+<a href="/return-file/" target="blank">
+  <h4 align="center">Please Click to Download the results as an Excel file</h4>
+</a>

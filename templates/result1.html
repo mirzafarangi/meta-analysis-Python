@@ -1,15 +1,78 @@
-The Average Cohen's d is: {{ave_d}}<br>
-The Standard Error is: {{ave_SEd}}<br>
-95% CI=[{{lower_dd}},{{upper_dd}}]<br>
-</hr><br>
-The Average Hedges's g is: {{ave_g}}<br>
-The Standard Error is: {{ave_SEg}}<br>
-95% CI=[{{lower_gg}},{{upper_gg}}]<br>
-The Heterogeneity of the analysis is: {{Het}}%
-<br><br>
-</hr><br>
+<p></p>
 
-{{result_table}}
+<div style="overflow-x:auto;">
+      {{result_table}}
+</div>
+
+
+<p></p>
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Hedges'g (SMD) </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SEg </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
+        <td> <center>{{ave_g_fixed}}</center> </td>
+        <td> <center>{{ave_SEg_fixed}} </center></td>
+        <td> <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center></td>
+        <td> <center>{{z_score_fixed}} </center></td>
+        <td> <center>{{p_value_fixed}} </center></td>
+        <td> <center>{{Het_fixed}}% </center></td>
+      </tr>
+      <tr>
+        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
+        <td> <center>{{ave_g_random}}</center> </td>
+        <td> <center>{{ave_SEg_random}} </center></td>
+        <td> <center>[{{lower_gg_random}},{{upper_gg_random}}]</center> </td>
+        <td> <center>{{z_score_random}} </center></td>
+        <td> <center>{{p_value_random}} </center></td>
+        <td> <center>{{Het_random}}% </center></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+  {{moder | safe}}
 
 <br>
 <a href="/return-file/" target="blank">

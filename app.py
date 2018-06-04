@@ -6,6 +6,9 @@ import numpy as np
 import copy
 import requests
 from IPython.display import display, HTML
+import statsmodels.api as sm
+from sklearn import datasets
+import scipy.stats
 
 DEBUG = True
 app = Flask(__name__)
@@ -17,6 +20,7 @@ ELASTICMAIL_API_KEY = os.environ.get('ELASTICMAIL_API_KEY', '')
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 
 @app.route('/result1',methods = ['POST', 'GET'])
@@ -32,7 +36,11 @@ def result():
             g2_mean = [row['g2_mean'] for row in request.json]
             g2_sd = [row['g2_sd'] for row in request.json]
 
-            table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd]
+            moderator = [row['moderator'] for row in request.json]
+
+
+
+            table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd, moderator]
             df=pd.DataFrame(table)
             df = df.transpose()
 
@@ -60,37 +68,86 @@ def result():
             df['w_s_d']=1/df['SEd']**2
             df['d_s']=df['w_s_d']*df['d']
 
-            df['w_s_g']=1/df['SEg']**2
-            df['g_s']=df['w_s_g']*df['g']
+            df['w_s_g_fixed']=1/df['SEg']**2
+            df['g_s_fixed']=df['w_s_g_fixed']*df['g']
+            df['g2_s_fixed']=df['w_s_g_fixed']*df['g']**2
 
 
-            d_total=np.sum(df['d_s'])/np.sum(df['w_s_d'])
-            s_total=(1/np.sum(df['w_s_d']))**0.5
 
-            lower_d=d_total-1.96*s_total
-            upper_d=d_total+1.96*s_total
-
-            g_total=np.sum(df['g_s'])/np.sum(df['w_s_g'])
-            sg_total=(1/np.sum(df['w_s_g']))**0.5
-
-            lower_g=g_total-1.96*sg_total
-            upper_g=g_total+1.96*sg_total
-
-
-            q=np.sum(df['w_s_d']*df['d']**2)-((np.sum(df['d_s'])**2)/np.sum(df['w_s_d']))
-            if q==0:
-                print('Q=0 and I^2 is not calculable')
-                I2=0
+            qq=np.sum(df['g2_s_fixed'])-((np.sum(df['g_s_fixed']))**2/np.sum(df['w_s_g_fixed']))
+            c=np.sum(df['w_s_g_fixed'])-((np.sum(df['w_s_g_fixed']**2))/(np.sum(df['w_s_g_fixed'])))
+            degf= len(df.index)-2
+            if qq >= degf:
+                t2=(qq-degf)/c
             else:
-                I2=(q-8)/q
+                t2=0
 
-            df.drop(['n','n_1','SE'], axis=1, inplace=True)
+            df["w_random"]= 1/((df['SEg']**2)+t2)
+            df['gw_random']=df['w_random']*df['g']
+            g_total_random=np.sum(df['gw_random'])/np.sum(df["w_random"])
+            sg_total_random=(1/np.sum(df["w_random"]))**0.5
 
-            df.columns = [
-                'Study', 'Group1-sample', 'Group1-mean', 'Group1-sd', 'Group2-sample', 'Group2-mean', 'Group2-sd',
-                'd', 'g', 'SEd', 'SEg', 'd_lower', 'd_upper', 'g_lower', 'g_upper',
-                'weight (d)', 'weighted d', 'weight (g)', 'weighted g'
-            ]
+            lower_g_random=g_total_random-1.96*sg_total_random
+            upper_g_random=g_total_random+1.96*sg_total_random
+
+
+
+
+            g_total_fixed=np.sum(df['g_s_fixed'])/np.sum(df['w_s_g_fixed'])
+            sg_total_fixed=(1/np.sum(df['w_s_g_fixed']))**0.5
+
+            lower_g_fixed=g_total_fixed-1.96*sg_total_fixed
+            upper_g_fixed=g_total_fixed+1.96*sg_total_fixed
+
+
+
+            df["weight(%)-fixed model"]=(df['w_s_g_fixed']/sum(df['w_s_g_fixed']))*100
+            df["weight(%)-random model %"]=(df['w_random']/sum(df['w_random']))*100
+
+            z_score_fixed=g_total_fixed/sg_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            z_score_random=g_total_random/sg_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+
+
+
+
+            #fixed model
+
+            q_fixed=np.sum(df['w_s_g_fixed']*df['g']**2)-((np.sum(df['g_s_fixed'])**2)/np.sum(df['g_s_fixed']))
+            if q_fixed==0:
+                I2_fixed=0
+            else:
+                degf= len(df.index)-2
+                I2_fixed=(q_fixed-degf)/q_fixed
+
+            #random model
+
+            q_random=np.sum(df['w_random']*df['g']**2)-((np.sum(df['gw_random'])**2)/np.sum(df['gw_random']))
+            if q_random==0:
+                I2_random=0
+            else:
+                degf= len(df.index)-2
+                I2_random=(q_random-degf)/q_random
+
+
+
+            #moderator-regression analysis
+            moderator_=df[7]
+            effect_size=df['g']
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+            df.drop(['SE','d','n','n_1','SEd','d_lower','d_upper','w_s_d','d_s','w_s_g_fixed','g_s_fixed', 'g2_s_fixed', 'w_random', 'gw_random'] ,inplace=True, axis=1)
+
+
+            df.columns = ['Study name', 'n1', 'Mean1' , 'SD1', 'n2', 'Mean2' , 'SD2', 'Moderator Variable', 'g', 'SEg', 'g_lower', 'g_upper', 'weight(%)-fixed model', 'weight(%)-random model' ]
 
             df2=df.to_dict(orient="dict")
             writer = pd.ExcelWriter('results/Meta-Mar_analysis_result.xlsx')
@@ -99,25 +156,35 @@ def result():
 
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
-                'ave_d': float("{0:.2f}".format(d_total)),
-                'ave_SEd': float("{0:.2f}".format(s_total)),
-                'lower_dd': float("{0:.2f}".format(lower_d)),
-                'upper_dd': float("{0:.2f}".format(upper_d)),
-                'ave_g': float("{0:.2f}".format(g_total)),
-                'ave_SEg': float("{0:.3f}".format(sg_total)),
-                'lower_gg': float("{0:.3f}".format(lower_g)),
-                'upper_gg': float("{0:.3f}".format(upper_g)),
-                'Het': 100*float("{0:.3f}".format(I2))
+
+
+                'ave_g_fixed': float("{0:.2f}".format(g_total_fixed)),
+                'ave_SEg_fixed': float("{0:.3f}".format(sg_total_fixed)),
+                'lower_gg_fixed': float("{0:.3f}".format(lower_g_fixed)),
+                'upper_gg_fixed': float("{0:.3f}".format(upper_g_fixed)),
+                'Het_fixed': 100*float("{0:.3f}".format(I2_fixed)),
+                'ave_g_random': float("{0:.2f}".format(g_total_random)),
+                'ave_SEg_random': float("{0:.3f}".format(sg_total_random)),
+                'lower_gg_random': float("{0:.3f}".format(lower_g_random)),
+                'upper_gg_random': float("{0:.3f}".format(upper_g_random)),
+                'Het_random': 100*float("{0:.3f}".format(I2_random)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'moder': moder
             }
 
             content = render_template("result1.html", **resultData)
             return jsonify({
                 'content': content,
-                'd_list': df['d'].tolist(),
-                'study_list': df['Study'].tolist(),
-                'd_lower_list': df['d_lower'].tolist(),
-                'd_upper_list': df['d_upper'].tolist(),
-                'ave_g': float("{0:.2f}".format(g_total)),
+                'g_list': df['g'].tolist(),
+                'study_list': df['Study name'].tolist(),
+                'g_lower_list': df['g_lower'].tolist(),
+                'g_upper_list': df['g_upper'].tolist(),
+                'ave_g': float("{0:.2f}".format(g_total_random)),
+                'lower_g_ave': float("{0:.2f}".format(lower_g_random)),
+                'upper_g_ave': float("{0:.2f}".format(upper_g_random))
             })
 
         except Exception as error:
@@ -127,6 +194,119 @@ def result():
 @app.route('/return-file/')
 def return_file():
     return send_file('results/Meta-Mar_analysis_result.xlsx', attachment_filename='Meta-Mar_analysis_result.xlsx')
+
+
+@app.route('/result_corr',methods = ['POST', 'GET'])
+def result_corr():
+    if request.method == 'POST':
+        try:
+            study = [row['study'] for row in request.json]
+            correlation = [row['correlation'] for row in request.json]
+            sample = [row['sample'] for row in request.json]
+            moderator = [row['moderator'] for row in request.json]
+
+
+            table=[study, correlation, sample, moderator]
+            df=pd.DataFrame(table)
+            df = df.transpose()
+
+
+            df = df.convert_objects(convert_numeric=True)
+
+
+            df['Var']=1/(df[2]-3)
+            df['SE']=df['Var']**0.5
+            df['weight']=1/df['Var']
+            df['Weight(%)']=100*df['weight']/np.sum(df['weight'])
+
+            df['r_lower']=df[1]-1.96*df['SE']
+            df['r_upper']=df[1]+1.96*df['SE']
+
+            df['Fisher z']=0.5*np.log((1+df[1])/(1-df[1]))
+            df['z*w']=df['Fisher z']*df['weight']
+
+            df['d']=2*df[1]/((1-df[1]**2)**0.5)
+            df['d*w']=df['d']*df['weight']
+
+
+
+
+            z_total=np.sum(df['z*w'])/np.sum(df['weight'])
+            s_total=(1/np.sum(df['weight']))**0.5
+            r_total= (-1+np.exp(2*z_total))/(1+np.exp(2*z_total))
+            d_total=2*r_total/((1-r_total**2)**0.5)
+
+            lower_r=r_total-1.96*s_total
+            upper_r=r_total+1.96*s_total
+
+            df['r*w']=df[1]*df['weight']
+
+
+
+
+            q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
+            if q==0:
+                I2=0
+            else:
+                I2=(q-8)/q
+
+
+            moderator_=df[3]
+            effect_size=df[1]
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+            z_score = d_total/s_total
+            p_value = scipy.stats.norm.sf(abs(z_score))*2
+
+
+            df.drop(['Var','weight','z*w','d','d*w','r*w'] ,inplace=True, axis=1)
+
+
+            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'weight(%)', 'r_lower', 'r_upper', 'Fisher z']
+
+
+
+
+            df2=df.to_dict(orient="dict")
+            writer = pd.ExcelWriter('results/Meta-Mar_analysis_result_corr.xlsx')
+            df.to_excel(writer,'Sheet1')
+            writer.save()
+
+
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+
+
+                'ave_z': float("{0:.2f}".format(z_total)),
+                'ave_r': float("{0:.2f}".format(r_total)),
+                'ave_SE': float("{0:.3f}".format(s_total)),
+                'lower_r': float("{0:.3f}".format(lower_r)),
+                'upper_r': float("{0:.3f}".format(upper_r)),
+                'Het': 100*float("{0:.3f}".format(I2)),
+                'p_value': float("{0:.4f}".format(p_value)),
+                'z_score': float("{0:.3f}".format(z_score)),
+                'moder': moder
+            }
+
+            content = render_template("result_corr.html", **resultData)
+            return jsonify({
+                'content': content,
+                'r_list': df['r'].tolist(),
+                'study_list': df['study name'].tolist(),
+                'r_lower_list': df['r_lower'].tolist(),
+                'r_upper_list': df['r_upper'].tolist(),
+                'ave_r': float("{0:.2f}".format(r_total)),
+                'lower_r_ave': float("{0:.2f}".format(lower_r)),
+                'upper_r_ave': float("{0:.2f}".format(upper_r))
+            })
+
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
 
 @app.route('/method2')
 def method2():
@@ -233,6 +413,12 @@ def upload_file():
             df["weight(%)-fixed model"]=(w_s_g_fixed/sum(w_s_g_fixed))*100
             df["weight(%)-random model %"]=(w_s_g_random/sum(w_s_g_random))*100
 
+            z_score_fixed=g_total_fixed/sg_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            z_score_random=g_total_random/sg_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
 
 
 
@@ -254,6 +440,18 @@ def upload_file():
             else:
                 degf= len(df.index)-2
                 I2_random=(q_random-degf)/q_random
+
+            #moderator-regression analysis
+            moderator_=df['Moderator']
+            effect_size=g_per_study
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+
 
             df2=pd.DataFrame(index=['Fixed Effect Model','Random Effect Model'], columns=["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'Heterogeneity %'])
             df2.xs('Fixed Effect Model')["Hedges's g"]= g_total_fixed
@@ -295,7 +493,13 @@ def upload_file():
                 'lower_gg_random': float("{0:.3f}".format(lower_g_random)),
                 'upper_gg_random': float("{0:.3f}".format(upper_g_random)),
                 'Het_fixed': 100 * float("{0:.3f}".format(I2_fixed)),
-                'Het_random': 100 * float("{0:.3f}".format(I2_random))
+                'Het_random': 100 * float("{0:.2f}".format(I2_random)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+
+                'moder': moder
             }
 
             return render_template("result2.html", **resultData)
@@ -303,17 +507,474 @@ def upload_file():
             print(error)
             return render_template('error_content.html')
 
+
+@app.route('/uploader_corr', methods = ['GET', 'POST'])
+def upload_file_corr():
+    if request.method == 'POST':
+        try:
+            f = request.files['file']
+            xl=pd.ExcelFile(f)
+            df=xl.parse('Data')
+
+            df.columns = ['Study','N', 'r', 'Moderator']
+
+
+            df['Var']=1/(df['N']-3)
+            df['SE']=df['Var']**0.5
+            df['weight']=1/df['Var']
+            df['Weight(%)']=100*df['weight']/np.sum(df['weight'])
+
+
+            df['r_lower']=df['r']-1.96*df['SE']
+            df['r_upper']=df['r']+1.96*df['SE']
+
+            df["Fisher z"]=0.5*(np.log((1+df['r'])/(1-df['r'])))
+
+            df['z*w']=df['Fisher z']*df['weight']
+
+
+
+
+            z_total=np.sum(df['z*w'])/np.sum(df['weight'])
+            s_total=(1/np.sum(df['weight']))**0.5
+            r_total= (-1+np.exp(2*z_total))/(1+np.exp(2*z_total))
+            d_total= 2*r_total/((1-r_total**2)**0.5)
+
+            lower_r=r_total-1.96*s_total
+            upper_r=r_total+1.96*s_total
+
+            df['d']=2*df['r']/(1-df['r']**2)
+            df['d*w']=df['d']*df['weight']
+
+
+            q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
+            if q==0:
+                I2=0
+            else:
+                I2=(q-8)/q
+
+
+
+
+            #moderator-regression analysis
+            moderator_=df['Moderator']
+            effect_size=df['r']
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+            z_score = d_total/s_total
+            p_value = scipy.stats.norm.sf(abs(z_score))*2
+
+
+            df.drop(['Var','weight','z*w','d','d*w'] ,inplace=True, axis=1)
+
+
+            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'weight(%)', 'r_lower', 'r_upper', 'Fisher z']
+
+
+
+
+
+            df2=pd.DataFrame(index=['Results of analysis'], columns=["Fisher z",'SE', 'r', "95%CI lower", "95%CI upper", 'Heterogeneity %'])
+            df2.xs('Results of analysis')["Fisher z"]= z_total
+            df2.xs('Results of analysis')["SE"]= s_total
+            df2.xs('Results of analysis')["r"]= r_total
+            df2.xs('Results of analysis')["95%CI lower"]= lower_r
+            df2.xs('Results of analysis')["95%CI upper"]= upper_r
+            df2.xs('Results of analysis')['Heterogeneity %']= I2
+
+
+
+            #Save the analysis
+
+            df.index+=1
+
+            writer = pd.ExcelWriter('results/analysis_corrxls.xlsx')
+            df.to_excel(writer,'per study')
+            df2.to_excel(writer,'Total Results')
+
+            writer.save()
+
+            study_list = list(map(lambda x: str(x), df['study name'].tolist()))
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+                'study_list': study_list,
+                'r_list': df["r"].tolist(),
+                'r_lower_list': df["r_lower"].tolist(),
+                'r_upper_list': df["r_upper"].tolist(),
+                'ave_z': float("{0:.2f}".format(z_total)),
+                'ave_r': float("{0:.2f}".format(r_total)),
+                'ave_SE': float("{0:.2f}".format(s_total)),
+                'lower_r': float("{0:.2f}".format(lower_r)),
+                'upper_r': float("{0:.2f}".format(upper_r)),
+                'Het': 100 * float("{0:.3f}".format(I2)),
+                'p_value': float("{0:.6f}".format(p_value)),
+                'z_score': float("{0:.3f}".format(z_score)),
+                'moder': moder
+            }
+
+            return render_template("result_corrxls.html", **resultData)
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
+
+@app.route('/result_ratios',methods = ['POST', 'GET'])
+def result_ratios():
+    if request.method == 'POST':
+        try:
+            study = [row['study'] for row in request.json]
+            g1_e = [row['g1_e'] for row in request.json]
+            g1_ne = [row['g1_ne'] for row in request.json]
+
+
+            g2_e = [row['g2_e'] for row in request.json]
+            g2_ne = [row['g2_ne'] for row in request.json]
+
+
+            moderator = [row['moderator'] for row in request.json]
+
+
+
+            table=[study, g1_e, g1_ne, g2_e, g2_ne, moderator]
+            df=pd.DataFrame(table)
+            df = df.transpose()
+
+
+
+            df = df.convert_objects(convert_numeric=True)
+
+            df['RiskRatio']=(df[1]/(df[1]+df[2]))/(df[3]/(df[3]+df[4]))
+            df['LnRR']=np.log(df['RiskRatio'])
+
+            df['V']=(1/df[1])-(1/(df[1]+df[2]))+(1/df[3])-(1/(df[3]+df[4]))
+            df['SE']=df['V']**0.5
+
+            df['lower_lnRR']=df['LnRR']-1.96*df['SE']
+            df['upper_lnRR']=df['LnRR']+1.96*df['SE']
+
+            df['lower_RR']=np.exp(df['lower_lnRR'])
+            df['upper_RR']=np.exp(df['upper_lnRR'])
+
+            df['weight_fixed model']=1/df['V']
+
+
+            df['LnRR*w_fixed']=df['weight_fixed model']*df['LnRR']
+            df['LnRR2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
+
+
+
+            qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
+            c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
+            degf= len(df.index)-2
+            if qq >= degf:
+                t2=(qq-degf)/c
+            else:
+                t2=0
+
+            df["weight_random model"]= 1/((df['V']**2)+t2)
+            df['LnRR*w_random']=df['weight_random model']*df['LnRR']
+
+            df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
+            df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
+
+            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df["weight_random model"])
+            se_total_random=(1/np.sum(df["weight_random model"]))**0.5
+
+            lower_LnRR_random=LnRR_total_random-1.96*se_total_random
+            upper_LnRR_random=LnRR_total_random+1.96*se_total_random
+
+            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df["weight_fixed model"])
+            se_total_fixed=(1/np.sum(df["weight_fixed model"]))**0.5
+
+            lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
+            upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
+
+            RRave_random=np.exp(LnRR_total_random)
+            lower_RRave_random=np.exp(lower_LnRR_random)
+            upper_RRave_random=np.exp(upper_LnRR_random)
+
+            RRave_fixed=np.exp(LnRR_total_fixed)
+            lower_RRave_fixed=np.exp(lower_LnRR_fixed)
+            upper_RRave_fixed=np.exp(upper_LnRR_fixed)
+
+            z_score_fixed=LnRR_total_fixed/se_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            z_score_random=LnRR_total_random/se_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+
+            #fixed model
+
+            q_fixed=np.sum(df['weight_fixed model']*df['LnRR']**2)-((np.sum(df['LnRR*w_fixed'])**2)/np.sum(df['LnRR*w_fixed']))
+            if q_fixed==0:
+                I2_fixed=0
+            else:
+                degf= len(df.index)-2
+                I2_fixed=(q_fixed-degf)/q_fixed
+
+            #random model
+
+            q_random=np.sum(df['weight_random model']*df['LnRR']**2)-((np.sum(df['LnRR*w_random'])**2)/np.sum(df['LnRR*w_random']))
+            if q_random==0:
+                I2_random=0
+            else:
+                degf= len(df.index)-2
+                I2_random=(q_random-degf)/q_random
+
+
+
+            #moderator-regression analysis
+            moderator_=df[5]
+            effect_size=df['LnRR']
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model'] ,inplace=True, axis=1)
+
+
+            df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'weight(%)_random model', 'weight(%)_fixed model' ]
+
+            df.index+=1
+
+
+
+
+
+
+            df2=df.to_dict(orient="dict")
+            writer = pd.ExcelWriter('results/analysis_result_RR.xlsx')
+            df.to_excel(writer,'Sheet1')
+            writer.save()
+
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+
+
+                'LnRR_total_random': float("{0:.2f}".format(LnRR_total_random)),
+                'RRave_random': float("{0:.2f}".format(RRave_random)),
+                'se_total_random': float("{0:.3f}".format(se_total_random)),
+                'lower_RRave_random': float("{0:.3f}".format(lower_RRave_random)),
+                'upper_RRave_random': float("{0:.3f}".format(upper_RRave_random)),
+                'Het_random': 100*float("{0:.3f}".format(I2_random)),
+                'LnRR_total_fixed': float("{0:.2f}".format(LnRR_total_fixed)),
+                'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
+                'se_total_fixed': float("{0:.3f}".format(se_total_fixed)),
+                'lower_RRave_fixed': float("{0:.3f}".format(lower_RRave_fixed)),
+                'upper_RRave_fixed': float("{0:.3f}".format(upper_RRave_fixed)),
+                'Het_fixed': 100*float("{0:.3f}".format(I2_fixed)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'moder': moder
+            }
+
+            content = render_template("result_ratios.html", **resultData)
+            return jsonify({
+                'content': content,
+                'RR_list': df['RiskRatio'].tolist(),
+                'study_list': df['Study name'].tolist(),
+                'lower_RR_list': df['lower_RR'].tolist(),
+                'upper_RR_list': df['upper_RR'].tolist(),
+                'RRave_random': float("{0:.2f}".format(RRave_random)),
+                'lower_RRave_random': float("{0:.2f}".format(lower_RRave_random)),
+                'upper_RRave_random': float("{0:.2f}".format(upper_RRave_random))
+            })
+
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
+
+@app.route('/uploader_ratios', methods = ['GET', 'POST'])
+def uploader_ratios():
+    if request.method == 'POST':
+        try:
+            f = request.files['file']
+            xl=pd.ExcelFile(f)
+            df=xl.parse('Data')
+
+            df.columns = ['Study name','Events (g1)', 'Non-Events (g1)', 'Events (g2)', 'Non-Events (g2)', 'Moderator']
+            df['RiskRatio']=(df['Events (g1)']/(df['Events (g1)']+df['Non-Events (g1)']))/(df['Events (g2)']/(df['Events (g2)']+df['Non-Events (g2)']))
+            df['LnRR']=np.log(df['RiskRatio'])
+
+            df['V']=(1/df['Events (g1)'])-(1/(df['Events (g1)']+df['Non-Events (g1)']))+(1/df['Events (g2)'])-(1/(df['Events (g2)']+df['Non-Events (g2)']))
+            df['SE']=df['V']**0.5
+
+            df['lower_lnRR']=df['LnRR']-1.96*df['SE']
+            df['upper_lnRR']=df['LnRR']+1.96*df['SE']
+
+            df['lower_RR']=np.exp(df['lower_lnRR'])
+            df['upper_RR']=np.exp(df['upper_lnRR'])
+
+            df['weight_fixed model']=1/df['V']
+
+
+            df['LnRR*w_fixed']=df['weight_fixed model']*df['LnRR']
+            df['LnRR2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
+
+
+
+            qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
+            c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
+            degf= len(df.index)-2
+            if qq >= degf:
+                t2=(qq-degf)/c
+            else:
+                t2=0
+
+            df["weight_random model"]= 1/((df['V']**2)+t2)
+            df['LnRR*w_random']=df['weight_random model']*df['LnRR']
+
+            df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
+            df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
+
+            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df["weight_random model"])
+            se_total_random=(1/np.sum(df["weight_random model"]))**0.5
+
+            lower_LnRR_random=LnRR_total_random-1.96*se_total_random
+            upper_LnRR_random=LnRR_total_random+1.96*se_total_random
+
+            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df["weight_fixed model"])
+            se_total_fixed=(1/np.sum(df["weight_fixed model"]))**0.5
+
+            lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
+            upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
+
+            RRave_random=np.exp(LnRR_total_random)
+            lower_RRave_random=np.exp(lower_LnRR_random)
+            upper_RRave_random=np.exp(upper_LnRR_random)
+
+            RRave_fixed=np.exp(LnRR_total_fixed)
+            lower_RRave_fixed=np.exp(lower_LnRR_fixed)
+            upper_RRave_fixed=np.exp(upper_LnRR_fixed)
+
+            z_score_fixed=LnRR_total_fixed/se_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            z_score_random=LnRR_total_random/se_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+
+            #fixed model
+
+            q_fixed=np.sum(df['weight_fixed model']*df['LnRR']**2)-((np.sum(df['LnRR*w_fixed'])**2)/np.sum(df['LnRR*w_fixed']))
+            if q_fixed==0:
+                I2_fixed=0
+            else:
+                degf= len(df.index)-2
+                I2_fixed=(q_fixed-degf)/q_fixed
+
+            #random model
+
+            q_random=np.sum(df['weight_random model']*df['LnRR']**2)-((np.sum(df['LnRR*w_random'])**2)/np.sum(df['LnRR*w_random']))
+            if q_random==0:
+                I2_random=0
+            else:
+                degf= len(df.index)-2
+                I2_random=(q_random-degf)/q_random
+
+
+
+            #moderator-regression analysis
+            moderator_=df['Moderator']
+            effect_size=df['LnRR']
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model'] ,inplace=True, axis=1)
+
+
+            df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'weight(%)_random model', 'weight(%)_fixed model' ]
+
+
+            df.index+=1
+
+
+
+
+            df2=df.to_dict(orient="dict")
+            writer = pd.ExcelWriter('results/analysis_result_RRx.xlsx')
+            df.to_excel(writer,'Sheet1')
+            writer.save()
+
+            study_list = list(map(lambda x: str(x), df['Study name'].tolist()))
+
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+
+
+                'LnRR_total_random': float("{0:.2f}".format(LnRR_total_random)),
+                'RRave_random': float("{0:.2f}".format(RRave_random)),
+                'se_total_random': float("{0:.3f}".format(se_total_random)),
+                'lower_RRave_random': float("{0:.3f}".format(lower_RRave_random)),
+                'upper_RRave_random': float("{0:.3f}".format(upper_RRave_random)),
+                'Het_random': 100*float("{0:.3f}".format(I2_random)),
+                'LnRR_total_fixed': float("{0:.2f}".format(LnRR_total_fixed)),
+                'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
+                'se_total_fixed': float("{0:.3f}".format(se_total_fixed)),
+                'lower_RRave_fixed': float("{0:.3f}".format(lower_RRave_fixed)),
+                'upper_RRave_fixed': float("{0:.3f}".format(upper_RRave_fixed)),
+                'Het_fixed': 100*float("{0:.3f}".format(I2_fixed)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'RR_list': df['RiskRatio'].tolist(),
+                'study_list': df['Study name'].tolist(),
+                'lower_RR_list': df['lower_RR'].tolist(),
+                'upper_RR_list': df['upper_RR'].tolist(),
+                'moder': moder
+            }
+
+            return render_template("result_ratiosxls.html", **resultData)
+
+
+
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
+
+
+
+
+
 @app.route('/about')
 def about():
     return render_template('about.html')
 
 @app.route('/meta')
 def meta():
+    return render_template('select.html')
+
+@app.route('/smd')
+def smd():
     return render_template('meta.html')
+
+@app.route('/corr')
+def corr():
+    return render_template('correlation.html')
+
+@app.route('/ratios')
+def odds():
+    return render_template('ratios.html')
 
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
 
 @app.route('/submitcontact', methods = ['POST', 'GET'])
 def submitcontact():

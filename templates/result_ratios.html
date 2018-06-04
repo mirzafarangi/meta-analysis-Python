@@ -1,0 +1,87 @@
+<p></p>
+
+<div style="overflow-x:auto;">
+      {{result_table}}
+</div>
+
+
+<p></p>
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Ln(Risk Ratio average) </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Risk Ratio average </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SE </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
+        <td> <center>{{LnRR_total_fixed}}</center> </td>
+        <td> <center>{{RRave_fixed}}</center> </td>
+        <td> <center>{{se_total_fixed}} </center></td>
+        <td> <center>[{{lower_RRave_fixed}},{{upper_RRave_fixed}}] </center></td>
+        <td> <center>{{z_score_fixed}} </center></td>
+        <td> <center>{{p_value_fixed}} </center></td>
+        <td> <center>{{Het_fixed}}% </center></td>
+      </tr>
+      <tr>
+        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
+        <td> <center>{{LnRR_total_random}}</center> </td>
+        <td> <center>{{RRave_random}}</center> </td>
+        <td> <center>{{se_total_random}} </center></td>
+        <td> <center>[{{lower_RRave_random}},{{upper_RRave_random}}] </center></td>
+        <td> <center>{{z_score_random}} </center></td>
+        <td> <center>{{p_value_random}} </center></td>
+        <td> <center>{{Het_random}}% </center></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+  {{moder | safe}}
+
+<br>
+<a href="/return-file/" target="blank">
+  <h4 align="center">Please Click to Download the results as an Excel file</h4>
+</a>

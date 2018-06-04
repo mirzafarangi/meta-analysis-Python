@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block app %}
+
+<p></p>
+{{result_table}}
+<p></p>
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center> <b> <font color="black">  </font> </b> </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Fisher Z </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> r </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SE </center>
+          </font>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td> <center> <font color="#FF9900"> Results of the analysis </font> </center> </td>
+        <td> <center>{{ave_z}}</center> </td>
+        <td> <center>{{ave_r}} </center></td>
+        <td> <center>{{ave_SE}} </center></td>
+        <td> <center>[{{lower_r}},{{upper_r}}] </center></td>
+        <td> <center>{{z_score}} </center></td>
+        <td> <center>{{p_value}} </center></td>
+        <td> <center>{{Het}}% </center></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+  <p></p>
+  <p></p>
+  <div style="overflow-x:auto;">
+        {{moder | safe}}
+  </div>
+  <p></p>
+  <p></p>
+
+<a href="/return-file/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
+
+<div id="forestplot"></div>
+<p></p>
+
+
+</div>
+
+
+
+{% endblock %}
+{% block script %}
+<script>
+    const study = {{study_list | safe}}
+    const r = {{r_list}}
+    const r_lower = {{r_lower_list}}
+    const r_upper = {{r_upper_list}}
+    const list = []
+
+    for (let i = 0; i < g.length; i++) {
+        list[i] = {
+            x: [r_lower[i],r[i] ,r_upper[i]],
+            type: 'box',
+            name: study[i]
+        }
+    }
+
+    const ave_r = {
+      x: [{{lower_r}}, {{ave_r}}, {{upper_r}}],
+      type: 'box',
+      name: 'Average Effect Size'
+    }
+
+    list.push(ave_r)
+    list.reverse()
+    const layout = {
+        title: 'Forest Plot'
+    }
+
+
+    Plotly.newPlot('forestplot', list, layout)
+
+
+</script>
+{% endblock %}
