@@ -76,7 +76,7 @@ def result():
 
             qq=np.sum(df['g2_s_fixed'])-((np.sum(df['g_s_fixed']))**2/np.sum(df['w_s_g_fixed']))
             c=np.sum(df['w_s_g_fixed'])-((np.sum(df['w_s_g_fixed']**2))/(np.sum(df['w_s_g_fixed'])))
-            degf= len(df.index)-2
+            degf= len(df.index)
             if qq >= degf:
                 t2=(qq-degf)/c
             else:
@@ -118,9 +118,9 @@ def result():
 
             q_fixed=np.sum(df['w_s_g_fixed']*df['g']**2)-((np.sum(df['g_s_fixed'])**2)/np.sum(df['g_s_fixed']))
             if q_fixed==0:
-                I2_fixed=0
+                I2_fixed=1
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_fixed=(q_fixed-degf)/q_fixed
 
             #random model
@@ -129,12 +129,13 @@ def result():
             if q_random==0:
                 I2_random=0
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_random=(q_random-degf)/q_random
 
 
 
             #moderator-regression analysis
+
             moderator_=df[7]
             effect_size=df['g']
             moderator_ = sm.add_constant(moderator_)
@@ -246,9 +247,11 @@ def result_corr():
 
             q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
             if q==0:
-                I2=0
+                I2=1
             else:
-                I2=(q-8)/q
+                degf= len(df.index)-1
+                I2=(q-degf)/q
+                
 
 
             moderator_=df[3]
@@ -368,7 +371,7 @@ def upload_file():
 
             qq=np.sum(g2_s_fixed)-((np.sum(g_s_fixed))**2/np.sum(w_s_g_fixed))
             c=np.sum(w_s_g_fixed)-((np.sum(w_s_g_fixed**2))/(np.sum(w_s_g_fixed)))
-            degf= len(df.index)-2
+            degf= len(df.index)
             if qq >= degf:
                 t2=(qq-degf)/c
             else:
@@ -427,9 +430,9 @@ def upload_file():
 
             q_fixed=np.sum(w_s_g_fixed*g_per_study**2)-((np.sum(g_s_fixed)**2)/np.sum(g_s_fixed))
             if q_fixed==0:
-                I2_fixed=0
+                I2_fixed=1
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_fixed=(q_fixed-degf)/q_fixed
 
             #random model
@@ -438,7 +441,7 @@ def upload_file():
             if q_random==0:
                 I2_random=0
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_random=(q_random-degf)/q_random
 
             #moderator-regression analysis
@@ -549,7 +552,7 @@ def upload_file_corr():
 
             q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
             if q==0:
-                I2=0
+                I2=1
             else:
                 I2=(q-8)/q
 
@@ -669,7 +672,7 @@ def result_ratios():
 
             qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
             c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
-            degf= len(df.index)-2
+            degf= len(df.index)
             if qq >= degf:
                 t2=(qq-degf)/c
             else:
@@ -712,9 +715,9 @@ def result_ratios():
 
             q_fixed=np.sum(df['weight_fixed model']*df['LnRR']**2)-((np.sum(df['LnRR*w_fixed'])**2)/np.sum(df['LnRR*w_fixed']))
             if q_fixed==0:
-                I2_fixed=0
+                I2_fixed=1
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_fixed=(q_fixed-degf)/q_fixed
 
             #random model
@@ -723,7 +726,7 @@ def result_ratios():
             if q_random==0:
                 I2_random=0
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_random=(q_random-degf)/q_random
 
 
@@ -825,7 +828,7 @@ def uploader_ratios():
 
             qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
             c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
-            degf= len(df.index)-2
+            degf= len(df.index)
             if qq >= degf:
                 t2=(qq-degf)/c
             else:
@@ -868,9 +871,9 @@ def uploader_ratios():
 
             q_fixed=np.sum(df['weight_fixed model']*df['LnRR']**2)-((np.sum(df['LnRR*w_fixed'])**2)/np.sum(df['LnRR*w_fixed']))
             if q_fixed==0:
-                I2_fixed=0
+                I2_fixed=1
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_fixed=(q_fixed-degf)/q_fixed
 
             #random model
@@ -879,7 +882,7 @@ def uploader_ratios():
             if q_random==0:
                 I2_random=0
             else:
-                degf= len(df.index)-2
+                degf= len(df.index)-1
                 I2_random=(q_random-degf)/q_random
 
 
