@@ -76,7 +76,7 @@
         <td> <center>[{{lower_RRave_random}},{{upper_RRave_random}}] </center></td>
         <td> <center>{{z_score_random}} </center></td>
         <td> <center>{{p_value_random}} </center></td>
-        <td> <center>{{Het_random}}% </center></td>
+        <td> <center>{{Het_random}}%, T2={{t2}} </center></td>
       </tr>
     </tbody>
   </table>
@@ -86,14 +86,15 @@
   {{moder | safe}}
 
 <br>
-<a href="/return-file/" target="blank">
+<a href="/return-file-ratioxl/" target="blank">
   <h4 align="center">Please Click to Download the results as an Excel file</h4>
 </a>
-
+<div id="forestplot"></div>
+<p></p>
+</div>
 
 {% endblock %}
 {% block script %}
-
 <script>
     const study = {{study_list | safe}}
     const RR_list = {{RR_list}}
@@ -109,13 +110,13 @@
         }
     }
 
-    const RRave_random = {
+    const ave_RR = {
       x: [{{lower_RRave_random}}, {{RRave_random}}, {{upper_RRave_random}}],
       type: 'box',
       name: 'Average Effect Size'
     }
 
-    list.push(RRave_random)
+    list.push(ave_RR)
     list.reverse()
     const layout = {
         title: 'Forest Plot'
@@ -126,5 +127,4 @@
 
 
 </script>
-
 {% endblock %}

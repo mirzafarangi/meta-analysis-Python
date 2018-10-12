@@ -51,7 +51,7 @@
     </thead>
     <tbody>
       <tr>
-        <td> <center> <font color="#FF9900"> Results of the analysis </font> </center> </td>
+        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
         <td> <center>{{ave_z}}</center> </td>
         <td> <center>{{ave_r}} </center></td>
         <td> <center>{{ave_SE}} </center></td>
@@ -60,7 +60,16 @@
         <td> <center>{{p_value}} </center></td>
         <td> <center>{{Het}}% </center></td>
       </tr>
-
+      <tr>
+        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
+        <td> <center>{{ave_z_random}}</center> </td>
+        <td> <center>{{ave_r_random}} </center></td>
+        <td> <center>{{ave_SE_random}} </center></td>
+        <td> <center>[{{lower_r_random}},{{upper_r_random}}] </center></td>
+        <td> <center>{{z_score_random}} </center></td>
+        <td> <center>{{p_value_random}} </center></td>
+        <td> <center>{{Het}}%, T^2={{t2}}</center></td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -72,6 +81,6 @@
   </div>
   <p></p>
   <p></p>
-<a href="/return-file/" target="blank">
+<a href="/return-file-corr/" target="blank">
   <h4 align="center">Please Click to Download the results as an Excel file</h4>
 </a>

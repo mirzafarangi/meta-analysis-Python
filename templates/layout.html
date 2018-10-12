@@ -2,12 +2,11 @@
 <html lang="en">
 
 <head>
-    <title>Meta-Mar</title>
+    <title>Meta-Mar free online meta analysis service!</title>
     <link rel="shortcut icon" href="/static/icon.png">
     <meta charset="utf-8">
     <meta name="description" content="Meta-Mar Free Online Meta Analysis Service!" />
-    <meta name="keywords" content="meta analysis, meta-analysis, effect size, social science, psychology, psychiatry, marburg, philipps universität marburg, cohen's d, hedges's g, mean and standard deviation effect size, correlation effect size, heterogeneity, forestplot, free meta nalysis. meta analysis online, meta analysis calculator"
-    />
+    <meta name="keywords" content="meta analysis, meta-analysis, effect size, social science, psychology, psychiatry, marburg, philipps universität marburg, cohen's d, hedges's g, mean and standard deviation effect size, correlation effect size, heterogeneity, forestplot, free meta nalysis. meta analysis online, meta analysis calculator, ashkan beheshti, meta-analysis, free meta-analysis, effect size calculator, اشکان بهشتی "/>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="/static/style/style.css?version=1.4" title="style" />
     <script src="https://unpkg.com/vue@2.3.4/dist/vue.min.js"></script>
@@ -25,6 +24,7 @@
                     <ul id="menu">
                         <li {%- if request.path=="/" %} class="selected" {% endif %}><a href="/">Home</a></li>
                         <li {%- if request.path=="/meta" %} class="selected" {% endif %}><a href="/meta">Meta Analysis</a></li>
+                        <li {%- if request.path=="/effect" %} class="selected" {% endif %}><a href="/effect">Effect Size Calculator</a></li>
                         <li {%- if request.path=="/about" %} class="selected" {% endif %}><a href="/about">About the Project</a></li>
                         <li {%- if request.path=="/contact" %} class="selected" {% endif %}><a href="/contact">Contact Us</a></li>
                     </ul>
@@ -41,7 +41,7 @@
         </div>
 
         <div id="footer">
-            Copyright &copy; Meta-Mar
+            Copyright &copy; Meta-Mar v1.8.0
             <!--| <a href="my page">My page</a> |-->
         </div>
     </div>

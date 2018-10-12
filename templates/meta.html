@@ -113,7 +113,7 @@
           <td> <input type="number" step="0.001" v-model="row.g2_sample" name="g2_sample" required></td>
           <td> <input type="number" step="0.001" v-model="row.g2_mean" name="g2_mean" required></td>
           <td> <input type="number" step="0.001" v-model="row.g2_sd" name="g2_sd" required></td>
-          <td> <input type="number" step="0.001" v-model="row.moderator" name="moderator"></td>
+          <td> <input type="number" step="0.001" v-model="row.moderator" name="moderator" required></td>
           <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
         </tr>
       </tbody>
@@ -138,6 +138,13 @@
     <div v-if="isLoading"> Loading... </div>
     <div v-if="ajaxResult" v-html="ajaxResult"></div>
     <div v-if="ajaxResult" id="forestplot"></div>
+       <style>
+           #forestplot {
+             zoom: 50%;
+             -moz-transform: scale(0.5);
+             position: absolute; top: 200px; left: 100px; height: 130px; width: 130px;
+             }
+       </style>
   </div>
   </div>
 </div>
@@ -264,4 +271,6 @@
 
 
 </script>
+
+
 {% endblock %}
