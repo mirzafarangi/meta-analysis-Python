@@ -21,6 +21,10 @@ ELASTICMAIL_API_KEY = os.environ.get('ELASTICMAIL_API_KEY', '')
 def index():
     return render_template('index.html')
 
+@app.route('/sitemap')
+def sitemap():
+    return render_template('sitemap.xml')
+
 @app.route('/effect')
 def effect():
     return render_template('effect.html')
