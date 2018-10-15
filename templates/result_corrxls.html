@@ -2,9 +2,10 @@
 {% block app %}
 
 <p></p>
+<h4>Table of effect sizes, weights(fixed and random model) and 95%CIs for studies</h4>
 {{result_table}}
 <p></p>
-
+<h4>Summary of results</h4>
 <div id="table" align="left">
   <table style="width:100%">
     <thead>
@@ -67,7 +68,7 @@
         <td> <center>{{ave_z_random}}</center> </td>
         <td> <center>{{ave_r_random}} </center></td>
         <td> <center>{{ave_SE_random}} </center></td>
-        <td> <center>[{{lower_r_random}},{{upper_r}}] </center></td>
+        <td> <center>[{{lower_r_random}},{{upper_r_random}}] </center></td>
         <td> <center>{{z_score_random}} </center></td>
         <td> <center>{{p_value_random}} </center></td>
         <td> <center>{{Het}}%, T<sup>2</sup>={{t2}}</center></td>
@@ -78,25 +79,42 @@
 </div>
 
   <p></p>
+
+  <div class="forest">
+        <h4>  Forestplot - fixed and random effect models</h4>
+
+        <div id="chartdiv"></div>
+        <style media="screen">
+        #chartdiv {
+        width: 480px;
+        height: 500px;
+        float: left;
+        }
+        </style>
+
+
+        <div id="chart2div"></div>
+
+        <style media="screen">
+        #chart2div {
+        width: 480px;
+        height: 500px;
+        float: right;
+        }
+        </style>
+  </div>
   <p></p>
+  <div class="regress" style="display:inline-block;">
+  <p></p>
+  <h4>Meta regression results</h4>
   <div style="overflow-x:auto;">
         {{moder | safe}}
-  </div>
+  </div></div>
   <p></p>
   <p></p>
 
 <a href="/return-file-corrxl/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
 
-
-<p></p>
-<div id="chartdiv"></div>
-<style media="screen">
-#chartdiv {
-width: 600px;
-height: 500px;
-}
-</style>
-</div>
 
 {% endblock %}
 {% block script %}
@@ -106,8 +124,78 @@ height: 500px;
     const r = {{r_list}}
     const r_lower = {{r_lower_list}}
     const r_upper = {{r_upper_list}}
-    const r_w = {{r_weight_list}}
+    const rf_w = {{weight_fixed_list}}
+    const r_w = {{weight_random_list}}
     const list = []
+
+    var s=[]
+    s.push({
+    "category": "",
+    "measure": 0,
+    "bullet": "",
+    "bulletSize": 0,
+    "high": 0,
+    "low": 0
+    })
+    for (var i=0; i<r.length; i++) {
+     s.push({
+        "category": study[i],
+        "measure": r[i].toFixed(3),
+        "bullet": "square",
+        "bulletSize": rf_w[i].toFixed(0),
+        "high": r_upper[i].toFixed(3),
+        "low": r_lower[i].toFixed(3)
+        })}
+        s.push({
+           "category": "g(ave) fixed model",
+           "measure": {{ave_r}},
+           "bullet": "diamond",
+           "bulletSize": 25,
+           "high": {{lower_r}},
+           "low": {{upper_r}}
+           })
+
+    var chart = AmCharts.makeChart("chartdiv", {
+    "type": "serial",
+    "theme": "light",
+    "rotate": true,
+    "fontSize": 18,
+    "categoryAxis": {
+    "gridAlpha": 0,
+    },
+    "valueAxes": [{
+    "guides": [{
+    "value": 2.2,
+    "dashLength": 3,
+    "lineThickness": 2
+    }]
+    }],
+    "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+    },
+    "dataProvider": s,
+    "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+    }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+    }],
+    "categoryField": "category"
+    });
 
     var t=[]
     t.push({
@@ -128,15 +216,15 @@ height: 500px;
         "low": r_lower[i].toFixed(3)
         })}
         t.push({
-           "category": "g(ave)",
-           "measure": {{ave_r}},
+           "category": "g(ave) random model",
+           "measure": {{ave_r_random}},
            "bullet": "diamond",
            "bulletSize": 25,
-           "high": {{lower_r}},
-           "low": {{upper_r}}
+           "high": {{lower_r_random}},
+           "low": {{upper_r_random}}
            })
 
-    var chart = AmCharts.makeChart("chartdiv", {
+    var chart = AmCharts.makeChart("chart2div", {
     "type": "serial",
     "theme": "light",
     "rotate": true,
