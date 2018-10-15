@@ -87,42 +87,95 @@
 
 <a href="/return-file-corrxl/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
 
-<div id="forestplot"></div>
+
 <p></p>
+<div id="chartdiv"></div>
+<style media="screen">
+#chartdiv {
+width: 600px;
+height: 500px;
+}
+</style>
 </div>
 
 {% endblock %}
 {% block script %}
 <script>
+
     const study = {{study_list | safe}}
     const r = {{r_list}}
     const r_lower = {{r_lower_list}}
     const r_upper = {{r_upper_list}}
+    const r_w = {{r_weight_list}}
     const list = []
 
-    for (let i = 0; i < r.length; i++) {
-        list[i] = {
-            x: [r_lower[i],r[i] ,r_upper[i]],
-            type: 'box',
-            name: study[i]
-        }
-    }
+    var t=[]
+    t.push({
+    "category": "",
+    "measure": 0,
+    "bullet": "",
+    "bulletSize": 0,
+    "high": 0,
+    "low": 0
+    })
+    for (var i=0; i<r.length; i++) {
+     t.push({
+        "category": study[i],
+        "measure": r[i].toFixed(3),
+        "bullet": "square",
+        "bulletSize": r_w[i].toFixed(0),
+        "high": r_upper[i].toFixed(3),
+        "low": r_lower[i].toFixed(3)
+        })}
+        t.push({
+           "category": "g(ave)",
+           "measure": {{ave_r}},
+           "bullet": "diamond",
+           "bulletSize": 25,
+           "high": {{lower_r}},
+           "low": {{upper_r}}
+           })
 
-    const ave_r = {
-      x: [{{lower_r}}, {{ave_r}}, {{upper_r}}],
-      type: 'box',
-      name: 'Average Effect Size'
-    }
-
-    list.push(ave_r)
-    list.reverse()
-    const layout = {
-        title: 'Forest Plot'
-    }
-
-
-    Plotly.newPlot('forestplot', list, layout)
-
-
+    var chart = AmCharts.makeChart("chartdiv", {
+    "type": "serial",
+    "theme": "light",
+    "rotate": true,
+    "fontSize": 18,
+    "categoryAxis": {
+    "gridAlpha": 0,
+    },
+    "valueAxes": [{
+    "guides": [{
+    "value": 2.2,
+    "dashLength": 3,
+    "lineThickness": 2
+    }]
+    }],
+    "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+    },
+    "dataProvider": t,
+    "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+    }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+    }],
+    "categoryField": "category"
+    });
 </script>
 {% endblock %}

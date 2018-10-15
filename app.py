@@ -172,6 +172,7 @@ def result():
                 'study_list': df['Study name'].tolist(),
                 'g_lower_list': df['g_lower'].tolist(),
                 'g_upper_list': df['g_upper'].tolist(),
+                'g_weight_list': df['weight(%)-random model'].tolist(),
                 'ave_g': float("{0:.2f}".format(g_total_random)),
                 'lower_g_ave': float("{0:.2f}".format(lower_g_random)),
                 'upper_g_ave': float("{0:.2f}".format(upper_g_random))
@@ -304,6 +305,8 @@ def upload_file():
             results=model.summary()
             moder=results.as_html()
 
+
+
             df2=pd.DataFrame(index=['Fixed Effect Model','Random Effect Model'], columns=["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'Heterogeneity %'])
             df2.xs('Fixed Effect Model')["Hedges's g"]= g_total_fixed
             df2.xs('Fixed Effect Model')["SEg"]= sg_total_fixed
@@ -324,12 +327,15 @@ def upload_file():
             df2.to_excel(writer,'Total Results')
             writer.save()
 
+
+
             study_list = list(map(lambda x: str(x), df['Study'].tolist()))
             resultData = {
                 'study_list': study_list,
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'g_lower_list': df["95%CI-Lower"].tolist(),
                 'g_upper_list': df["95%CI-Upper"].tolist(),
+                'g_weight_list': df["weight(%)-random model %"].tolist(),
                 'total': HTML(df.to_html(classes="responsive-table-2 rt cf")),
                 'ave_g_fixed': float("{0:.2f}".format(g_total_fixed)),
                 'ave_SEg_fixed': float("{0:.2f}".format(sg_total_fixed)),
@@ -623,6 +629,7 @@ def upload_file_corr():
                 'r_list': df['r'].tolist(),
                 'r_lower_list': df['r_lower'].tolist(),
                 'r_upper_list': df['r_upper'].tolist(),
+                'r_weight_list': df['Weight(%)_random'].tolist(),
                 'ave_z': float("{0:.2f}".format(z_total)),
                 'ave_r': float("{0:.2f}".format(r_total)),
                 'ave_SE': float("{0:.2f}".format(s_total)),
@@ -856,6 +863,7 @@ def uploader_ratios():
                 'RR_list': df['RiskRatio'].tolist(),
                 'lower_RR_list': df['lower_RR'].tolist(),
                 'upper_RR_list': df['upper_RR'].tolist(),
+                'RR_weight_list': df['weight(%)_fixed model'].tolist(),
                 'LnRR_total_random': float("{0:.2f}".format(LnRR_total_random)),
                 'RRave_random': float("{0:.2f}".format(RRave_random)),
                 'se_total_random': float("{0:.3f}".format(se_total_random)),

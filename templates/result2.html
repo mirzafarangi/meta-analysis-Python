@@ -54,7 +54,7 @@
         </td>
         <td>
           <center>
-            <font color="#2E9AFE"> Heterogeneity </font>
+            <font color="#2E9AFE"> Heterogeneity (I<sup>2</sup>) </font>
           </center>
         </td>
 
@@ -78,7 +78,7 @@
         <td> <center>[{{lower_gg_random}},{{upper_gg_random}}]</center> </td>
         <td> <center>{{z_score_random}} </center></td>
         <td> <center>{{p_value_random}} </center></td>
-        <td> <center>{{Het_random}}%, T^2={{t2}} </center></td>
+        <td> <center>{{Het_random}}%, T<sup>2</sup>={{t2}} </center></td>
       </tr>
     </tbody>
   </table>
@@ -95,11 +95,17 @@
 
 <a href="/return-file-smdxl/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
 
-<div id="forestplot"></div>
+<p></p>
+<p></p>
+<div id="chartdiv"></div>
+<style media="screen">
+#chartdiv {
+width: 600px;
+height: 500px;
+}
+</style>
 <p></p>
 
-
-</div>
 {% endblock %}
 {% block script %}
 <script>
@@ -107,31 +113,163 @@
     const g = {{g_list}}
     const g_lower = {{g_lower_list}}
     const g_upper = {{g_upper_list}}
+    const g_w = {{g_weight_list}}
     const list = []
 
-    for (let i = 0; i < g.length; i++) {
-        list[i] = {
-            x: [g_lower[i],g[i] ,g_upper[i]],
-            type: 'box',
-            name: study[i]
-        }
-    }
+var t=[]
+t.push({
+   "category": "",
+   "measure": 0,
+   "bullet": "",
+   "bulletSize": 0,
+   "high": 0,
+   "low": 0
+   })
+for (var i=0; i<g.length; i++) {
+     t.push({
+        "category": study[i],
+        "measure": g[i].toFixed(3),
+        "bullet": "square",
+        "bulletSize": g_w[i].toFixed(0),
+        "high": g_upper[i].toFixed(3),
+        "low": g_lower[i].toFixed(3)
+        })}
+        t.push({
+           "category": "g(ave)",
+           "measure": {{ave_g_random}},
+           "bullet": "diamond",
+           "bulletSize": 25,
+           "high": {{upper_gg_random}},
+           "low": {{lower_gg_random}}
+           })
 
-    const ave_g = {
-      x: [{{lower_gg_random}}, {{ave_g_random}}, {{upper_gg_random}}],
-      type: 'box',
-      name: 'Average Effect Size'
-    }
+var chart = AmCharts.makeChart("chartdiv", {
+"type": "serial",
+"theme": "light",
+"rotate": true,
+"fontSize": 18,
+"categoryAxis": {
+  "gridAlpha": 0,
+},
+"valueAxes": [{
+  "guides": [{
+    "value": 2.2,
+    "dashLength": 3,
+    "lineThickness": 2
+  }]
+}],
+"chartCursor": {
+  "fullWidth": true,
+  "graphBulletSize": 1,
+  "categoryBalloonEnabled": false,
+  "cursorAlpha": 0.1
+},
+"dataProvider": t,
+"graphs": [{
+  "lineAlpha": 0,
+  "bulletField": "bullet",
+  "bulletSizeField": "bulletSize",
+  "valueField": "measure",
+  "lineColor": "#00c20d",
+  "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+}, {
+  "type": "ohlc",
+  "highField": "high",
+  "lowField": "low",
+  "openField": "measure",
+  "closeField": "measure",
+  "fixedColumnWidth": 1,
+  "lineColor": "#00c20d",
+  "showBalloon": false
+}],
+"categoryField": "category"
+});
 
-    list.push(ave_g)
-    list.reverse()
-    const layout = {
-        title: 'Forest Plot'
-    }
+</script>
 
-
-    Plotly.newPlot('forestplot', list, layout)
-
-
+<script>
+var chart = AmCharts.makeChart("chartdiv", {
+"type": "serial",
+"theme": "light",
+"rotate": true,
+"fontSize": 18,
+"categoryAxis": {
+  "gridAlpha": 0,
+},
+"valueAxes": [{
+  "guides": [{
+    "value": 2.2,
+    "dashLength": 3,
+    "lineThickness": 2
+  }]
+}],
+"chartCursor": {
+  "fullWidth": true,
+  "graphBulletSize": 1,
+  "categoryBalloonEnabled": false,
+  "cursorAlpha": 0.1
+},
+"dataProvider": [{
+  "category": "Smith et al. 1991",
+  "measure": 1.3,
+  "bullet": "square",
+  "bulletSize": 25,
+  "high": 3.4,
+  "low": 1.0
+}, {
+  "category": "Jones et al. 1993",
+  "measure": 2.1,
+  "bullet": "square",
+  "bulletSize": 15,
+  "high": 2.6,
+  "low": 0.5
+}, {
+  "category": "Smith et al. 1999",
+  "measure": 1.8,
+  "bullet": "square",
+  "bulletSize": 10,
+  "high": 3.2,
+  "low": 0.9
+}, {
+  "category": "Ng et al. 2004",
+  "measure": 2.3,
+  "bullet": "square",
+  "bulletSize": 30,
+  "high": 2.7,
+  "low": 1.9
+}, {
+  "category": "Chu et al. 2009",
+  "measure": 2.1,
+  "bullet": "square",
+  "bulletSize": 35,
+  "high": 2.5,
+  "low": 1.8
+}, {
+  "category": "Summary measure",
+  "measure": 2.2,
+  "bullet": "diamond",
+  "bulletSize": 55,
+  "high": 2.4,
+  "low": 1.9
+}],
+"graphs": [{
+  "lineAlpha": 0,
+  "bulletField": "bullet",
+  "bulletSizeField": "bulletSize",
+  "valueField": "measure",
+  "lineColor": "#67b7dc",
+  "balloonText": "<strong>[[value]]</strong> ([[low]]-[[high]])"
+}, {
+  "type": "ohlc",
+  "highField": "high",
+  "lowField": "low",
+  "openField": "measure",
+  "closeField": "measure",
+  "fixedColumnWidth": 1,
+  "lineColor": "#67b7dc",
+  "showBalloon": false
+}],
+"categoryField": "category"
+});
 </script>
 {% endblock %}

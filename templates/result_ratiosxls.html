@@ -89,42 +89,95 @@
 <a href="/return-file-ratioxl/" target="blank">
   <h4 align="center">Please Click to Download the results as an Excel file</h4>
 </a>
-<div id="forestplot"></div>
+
 <p></p>
+<p></p>
+<div id="chartdiv"></div>
+<style media="screen">
+#chartdiv {
+width: 600px;
+height: 500px;
+}
+</style>
 </div>
 
 {% endblock %}
 {% block script %}
 <script>
-    const study = {{study_list | safe}}
-    const RR_list = {{RR_list}}
-    const lower_RR_list = {{lower_RR_list}}
-    const upper_RR_list = {{upper_RR_list}}
-    const list = []
+        const study = {{study_list | safe}}
+        const rr = {{RR_list}}
+        const rr_lower = {{lower_RR_list}}
+        const rr_upper = {{upper_RR_list}}
+        const rr_w = {{RR_weight_list}}
+        const list = []
 
-    for (let i = 0; i < RR_list.length; i++) {
-        list[i] = {
-            x: [lower_RR_list[i],RR_list[i] ,upper_RR_list[i]],
-            type: 'box',
-            name: study[i]
-        }
-    }
+        var t=[]
+        t.push({
+        "category": "",
+        "measure": 0,
+        "bullet": "",
+        "bulletSize": 0,
+        "high": 0,
+        "low": 0
+        })
+        for (var i=0; i<rr.length; i++) {
+         t.push({
+            "category": study[i],
+            "measure": rr[i].toFixed(3),
+            "bullet": "square",
+            "bulletSize": rr_w[i].toFixed(0),
+            "high": rr_upper[i].toFixed(3),
+            "low": rr_lower[i].toFixed(3)
+            })}
+            t.push({
+               "category": "g(ave)",
+               "measure": {{RRave_random}},
+               "bullet": "diamond",
+               "bulletSize": 25,
+               "high": {{upper_RRave_random}},
+               "low": {{lower_RRave_random}}
+               })
 
-    const ave_RR = {
-      x: [{{lower_RRave_random}}, {{RRave_random}}, {{upper_RRave_random}}],
-      type: 'box',
-      name: 'Average Effect Size'
-    }
-
-    list.push(ave_RR)
-    list.reverse()
-    const layout = {
-        title: 'Forest Plot'
-    }
-
-
-    Plotly.newPlot('forestplot', list, layout)
-
-
+        var chart = AmCharts.makeChart("chartdiv", {
+        "type": "serial",
+        "theme": "light",
+        "rotate": true,
+        "fontSize": 18,
+        "categoryAxis": {
+        "gridAlpha": 0,
+        },
+        "valueAxes": [{
+        "guides": [{
+        "value": 2.2,
+        "dashLength": 3,
+        "lineThickness": 2
+        }]
+        }],
+        "chartCursor": {
+        "fullWidth": true,
+        "graphBulletSize": 1,
+        "categoryBalloonEnabled": false,
+        "cursorAlpha": 0.1
+        },
+        "dataProvider": t,
+        "graphs": [{
+        "lineAlpha": 0,
+        "bulletField": "bullet",
+        "bulletSizeField": "bulletSize",
+        "valueField": "measure",
+        "lineColor": "#00c20d",
+        "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+        }, {
+        "type": "ohlc",
+        "highField": "high",
+        "lowField": "low",
+        "openField": "measure",
+        "closeField": "measure",
+        "fixedColumnWidth": 1,
+        "lineColor": "#00c20d",
+        "showBalloon": false
+        }],
+        "categoryField": "category"
+        });
 </script>
 {% endblock %}
