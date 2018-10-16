@@ -140,160 +140,19 @@
 {% endblock %}
 {% block script %}
 <script>
-const study = {{study_list | safe}}
-const g = {{g_list}}
-const g_lower = {{g_lower_list}}
-const g_upper = {{g_upper_list}}
-const g_wf = {{weight_fixed_list}}
-const g_w = {{weight_random_list}}
-const list = []
-
-let fixedModelChartData = []
-let randomModelChartData = []
-
-fixedModelChartData.push({
-  "category": "",
-  "measure": 0,
-  "bullet": "",
-  "bulletSize": 0,
-  "high": 0,
-  "low": 0
-})
-
-
-for (var i=0; i<g.length; i++) {
-  fixedModelChartData.push({
-    "category": study[i],
-    "measure": g[i].toFixed(3),
-    "bullet": "square",
-    "bulletSize": g_wf[i].toFixed(0),
-    "high": g_upper[i].toFixed(3),
-    "low": g_lower[i].toFixed(3)
-  })
+const data = {
+  g_list: {{g_list}},
+  study_list: {{study_list | safe}},
+  weight_fixed_list: {{weight_fixed_list}},
+  g_upper_list: {{g_upper_list}},
+  g_lower_list: {{g_lower_list}},
+  ave_g: {{ave_g_fixed}},
+  upper_g_ave: {{upper_gg_random}},
+  lower_g_ave: {{lower_gg_random}},
+  weight_random_list: {{weight_random_list}},
 }
 
-fixedModelChartData.push({
-  "category": "g(ave) fixed model",
-  "measure": {{ave_g_fixed}},
-  "bullet": "diamond",
-  "bulletSize": 25,
-  "high": {{upper_gg_fixed}},
-  "low": {{lower_gg_fixed}}
-})
-
-AmCharts.makeChart("fixedModelChartDiv", {
-  "type": "serial",
-  "theme": "light",
-  "rotate": true,
-  "fontSize": 18,
-  "categoryAxis": {
-    "gridAlpha": 0,
-  },
-  "valueAxes": [{
-    "guides": [{
-      "value": 2.2,
-      "dashLength": 3,
-      "lineThickness": 2
-    }]
-  }],
-  "chartCursor": {
-    "fullWidth": true,
-    "graphBulletSize": 1,
-    "categoryBalloonEnabled": false,
-    "cursorAlpha": 0.1
-  },
-  "dataProvider": fixedModelChartData,
-  "graphs": [{
-    "lineAlpha": 0,
-    "bulletField": "bullet",
-    "bulletSizeField": "bulletSize",
-    "valueField": "measure",
-    "lineColor": "#00c20d",
-    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
-  }, {
-    "type": "ohlc",
-    "highField": "high",
-    "lowField": "low",
-    "openField": "measure",
-    "closeField": "measure",
-    "fixedColumnWidth": 1,
-    "lineColor": "#00c20d",
-    "showBalloon": false
-  }],
-  "categoryField": "category"
-});
-
-
-randomModelChartData.push({
-  "category": "",
-  "measure": 0,
-  "bullet": "",
-  "bulletSize": 0,
-  "high": 0,
-  "low": 0
-})
-
-for (var i = 0; i < g.length; i++) {
-  randomModelChartData.push({
-    "category": study[i],
-    "measure": g[i].toFixed(3),
-    "bullet": "square",
-    "bulletSize": g_w[i].toFixed(0),
-    "high": g_upper[i].toFixed(3),
-    "low": g_lower[i].toFixed(3)
-  })
-}
-
-randomModelChartData.push({
-  "category": "g(ave) random model",
-  "measure": {{ave_g_random}},
-  "bullet": "diamond",
-  "bulletSize": 25,
-  "high": {{upper_gg_random}},
-  "low": {{lower_gg_random}}
-})
-
-AmCharts.makeChart("randomModelChartDiv", {
-  "type": "serial",
-  "theme": "light",
-  "rotate": true,
-  "fontSize": 18,
-  "categoryAxis": {
-    "gridAlpha": 0,
-  },
-  "valueAxes": [{
-    "guides": [{
-      "value": 2.2,
-      "dashLength": 3,
-      "lineThickness": 2
-    }]
-  }],
-  "chartCursor": {
-    "fullWidth": true,
-    "graphBulletSize": 1,
-    "categoryBalloonEnabled": false,
-    "cursorAlpha": 0.1
-  },
-  "dataProvider": randomModelChartData,
-  "graphs": [{
-    "lineAlpha": 0,
-    "bulletField": "bullet",
-    "bulletSizeField": "bulletSize",
-    "valueField": "measure",
-    "lineColor": "#00c20d",
-    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
-  }, {
-    "type": "ohlc",
-    "highField": "high",
-    "lowField": "low",
-    "openField": "measure",
-    "closeField": "measure",
-    "fixedColumnWidth": 1,
-    "lineColor": "#00c20d",
-    "showBalloon": false
-  }],
-  "categoryField": "category"
-});
-
+renderFixedModelChart('fixedModelChartDiv', data)
+renderRandomModelChart('randomModelChartDiv', data)
 </script>
 {% endblock %}
