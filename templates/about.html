@@ -1,63 +1,49 @@
 {% extends "layout.html" %}
 {% block app %}
-
-<style>
-.about {
-font-size: 120%;
-  text-align: justify;
-  text-justify: inter-word;
-  line-height: 150%;
-}
-
-</style>
-
 <div class="side" align="center">
-<div class="circular--portrait">
-<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><img src="static/dr-christiansen.jpeg" /></a>
-</div>
-<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><h5>Prof. Dr. Hanna Christiansen <br> Supervisor of the project</h5></a>
+  <div class="circular--portrait">
+    <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><img
+        src="static/dr-christiansen.jpeg" /></a>
+  </div>
+  <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none">
+    <h5>Prof. Dr. Hanna Christiansen <br> Supervisor of the project</h5>
+  </a>
 </div>
 <div class="side" align="center">
-<div class="circular--portrait">
-<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/beheshti" style="text-decoration:none"><img src="static/beheshti.jpg" /></a>
-</div>
-<a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/beheshti" style="text-decoration:none"><h5>Ashkan Beheshti <br> Developer of the project</h5></a>
+  <div class="circular--portrait">
+    <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/beheshti" style="text-decoration:none"><img
+        src="static/beheshti.jpg" /></a>
+  </div>
+  <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/beheshti" style="text-decoration:none">
+    <h5>Ashkan Beheshti <br> Developer of the project</h5>
+  </a>
 </div>
 <p></p>
 <div class="about">
-<h4> About the project</h4>
-<b>Background:</b>
-Systematic reviews in general and meta-analysis specifically are broadly applied methods for synthesizing currently available studies in order to reach a better understanding of related problematics in a certain field. For conducting such analyses, several statistical software products facilitate the main process of effect size calculations. Each software has its own characteristics, pros and cons. However, nearly all of them are required to be installed by the user in order to run, and often this is associated with license fees. Regarding this limitation, the objective of the current project was to develop a free online and user-friendly meta-analysis service that can be used in different fields. We describe its use in comparison to the Cochrane RevMan5 using a clinical example.
-<p></p>
-<b>Method:</b>
-The first version of the application Meta-Mar was developed in two steps: The first step was to write the back-end part of the application. Python programming language made it possible to use its available libraries of data analyzing in back-end programming. The second step was to design the front-end part, which was created by html, CSS and JavaScript. In order to validate the function of application, we compare the results of a meta-analysis from Cochrane RevMan5 with our results.
-<p></p>
-<b>Conclusion:</b>
-We have developed Meta-Mar as a free online web application and validated its function by comparing its results. The first version of the program is able to calculate effect sizes based on standardized mean differences as well as correlation coefficients and risk ratios, weight each effect, and present the heterogeneity of the analysis as well as the forest plot. Furthermore, along the meta-analysis, meta regression, a regression analysis based on effect sizes and a moderator variable is available. We are currently working on Meta-Meta-Mar, a tool for synthesizing meta-analyses while correcting for the inclusion of primary articles cited in more than one meta-analysis.
+  <h4> About the project</h4>
+  <b>Background:</b>
+  Systematic reviews in general and meta-analysis specifically are broadly applied methods for synthesizing currently
+  available studies in order to reach a better understanding of related problematics in a certain field. For conducting
+  such analyses, several statistical software products facilitate the main process of effect size calculations. Each
+  software has its own characteristics, pros and cons. However, nearly all of them are required to be installed by the
+  user in order to run, and often this is associated with license fees. Regarding this limitation, the objective of the
+  current project was to develop a free online and user-friendly meta-analysis service that can be used in different
+  fields. We describe its use in comparison to the Cochrane RevMan5 using a clinical example.
+  <p></p>
+  <b>Method:</b>
+  The first version of the application Meta-Mar was developed in two steps: The first step was to write the back-end
+  part of the application. Python programming language made it possible to use its available libraries of data
+  analyzing in back-end programming. The second step was to design the front-end part, which was created by html, CSS
+  and JavaScript. In order to validate the function of application, we compare the results of a meta-analysis from
+  Cochrane RevMan5 with our results.
+  <p></p>
+  <b>Conclusion:</b>
+  We have developed Meta-Mar as a free online web application and validated its function by comparing its results. The
+  first version of the program is able to calculate effect sizes based on standardized mean differences as well as
+  correlation coefficients and risk ratios, weight each effect, and present the heterogeneity of the analysis as well
+  as the forest plot. Furthermore, along the meta-analysis, meta regression, a regression analysis based on effect
+  sizes and a moderator variable is available. We are currently working on Meta-Meta-Mar, a tool for synthesizing
+  meta-analyses while correcting for the inclusion of primary articles cited in more than one meta-analysis.
 
 </div>
-<style>
-.circular--portrait {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  margin-right: 150px;
-  margin-left: 150px;
-  border-radius: 40%;
-  align-items: center;
-}
-
-.circular--portrait img {
-  width: 100%;
-  height: auto;
-}
-
-.side {
-display:inline-block;
-}
-</style>
-
-
 {% endblock %}

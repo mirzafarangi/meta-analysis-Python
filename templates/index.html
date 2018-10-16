@@ -1,44 +1,33 @@
 {% extends "layout.html" %}
 {% block app %}
-
-<style>
-.about {
-font-size: 120%;
-  text-align: justify;
-  text-justify: inter-word;
-  line-height: 150%;
-}
-
-</style>
-
-<style>
-ul.a {list-style-type: circle;}
-</style>
 <div class="about">
-<h3>Why Meta-Mar?</h3>
-        <p> <b>Meta-Mar</b> is a free online meta-analysis service which is developed for <a href="https://www.uni-marburg.de/fb04/team-christiansen/kj-pam">department of psychology in university of Marburg</a>, makes it possible to enter data directly or easily upload an already excisting Microsoft Excel spreadsheet in order to receive the results of the analysis. </p>
-        <p>Facilities of this primary phase of the project include:
-<ul class="a">
-          <li>Possibillity of choosing the Data entry methode between manual Data entry or Excel file uploading.</li>
-           <li>Calculate the effect sizes based on SMD, correlation and risk ration models for each single study.</li>
-           <li>Calculate the overall effect size of the analysis based on fixed and random effect model (include p values, z scores, CI).</li>
-           <li>Calculate the heterogeneity of the analysis (Q Cochran and I<sup>2).</li>
-           <li>Run a meta regression (one variable moderator analysis).</li>
-           <li>Demonstrating the Forest Plot of the analysis. </li>
-           <li>Prepare and download the results of the analysis via a .xlsx file.</li>
-           <li>Also availablity of a quick single effect size calculator</li>
-</ul>
-<p></p>
-<p></p>
+  <h3>Why Meta-Mar?</h3>
+  <p> <b>Meta-Mar</b> is a free online meta-analysis service which is developed for <a href="https://www.uni-marburg.de/fb04/team-christiansen/kj-pam">department
+      of psychology in university of Marburg</a>, makes it possible to enter data directly or easily upload an already
+    excisting Microsoft Excel spreadsheet in order to receive the results of the analysis. </p>
+  <p>Facilities of this primary phase of the project include:
+    <ul class="a">
+      <li>Possibillity of choosing the Data entry methode between manual Data entry or Excel file uploading.</li>
+      <li>Calculate the effect sizes based on SMD, correlation and risk ration models for each single study.</li>
+      <li>Calculate the overall effect size of the analysis based on fixed and random effect model (include p values, z
+        scores, CI).</li>
+      <li>Calculate the heterogeneity of the analysis (Q Cochran and I<sup>2).</li>
+      <li>Run a meta regression (one variable moderator analysis).</li>
+      <li>Demonstrating the Forest Plot of the analysis. </li>
+      <li>Prepare and download the results of the analysis via a .xlsx file.</li>
+      <li>Also availablity of a quick single effect size calculator</li>
+    </ul>
+    <p></p>
+    <p></p>
 
-        <center>
-              <a href="/about"> About the Project </a>
-            &nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a href="/meta"> Start Your Analysis! </a>
+    <center>
+      <a href="/about"> About the Project </a>
+      &nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <a href="/meta"> Start Your Analysis! </a>
 
 
-        </center>
+    </center>
 </div>
-        <p></p>
-        <p></p>
+<p></p>
+<p></p>
 
-  {% endblock %}
+{% endblock %}

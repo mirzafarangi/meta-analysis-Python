@@ -385,3 +385,44 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
   opacity: 0
 }
+
+.circular--portrait {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  margin-right: 150px;
+  margin-left: 150px;
+  border-radius: 40%;
+  align-items: center;
+}
+
+.circular--portrait img {
+  width: 100%;
+  height: auto;
+}
+
+.side {
+  display:inline-block;
+}
+
+.about {
+  font-size: 120%;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 150%;
+}
+
+.about ul.a {list-style-type: circle;}
+
+#fixedModelChartDiv {
+  width: 480px;
+  height: 500px;
+  float: left;
+}
+#randomModelChartDiv {
+  width: 480px;
+  height: 500px;
+  float: right;
+}
