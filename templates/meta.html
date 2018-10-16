@@ -152,7 +152,7 @@
     <div v-if="ajaxResult" v-html="ajaxResult"></div>
     <div v-if="ajaxResult" id="forestplot"></div>
     <div class="forest">
-      <h4> Forestplot - fixed and random effect models</h4>
+      <h4 v-if="ajaxResult"> Forestplot - fixed and random effect models</h4>
       <div v-if="ajaxResult" id="fixedModelChartDiv">fixedModelChartDiv</div>
       <div v-if="ajaxResult" id="randomModelChartDiv">randomModelChartDiv</div>
     </div>
@@ -170,6 +170,7 @@
     <br><p></p>
     <b> &nbsp;Step3:</b> Upload your excel file(analysis_mean.xlsx). <input type="file" name="file">
     <br> &nbsp;
+    <p></p>
     <button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
   </form>
 </div>
@@ -260,18 +261,18 @@ function drawChartWithSomeDelay(data) {
       "measure": data.g_list[i].toFixed(3),
       "bullet": "square",
       "bulletSize": data.weight_fixed_list[i].toFixed(0),
-      "high": data.g_lower_list[i].toFixed(3),
+      "high": data.g_upper_list[i].toFixed(3),
       "low": data.g_lower_list[i].toFixed(3)
     })
   }
 
   fixedModelChartData.push({
     "category": "g(ave) fixed model",
-    "measure": data.ave_g,
+    "measure": data.ave_g_fixed,
     "bullet": "diamond",
     "bulletSize": 25,
-    "high": data.upper_g_ave,
-    "low": data.lower_g_ave
+    "high": data.upper_g_ave_fixed,
+    "low": data.lower_g_ave_fixed
   })
 
   AmCharts.makeChart("fixedModelChartDiv", {
@@ -333,18 +334,18 @@ function drawChartWithSomeDelay(data) {
       "measure": data.g_list[i].toFixed(3),
       "bullet": "square",
       "bulletSize": data.weight_random_list[i].toFixed(0),
-      "high": data.g_lower_list[i].toFixed(3),
+      "high": data.g_upper_list[i].toFixed(3),
       "low": data.g_lower_list[i].toFixed(3)
     })
   }
 
   randomModelChartData.push({
     "category": "g(ave) fixed model",
-    "measure": data.ave_g,
+    "measure": data.ave_g.toFixed(3),
     "bullet": "diamond",
     "bulletSize": 25,
-    "high": data.upper_g_ave,
-    "low": data.lower_g_ave
+    "high": data.upper_g_ave.toFixed(3),
+    "low": data.lower_g_ave.toFixed(3)
   })
 
   AmCharts.makeChart("randomModelChartDiv", {

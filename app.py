@@ -177,7 +177,10 @@ def result():
                 'weight_random_list': df['weight(%)-random model'].tolist(),
                 'ave_g': float("{0:.2f}".format(g_total_random)),
                 'lower_g_ave': float("{0:.2f}".format(lower_g_random)),
-                'upper_g_ave': float("{0:.2f}".format(upper_g_random))
+                'upper_g_ave': float("{0:.2f}".format(upper_g_random)),
+                'ave_g_fixed': float("{0:.2f}".format(g_total_fixed)),
+                'lower_g_ave_fixed': float("{0:.2f}".format(lower_g_fixed)),
+                'upper_g_ave_fixed': float("{0:.2f}".format(upper_g_fixed))
             })
 
         except Exception as error:
@@ -389,39 +392,35 @@ def result_corr():
 
             df['Var']=1/(df[2]-3)
             df['SE']=df['Var']**0.5
-            df['weight']=1/df['Var']
+            df['w_fixed']=1/df['Var']
 
 
             df['r_lower']=df[1]-1.96*df['SE']
             df['r_upper']=df[1]+1.96*df['SE']
 
             df['Fisher z']=0.5*np.log((1+df[1])/(1-df[1]))
-            df['z*w']=df['Fisher z']*df['weight']
+            df['zw_fixed']=df['Fisher z']*df['w_fixed']
 
             df['d']=2*df[1]/((1-df[1]**2)**0.5)
-            df['d*w']=df['d']*df['weight']
+            df['dw_fixed']=df['d']*df['w_fixed']
 
 
 
 
-            z_total=np.sum(df['z*w'])/np.sum(df['weight'])
-            s_total=(1/np.sum(df['weight']))**0.5
-            r_total= (-1+np.exp(2*z_total))/(1+np.exp(2*z_total))
-            d_total=2*r_total/((1-r_total**2)**0.5)
-
-            lower_r=r_total-1.96*s_total
-            upper_r=r_total+1.96*s_total
-
-            df['r*w']=df[1]*df['weight']
-
-            z_score = d_total/s_total
-            p_value = scipy.stats.norm.sf(abs(z_score))*2
+            z_total_fixed=np.sum(df['zw_fixed'])/np.sum(df['w_fixed'])
+            s_total_fixed=(1/np.sum(df['w_fixed']))**0.5
+            r_total_fixed= (-1+np.exp(2*z_total_fixed))/(1+np.exp(2*z_total_fixed))
+            d_total_fixed=2*r_total_fixed/((1-r_total_fixed**2)**0.5)
+            lower_r_fixed=r_total_fixed-1.96*s_total_fixed
+            upper_r_fixed=r_total_fixed+1.96*s_total_fixed
+            z_score_fixed = d_total_fixed/s_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
 
 
             #random
 
-            q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
-            c=np.sum(df['weight'])-((np.sum(df['weight']**2))/(np.sum(df['weight'])))
+            q=np.sum(df['w_fixed']*df['d']**2)-((np.sum(df['dw_fixed'])**2)/np.sum(df['w_fixed']))
+            c=np.sum(df['w_fixed'])-((np.sum(df['w_fixed']**2))/(np.sum(df['w_fixed'])))
             degf= len(df.index)-1
             if q<=degf or degf==0:
                 t2=0
@@ -432,21 +431,21 @@ def result_corr():
                 I2=(q_fixed-degf)/q_fixed
 
             df['w_random']=1/(df['Var']+t2)
-            df['Weight(%)_fixed']=100*df['weight']/np.sum(df['weight'])
+            df['Weight(%)_fixed']=100*df['w_fixed']/np.sum(df['w_fixed'])
             df['Weight(%)_random']=100*df['w_random']/np.sum(df['w_random'])
 
             df['wz_random']=df['Fisher z']*df['w_random']
             df['wr_random']=df[1]*df['w_random']
             df['wd_random']=df['d']*df['w_random']
 
+
+
             z_total_random=np.sum(df['wz_random'])/np.sum(df['w_random'])
             s_total_random=(1/np.sum(df['w_random']))**0.5
-            r_total_random= (-1+np.exp(2*z_total))/(1+np.exp(2*z_total))
-            d_total_random=2*r_total/((1-r_total**2)**0.5)
-
+            r_total_random= (-1+np.exp(2*z_total_random))/(1+np.exp(2*z_total_random))
+            d_total_random=2*r_total_random/((1-r_total_random**2)**0.5)
             lower_r_random=r_total_random-1.96*s_total_random
             upper_r_random=r_total_random+1.96*s_total_random
-
             z_score_random = d_total_random/s_total_random
             p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
 
@@ -462,10 +461,10 @@ def result_corr():
 
 
 
-            df.drop(['Var','weight','z*w','d','d*w','r*w', 'w_random', 'wz_random', 'wd_random', 'wr_random'] ,inplace=True, axis=1)
+            df.drop(['Var','w_fixed','zw_fixed','dw_fixed', 'w_random', 'wz_random', 'wr_random','wd_random'] ,inplace=True, axis=1)
 
 
-            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'r_lower', 'r_upper', 'Fisher z', 'Weight(%)_fixed', 'Weight(%)_random']
+            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'r_lower', 'r_upper', 'Fisher z','d', 'Weight(%)_fixed', 'Weight(%)_random']
 
 
             df.index+=1
@@ -479,24 +478,22 @@ def result_corr():
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
 
-
-                'ave_z': float("{0:.2f}".format(z_total)),
-                'ave_r': float("{0:.2f}".format(r_total)),
-                'ave_SE': float("{0:.3f}".format(s_total)),
-                'lower_r': float("{0:.3f}".format(lower_r)),
-                'upper_r': float("{0:.3f}".format(upper_r)),
-                'Het': 100*float("{0:.3f}".format(I2)),
-                'p_value': float("{0:.4f}".format(p_value)),
-                'z_score': float("{0:.3f}".format(z_score)),
                 'ave_z_random': float("{0:.2f}".format(z_total_random)),
                 'ave_r_random': float("{0:.2f}".format(r_total_random)),
                 'ave_SE_random': float("{0:.3f}".format(s_total_random)),
                 'lower_r_random': float("{0:.3f}".format(lower_r_random)),
                 'upper_r_random': float("{0:.3f}".format(upper_r_random)),
+                'ave_z_fixed': float("{0:.2f}".format(z_total_fixed)),
+                'ave_r_fixed': float("{0:.2f}".format(r_total_fixed)),
+                'ave_SE_fixed': float("{0:.3f}".format(s_total_fixed)),
+                'lower_r_fixed': float("{0:.3f}".format(lower_r_fixed)),
+                'upper_r_fixed': float("{0:.3f}".format(upper_r_fixed)),
                 'Het': 100*float("{0:.3f}".format(I2)),
                 't2': float("{0:.3f}".format(t2)),
                 'p_value_random': float("{0:.4f}".format(p_value_random)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'p_value_fixed': float("{0:.4f}".format(p_value_fixed)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'moder': moder
             }
 
@@ -507,9 +504,14 @@ def result_corr():
                 'study_list': df['study name'].tolist(),
                 'r_lower_list': df['r_lower'].tolist(),
                 'r_upper_list': df['r_upper'].tolist(),
-                'ave_r': float("{0:.2f}".format(r_total)),
-                'lower_r_ave': float("{0:.2f}".format(lower_r)),
-                'upper_r_ave': float("{0:.2f}".format(upper_r))
+                'weight_random_list': df["Weight(%)_random"].tolist(),
+                'weight_fixed_list': df["Weight(%)_fixed"].tolist(),
+                'ave_r_random': float("{0:.2f}".format(r_total_random)),
+                'lower_r_random': float("{0:.2f}".format(lower_r_random)),
+                'upper_r_random': float("{0:.2f}".format(upper_r_random)),
+                'ave_r_fixed': float("{0:.2f}".format(r_total_fixed)),
+                'lower_r_fixed': float("{0:.2f}".format(lower_r_fixed)),
+                'upper_r_fixed': float("{0:.2f}".format(upper_r_fixed))
             })
 
         except Exception as error:
@@ -772,14 +774,20 @@ def result_ratios():
                 'study_list': df['Study name'].tolist(),
                 'lower_RR_list': df['lower_RR'].tolist(),
                 'upper_RR_list': df['upper_RR'].tolist(),
+                'w_random': df['weight(%)_random model'].tolist(),
+                'w_fixed': df['weight(%)_fixed model'].tolist(),
                 'RRave_random': float("{0:.2f}".format(RRave_random)),
                 'lower_RRave_random': float("{0:.2f}".format(lower_RRave_random)),
-                'upper_RRave_random': float("{0:.2f}".format(upper_RRave_random))
+                'upper_RRave_random': float("{0:.2f}".format(upper_RRave_random)),
+                'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
+                'lower_RRave_fixed': float("{0:.3f}".format(lower_RRave_fixed)),
+                'upper_RRave_fixed': float("{0:.3f}".format(upper_RRave_fixed)),
             })
 
         except Exception as error:
             print(error)
             return render_template('error_content.html')
+
 
 @app.route('/return-file-ratio/')
 def return_file_ratio():

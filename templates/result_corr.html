@@ -1,5 +1,19 @@
 <p></p>
+<style media="screen">
+  #fixedModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: left;
+  }
+  #randomModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: right;
+  }
+</style>
 
+<p></p>
+<h4>Summary of results</h4>
 {{result_table}}
 
 <p></p>
@@ -52,12 +66,12 @@
     <tbody>
       <tr>
         <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
-        <td> <center>{{ave_z}}</center> </td>
-        <td> <center>{{ave_r}} </center></td>
-        <td> <center>{{ave_SE}} </center></td>
-        <td> <center>[{{lower_r}},{{upper_r}}] </center></td>
-        <td> <center>{{z_score}} </center></td>
-        <td> <center>{{p_value}} </center></td>
+        <td> <center>{{ave_z_fixed}}</center> </td>
+        <td> <center>{{ave_r_fixed}} </center></td>
+        <td> <center>{{ave_SE_fixed}} </center></td>
+        <td> <center>[{{lower_r_fixed}},{{upper_r_fixed}}] </center></td>
+        <td> <center>{{z_score_fixed}} </center></td>
+        <td> <center>{{p_value_fixed}} </center></td>
         <td> <center>{{Het}}% </center></td>
       </tr>
       <tr>
@@ -76,6 +90,7 @@
 
   <p></p>
   <p></p>
+  <h4>Meta regression results</h4>
   <div style="overflow-x:auto;">
         {{moder | safe}}
   </div>
@@ -84,3 +99,4 @@
 <a href="/return-file-corr/" target="blank">
   <h4 align="center">Please Click to Download the results as an Excel file</h4>
 </a>
+<p></p>

@@ -127,7 +127,10 @@
     </div>
     <div v-if="isLoading"> Loading... </div>
     <div v-if="ajaxResult" v-html="ajaxResult"></div>
-    <div v-if="ajaxResult" id="forestplot"></div>
+    <h4 v-if="ajaxResult"> Forestplot - fixed and random effect models</h4>
+    <div v-if="ajaxResult" id="fixedModelChartDiv">fixedModelChartDiv</div>
+    <div v-if="ajaxResult" id="randomModelChartDiv">randomModelChartDiv</div>
+
   </div>
   </div>
 </div>
@@ -142,6 +145,7 @@
     <br><p></p>
     <b> &nbsp;Step3:</b> Upload your excel file(analysis_ratios.xlsx). <input type="file" name="file">
     <br> &nbsp;
+    <p></p>
     <button type="submit" value="Submit" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Continue to the Results </button>
   </form>
 </div>
@@ -154,10 +158,8 @@
     data: {
       dataEntryMethod: true,
       uploadMethod: false,
-
       dataEntryHelp: false,
       uploadHelp: false,
-
       error: false,
       isLoading: false,
       ajaxResult: null,
@@ -184,16 +186,13 @@
       removeRow: function (index) {
           this.rows.splice(index, 1)
       },
-
       processData: function () {
           // clear error, previous results, ...
           this.error = false
           this.isLoading = true
           this.ajaxResult = null
-
           // get data from data-model & convert to json string
           const data = JSON.stringify(this.rows)
-
           // send ajax request as POST
           this.$http.post('/result_ratios', data).then(response => {
             // request was successful, binding the result
@@ -205,49 +204,159 @@
             this.isLoading = false
             this.error = error
           })
-      },
-
-      drawChart: function (data) {
-        const list = []
-        for (let i = 0; i < data.RR_list.length; i++) {
-          const x = [
-            data.lower_RR_list[i],
-            data.RR_list[i]-0.3,
-            data.RR_list[i]-0.2,
-            data.RR_list[i]-0.1,
-            data.RR_list[i],
-            data.RR_list[i]+0.1,
-            data.RR_list[i]+0.2,
-            data.RR_list[i]+0.3,
-            data.upper_RR_list[i]
-          ]
-
-          list[i] = {
-            x: x,
-            type: 'box',
-            name: data.study_list[i]
-          }
-        }
-
-        const RRave_random = {
-          x: [data.lower_RRave_random, data.RRave_random, data.upper_RRave_random],
-          type: 'box',
-          name: 'Average Effect Size'
-        }
-
-        list.push(RRave_random)
-        list.reverse()
-        const layout = {
-            title: 'Forest Plot'
-        }
-
-        this.$nextTick(() => {
-          Plotly.newPlot('forestplot', list, layout)
-        })
+      }, drawChart: function (data) {
+        setTimeout(() => {
+          drawChartWithSomeDelay(data)
+        }, 200) // wait 200ms and then draw the chart
       }
     }
   })
+      function drawChartWithSomeDelay(data) {
+        let fixedModelChartData = []
+        let randomModelChartData = []
+
+        fixedModelChartData.push({
+          "category": "",
+          "measure": 0,
+          "bullet": "",
+          "bulletSize": 0,
+          "high": 0,
+          "low": 0
+        })
+
+        for (var i = 0; i < data.RR_list.length; i++) {
+          fixedModelChartData.push({
+            "category": data.study_list[i],
+            "measure": data.RR_list[i].toFixed(3),
+            "bullet": "square",
+            "bulletSize": data.w_fixed[i].toFixed(0),
+            "high": data.upper_RR_list[i].toFixed(3),
+            "low": data.lower_RR_list[i].toFixed(3)
+          })
+        }
+
+        fixedModelChartData.push({
+          "category": "RR(ave) fixed model",
+          "measure": data.RRave_fixed.toFixed(3),
+          "bullet": "diamond",
+          "bulletSize": 25,
+          "high": data.upper_RRave_fixed.toFixed(3),
+          "low": data.lower_RRave_fixed.toFixed(3)
+        })
+
+        AmCharts.makeChart("fixedModelChartDiv", {
+          "type": "serial",
+          "theme": "light",
+          "rotate": true,
+          "fontSize": 18,
+          "categoryAxis": {
+            "gridAlpha": 0,
+          },
+          "valueAxes": [{
+            "guides": [{
+              "value": 2.2,
+              "dashLength": 3,
+              "lineThickness": 2
+            }]
+          }],
+          "chartCursor": {
+            "fullWidth": true,
+            "graphBulletSize": 1,
+            "categoryBalloonEnabled": false,
+            "cursorAlpha": 0.1
+          },
+          "dataProvider": fixedModelChartData,
+          "graphs": [{
+            "lineAlpha": 0,
+            "bulletField": "bullet",
+            "bulletSizeField": "bulletSize",
+            "valueField": "measure",
+            "lineColor": "#00c20d",
+            "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+          }, {
+            "type": "ohlc",
+            "highField": "high",
+            "lowField": "low",
+            "openField": "measure",
+            "closeField": "measure",
+            "fixedColumnWidth": 1,
+            "lineColor": "#00c20d",
+            "showBalloon": false
+          }],
+          "categoryField": "category"
+        });
 
 
+
+        randomModelChartData.push({
+          "category": "",
+          "measure": 0,
+          "bullet": "",
+          "bulletSize": 0,
+          "high": 0,
+          "low": 0
+        })
+
+        for (var i = 0; i < data.RR_list.length; i++) {
+          randomModelChartData.push({
+            "category": data.study_list[i],
+            "measure": data.RR_list[i].toFixed(3),
+            "bullet": "square",
+            "bulletSize": data.w_random[i].toFixed(0),
+            "high": data.upper_RR_list[i].toFixed(3),
+            "low": data.lower_RR_list[i].toFixed(3)
+          })
+        }
+
+        randomModelChartData.push({
+          "category": "RR(ave) fixed model",
+          "measure": data.RRave_random.toFixed(3),
+          "bullet": "diamond",
+          "bulletSize": 25,
+          "high": data.upper_RRave_random.toFixed(3),
+          "low": data.lower_RRave_random.toFixed(3)
+        })
+
+        AmCharts.makeChart("randomModelChartDiv", {
+          "type": "serial",
+          "theme": "light",
+          "rotate": true,
+          "fontSize": 18,
+          "categoryAxis": {
+            "gridAlpha": 0,
+          },
+          "valueAxes": [{
+            "guides": [{
+              "value": 2.2,
+              "dashLength": 3,
+              "lineThickness": 2
+            }]
+          }],
+          "chartCursor": {
+            "fullWidth": true,
+            "graphBulletSize": 1,
+            "categoryBalloonEnabled": false,
+            "cursorAlpha": 0.1
+          },
+          "dataProvider": randomModelChartData,
+          "graphs": [{
+            "lineAlpha": 0,
+            "bulletField": "bullet",
+            "bulletSizeField": "bulletSize",
+            "valueField": "measure",
+            "lineColor": "#00c20d",
+            "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+          }, {
+            "type": "ohlc",
+            "highField": "high",
+            "lowField": "low",
+            "openField": "measure",
+            "closeField": "measure",
+            "fixedColumnWidth": 1,
+            "lineColor": "#00c20d",
+            "showBalloon": false
+          }],
+          "categoryField": "category"
+        });}
 </script>
 {% endblock %}
