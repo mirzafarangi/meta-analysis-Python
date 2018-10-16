@@ -233,19 +233,15 @@
             this.error = error
           })
       },
-      drawChart
+      drawChart: function (data) {
+        setTimeout(() => {
+          drawChartWithSomeDelay(data)
+        }, 200) // wait 200ms and then draw the chart
+      }
     }
   })
 
-
-
-function drawChart(data) {
-  setTimeout(() => {
-    drawChart2(data)
-  }, 1000)
-}
-
-function drawChart2(data) {
+function drawChartWithSomeDelay(data) {
   let fixedModelChartData = []
   let randomModelChartData = []
 
