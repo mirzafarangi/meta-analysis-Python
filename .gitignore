@@ -105,7 +105,7 @@ ENV/
 .ropeproject
 
 # End of https://www.gitignore.io/api/python
-templates/result2.html
+# templates/result2.html
 
 # windows tmp files
 Thumbs.db
