@@ -1,30 +1,38 @@
 {% extends "layout.html" %}
 {% block app %}
+<style media="screen">
+  #fixedModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: left;
+  }
+  #randomModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: right;
+  }
+</style>
 
-  <h4> <a href="/meta">Back to previous page </a></h4>
-  <p></p>
-
-
-
-
+<h4> <a href="/meta">Back to previous page </a></h4>
+<p></p>
 <p></p>
 <p></p>
 <p></p>
 <h4>Table of effect sizes, weights(fixed and random model) and 95%CIs for studies</h4>
 <div style="overflow-x:auto;">
-      {{total}}
+  {{total}}
 </div>
-
-
-  <p></p>
-  <p></p>
-  <h4>Summary of results</h4>
+<p></p>
+<p></p>
+<h4>Summary of results</h4>
 <div id="table" align="left">
   <table style="width:100%">
     <thead>
       <tr>
         <td>
-          <center> <b> <font color="black">  </font> </b> </center>
+          <center>
+              <font color="black"> </font>
+            </center>
         </td>
 
         <td>
@@ -34,7 +42,8 @@
         </td>
         <td>
           <center>
-            <font color="#2E9AFE"> SEg </center>
+            <font color="#2E9AFE"> SEg </font>
+          </center>
           </font>
         </td>
         <td>
@@ -62,23 +71,55 @@
     </thead>
     <tbody>
       <tr>
-        <td> <center> <font color="#FF9900"> Fixed Effect Model </font> </center> </td>
-        <td> <center>{{ave_g_fixed}}</center> </td>
-        <td> <center>{{ave_SEg_fixed}} </center></td>
-        <td> <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center></td>
-        <td> <center>{{z_score_fixed}} </center></td>
-        <td> <center>{{p_value_fixed}} </center></td>
-        <td> <center>{{Het_fixed}}% </center></td>
+        <td>
+          <center>
+            <font color="#FF9900"> Fixed Effect Model </font>
+          </center>
+        </td>
+        <td>
+          <center>{{ave_g_fixed}}</center>
+        </td>
+        <td>
+          <center>{{ave_SEg_fixed}} </center>
+        </td>
+        <td>
+          <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center>
+        </td>
+        <td>
+          <center>{{z_score_fixed}} </center>
+        </td>
+        <td>
+          <center>{{p_value_fixed}} </center>
+        </td>
+        <td>
+          <center>{{Het_fixed}}% </center>
+        </td>
 
       </tr>
       <tr>
-        <td> <center> <font color="#FF9900"> Random Effect Model </font> </center> </td>
-        <td> <center>{{ave_g_random}}</center> </td>
-        <td> <center>{{ave_SEg_random}} </center></td>
-        <td> <center>[{{lower_gg_random}},{{upper_gg_random}}]</center> </td>
-        <td> <center>{{z_score_random}} </center></td>
-        <td> <center>{{p_value_random}} </center></td>
-        <td> <center>{{Het_random}}%, T<sup>2</sup>={{t2}} </center></td>
+        <td>
+          <center>
+            <font color="#FF9900"> Random Effect Model </font>
+          </center>
+        </td>
+        <td>
+          <center>{{ave_g_random}}</center>
+        </td>
+        <td>
+          <center>{{ave_SEg_random}} </center>
+        </td>
+        <td>
+          <center>[{{lower_gg_random}},{{upper_gg_random}}]</center>
+        </td>
+        <td>
+          <center>{{z_score_random}} </center>
+        </td>
+        <td>
+          <center>{{p_value_random}} </center>
+        </td>
+        <td>
+          <center>{{Het_random}}%, T<sup>2</sup>={{t2}} </center>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -86,40 +127,25 @@
 
 <p></p>
 <div class="forest">
-      <h4>  Forestplot - fixed and random effect models</h4>
-
-      <div id="chartdiv"></div>
-      <style media="screen">
-      #chartdiv {
-      width: 480px;
-      height: 500px;
-      float: left;
-      }
-      </style>
-
-
-      <div id="chart2div"></div>
-
-      <style media="screen">
-      #chart2div {
-      width: 480px;
-      height: 500px;
-      float: right;
-      }
-      </style>
+  <h4> Forestplot - fixed and random effect models</h4>
+  <div id="fixedModelChartDiv"></div>
+  <div id="randomModelChartDiv"></div>
 </div>
+
 <div class="regress" style="display:inline-block;">
   <p></p>
   <h4>Meta regression results</h4>
   <p></p>
   <div style="overflow-x:auto;">
-        {{moder | safe}}
+    {{moder | safe}}
   </div>
 </div>
-  <p></p>
-  <p></p>
+<p></p>
+<p></p>
 
-<a href="/return-file-smdxl/" target="blank"> <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b></a>
+<a href="/return-file-smdxl/" target="blank">
+  <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b>
+</a>
 
 <p></p>
 
@@ -127,150 +153,159 @@
 {% endblock %}
 {% block script %}
 <script>
-    const study = {{study_list | safe}}
-    const g = {{g_list}}
-    const g_lower = {{g_lower_list}}
-    const g_upper = {{g_upper_list}}
-    const g_wf = {{weight_fixed_list}}
-    const g_w = {{weight_random_list}}
-    const list = []
+const study = {{study_list | safe}}
+const g = {{g_list}}
+const g_lower = {{g_lower_list}}
+const g_upper = {{g_upper_list}}
+const g_wf = {{weight_fixed_list}}
+const g_w = {{weight_random_list}}
+const list = []
 
-var s=[]
-s.push({
-   "category": "",
-   "measure": 0,
-   "bullet": "",
-   "bulletSize": 0,
-   "high": 0,
-   "low": 0
-   })
+let fixedModelChartData = []
+let randomModelChartData = []
+
+fixedModelChartData.push({
+  "category": "",
+  "measure": 0,
+  "bullet": "",
+  "bulletSize": 0,
+  "high": 0,
+  "low": 0
+})
+
+
 for (var i=0; i<g.length; i++) {
-     s.push({
-        "category": study[i],
-        "measure": g[i].toFixed(3),
-        "bullet": "square",
-        "bulletSize": g_wf[i].toFixed(0),
-        "high": g_upper[i].toFixed(3),
-        "low": g_lower[i].toFixed(3)
-        })}
-        s.push({
-           "category": "g(ave) fixed model",
-           "measure": {{ave_g_fixed}},
-           "bullet": "diamond",
-           "bulletSize": 25,
-           "high": {{upper_gg_fixed}},
-           "low": {{lower_gg_fixed}}
-           })
+  fixedModelChartData.push({
+    "category": study[i],
+    "measure": g[i].toFixed(3),
+    "bullet": "square",
+    "bulletSize": g_wf[i].toFixed(0),
+    "high": g_upper[i].toFixed(3),
+    "low": g_lower[i].toFixed(3)
+  })
+}
 
-var chart = AmCharts.makeChart("chartdiv", {
-"type": "serial",
-"theme": "light",
-"rotate": true,
-"fontSize": 18,
-"categoryAxis": {
-  "gridAlpha": 0,
-},
-"valueAxes": [{
-  "guides": [{
-    "value": 2.2,
-    "dashLength": 3,
-    "lineThickness": 2
-  }]
-}],
-"chartCursor": {
-  "fullWidth": true,
-  "graphBulletSize": 1,
-  "categoryBalloonEnabled": false,
-  "cursorAlpha": 0.1
-},
-"dataProvider": s,
-"graphs": [{
-  "lineAlpha": 0,
-  "bulletField": "bullet",
-  "bulletSizeField": "bulletSize",
-  "valueField": "measure",
-  "lineColor": "#00c20d",
-  "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
-}, {
-  "type": "ohlc",
-  "highField": "high",
-  "lowField": "low",
-  "openField": "measure",
-  "closeField": "measure",
-  "fixedColumnWidth": 1,
-  "lineColor": "#00c20d",
-  "showBalloon": false
-}],
-"categoryField": "category"
+fixedModelChartData.push({
+  "category": "g(ave) fixed model",
+  "measure": {{ave_g_fixed}},
+  "bullet": "diamond",
+  "bulletSize": 25,
+  "high": {{upper_gg_fixed}},
+  "low": {{lower_gg_fixed}}
+})
+
+AmCharts.makeChart("fixedModelChartDiv", {
+  "type": "serial",
+  "theme": "light",
+  "rotate": true,
+  "fontSize": 18,
+  "categoryAxis": {
+    "gridAlpha": 0,
+  },
+  "valueAxes": [{
+    "guides": [{
+      "value": 2.2,
+      "dashLength": 3,
+      "lineThickness": 2
+    }]
+  }],
+  "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+  },
+  "dataProvider": fixedModelChartData,
+  "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+  }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+  }],
+  "categoryField": "category"
 });
 
-var t=[]
-t.push({
-   "category": "",
-   "measure": 0,
-   "bullet": "",
-   "bulletSize": 0,
-   "high": 0,
-   "low": 0
-   })
-for (var i=0; i<g.length; i++) {
-     t.push({
-        "category": study[i],
-        "measure": g[i].toFixed(3),
-        "bullet": "square",
-        "bulletSize": g_w[i].toFixed(0),
-        "high": g_upper[i].toFixed(3),
-        "low": g_lower[i].toFixed(3)
-        })}
-        t.push({
-           "category": "g(ave) random model",
-           "measure": {{ave_g_random}},
-           "bullet": "diamond",
-           "bulletSize": 25,
-           "high": {{upper_gg_random}},
-           "low": {{lower_gg_random}}
-           })
 
-var chart = AmCharts.makeChart("chart2div", {
-"type": "serial",
-"theme": "light",
-"rotate": true,
-"fontSize": 18,
-"categoryAxis": {
-  "gridAlpha": 0,
-},
-"valueAxes": [{
-  "guides": [{
-    "value": 2.2,
-    "dashLength": 3,
-    "lineThickness": 2
-  }]
-}],
-"chartCursor": {
-  "fullWidth": true,
-  "graphBulletSize": 1,
-  "categoryBalloonEnabled": false,
-  "cursorAlpha": 0.1
-},
-"dataProvider": t,
-"graphs": [{
-  "lineAlpha": 0,
-  "bulletField": "bullet",
-  "bulletSizeField": "bulletSize",
-  "valueField": "measure",
-  "lineColor": "#00c20d",
-  "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
-}, {
-  "type": "ohlc",
-  "highField": "high",
-  "lowField": "low",
-  "openField": "measure",
-  "closeField": "measure",
-  "fixedColumnWidth": 1,
-  "lineColor": "#00c20d",
-  "showBalloon": false
-}],
-"categoryField": "category"
+randomModelChartData.push({
+  "category": "",
+  "measure": 0,
+  "bullet": "",
+  "bulletSize": 0,
+  "high": 0,
+  "low": 0
+})
+
+for (var i = 0; i < g.length; i++) {
+  randomModelChartData.push({
+    "category": study[i],
+    "measure": g[i].toFixed(3),
+    "bullet": "square",
+    "bulletSize": g_w[i].toFixed(0),
+    "high": g_upper[i].toFixed(3),
+    "low": g_lower[i].toFixed(3)
+  })
+}
+
+randomModelChartData.push({
+  "category": "g(ave) random model",
+  "measure": {{ave_g_random}},
+  "bullet": "diamond",
+  "bulletSize": 25,
+  "high": {{upper_gg_random}},
+  "low": {{lower_gg_random}}
+})
+
+AmCharts.makeChart("randomModelChartDiv", {
+  "type": "serial",
+  "theme": "light",
+  "rotate": true,
+  "fontSize": 18,
+  "categoryAxis": {
+    "gridAlpha": 0,
+  },
+  "valueAxes": [{
+    "guides": [{
+      "value": 2.2,
+      "dashLength": 3,
+      "lineThickness": 2
+    }]
+  }],
+  "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+  },
+  "dataProvider": randomModelChartData,
+  "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+  }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+  }],
+  "categoryField": "category"
 });
 
 </script>

@@ -1,6 +1,19 @@
 {% extends "layout.html" %} {% block app %}
 <br>
 
+<style media="screen">
+  #fixedModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: left;
+  }
+  #randomModelChartDiv {
+    width: 480px;
+    height: 500px;
+    float: right;
+  }
+</style>
+
 <h1>Meta-analysis: SMD Model</h1>
 <h4>In order to start your analysis please click on your preferred method:</h4>
 <br>
@@ -138,15 +151,13 @@
     <div v-if="isLoading"> Loading... </div>
     <div v-if="ajaxResult" v-html="ajaxResult"></div>
     <div v-if="ajaxResult" id="forestplot"></div>
-       <style>
-           #forestplot {
-             zoom: 50%;
-             -moz-transform: scale(0.5);
-             position: absolute; top: 200px; left: 100px; height: 130px; width: 130px;
-             }
-       </style>
+    <div class="forest">
+      <h4> Forestplot - fixed and random effect models</h4>
+      <div v-if="ajaxResult" id="fixedModelChartDiv">fixedModelChartDiv</div>
+      <div v-if="ajaxResult" id="randomModelChartDiv">randomModelChartDiv</div>
+    </div>
   </div>
-  </div>
+</div>
 </div>
 
 <div v-if="uploadMethod" class="data-entry-method method2">
@@ -223,41 +234,161 @@
           })
       },
       drawChart: function (data) {
-        const list = []
-        for (let i = 0; i < data.g_list.length; i++) {
-          const x = [
-            data.g_lower_list[i],
-            data.g_list[i]-0.3,
-            data.g_list[i]-0.2,
-            data.g_list[i]-0.1,
-            data.g_list[i],
-            data.g_list[i]+0.1,
-            data.g_list[i]+0.2,
-            data.g_list[i]+0.3,
-            data.g_upper_list[i]
-          ]
-          list[i] = {
-            x: x,
-            type: 'box',
-            name: data.study_list[i]
-          }
-        }
-        const ave_g = {
-          x: [data.lower_g_ave, data.ave_g, data.upper_g_ave],
-          type: 'box',
-          name: 'Average Effect Size'
-        }
-        list.push(ave_g)
-        list.reverse()
-        const layout = {
-            title: 'Forest Plot'
-        }
-        this.$nextTick(() => {
-          Plotly.newPlot('forestplot', list, layout)
-        })
+        setTimeout(() => {
+          drawChartWithSomeDelay(data)
+        }, 200) // wait 200ms and then draw the chart
       }
     }
   })
+
+function drawChartWithSomeDelay(data) {
+  let fixedModelChartData = []
+  let randomModelChartData = []
+
+  fixedModelChartData.push({
+    "category": "",
+    "measure": 0,
+    "bullet": "",
+    "bulletSize": 0,
+    "high": 0,
+    "low": 0
+  })
+
+  for (var i = 0; i < data.g_list.length; i++) {
+    fixedModelChartData.push({
+      "category": data.study_list[i],
+      "measure": data.g_list[i].toFixed(3),
+      "bullet": "square",
+      "bulletSize": data.weight_fixed_list[i].toFixed(0),
+      "high": data.g_lower_list[i].toFixed(3),
+      "low": data.g_lower_list[i].toFixed(3)
+    })
+  }
+
+  fixedModelChartData.push({
+    "category": "g(ave) fixed model",
+    "measure": data.ave_g,
+    "bullet": "diamond",
+    "bulletSize": 25,
+    "high": data.upper_g_ave,
+    "low": data.lower_g_ave
+  })
+
+  AmCharts.makeChart("fixedModelChartDiv", {
+    "type": "serial",
+    "theme": "light",
+    "rotate": true,
+    "fontSize": 18,
+    "categoryAxis": {
+      "gridAlpha": 0,
+    },
+    "valueAxes": [{
+      "guides": [{
+        "value": 2.2,
+        "dashLength": 3,
+        "lineThickness": 2
+      }]
+    }],
+    "chartCursor": {
+      "fullWidth": true,
+      "graphBulletSize": 1,
+      "categoryBalloonEnabled": false,
+      "cursorAlpha": 0.1
+    },
+    "dataProvider": fixedModelChartData,
+    "graphs": [{
+      "lineAlpha": 0,
+      "bulletField": "bullet",
+      "bulletSizeField": "bulletSize",
+      "valueField": "measure",
+      "lineColor": "#00c20d",
+      "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+    }, {
+      "type": "ohlc",
+      "highField": "high",
+      "lowField": "low",
+      "openField": "measure",
+      "closeField": "measure",
+      "fixedColumnWidth": 1,
+      "lineColor": "#00c20d",
+      "showBalloon": false
+    }],
+    "categoryField": "category"
+  });
+
+
+
+  randomModelChartData.push({
+    "category": "",
+    "measure": 0,
+    "bullet": "",
+    "bulletSize": 0,
+    "high": 0,
+    "low": 0
+  })
+
+  for (var i = 0; i < data.g_list.length; i++) {
+    randomModelChartData.push({
+      "category": data.study_list[i],
+      "measure": data.g_list[i].toFixed(3),
+      "bullet": "square",
+      "bulletSize": data.weight_random_list[i].toFixed(0),
+      "high": data.g_lower_list[i].toFixed(3),
+      "low": data.g_lower_list[i].toFixed(3)
+    })
+  }
+
+  randomModelChartData.push({
+    "category": "g(ave) fixed model",
+    "measure": data.ave_g,
+    "bullet": "diamond",
+    "bulletSize": 25,
+    "high": data.upper_g_ave,
+    "low": data.lower_g_ave
+  })
+
+  AmCharts.makeChart("randomModelChartDiv", {
+    "type": "serial",
+    "theme": "light",
+    "rotate": true,
+    "fontSize": 18,
+    "categoryAxis": {
+      "gridAlpha": 0,
+    },
+    "valueAxes": [{
+      "guides": [{
+        "value": 2.2,
+        "dashLength": 3,
+        "lineThickness": 2
+      }]
+    }],
+    "chartCursor": {
+      "fullWidth": true,
+      "graphBulletSize": 1,
+      "categoryBalloonEnabled": false,
+      "cursorAlpha": 0.1
+    },
+    "dataProvider": randomModelChartData,
+    "graphs": [{
+      "lineAlpha": 0,
+      "bulletField": "bullet",
+      "bulletSizeField": "bulletSize",
+      "valueField": "measure",
+      "lineColor": "#00c20d",
+      "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+    }, {
+      "type": "ohlc",
+      "highField": "high",
+      "lowField": "low",
+      "openField": "measure",
+      "closeField": "measure",
+      "fixedColumnWidth": 1,
+      "lineColor": "#00c20d",
+      "showBalloon": false
+    }],
+    "categoryField": "category"
+  });
+}
 </script>
 
 

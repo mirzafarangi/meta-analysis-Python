@@ -173,6 +173,8 @@ def result():
                 'g_lower_list': df['g_lower'].tolist(),
                 'g_upper_list': df['g_upper'].tolist(),
                 'g_weight_list': df['weight(%)-random model'].tolist(),
+                'weight_fixed_list': df['weight(%)-fixed model'].tolist(),
+                'weight_random_list': df['weight(%)-random model'].tolist(),
                 'ave_g': float("{0:.2f}".format(g_total_random)),
                 'lower_g_ave': float("{0:.2f}".format(lower_g_random)),
                 'upper_g_ave': float("{0:.2f}".format(upper_g_random))
