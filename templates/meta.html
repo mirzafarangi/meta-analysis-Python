@@ -66,7 +66,7 @@
 </div>
 
 <div v-if="dataEntryMethod" class="data-entry-method method1">
-  <form action="/result1" method="POST" v-on:submit.prevent="processData()">
+  <form action="/analysis/smd/data-entry" method="POST" v-on:submit.prevent="processData()">
     <table width="100%" class="table" id="method1">
       <thead>
         <tr>
@@ -223,7 +223,7 @@
           // get data from data-model & convert to json string
           const data = JSON.stringify(this.rows)
           // send ajax request as POST
-          this.$http.post('/result1', data).then(response => {
+          this.$http.post('/analysis/smd/data-entry', data).then(response => {
             // request was successful, binding the result
             this.isLoading = false
             this.ajaxResult = response.body.content
