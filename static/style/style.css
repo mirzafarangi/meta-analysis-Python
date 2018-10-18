@@ -385,3 +385,14 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
 .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
   opacity: 0
 }
+
+#fixedModelChartDiv {
+  width: 480px;
+  height: 500px;
+  float: left;
+}
+#randomModelChartDiv {
+  width: 480px;
+  height: 500px;
+  float: right;
+}
