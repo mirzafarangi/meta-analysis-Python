@@ -426,3 +426,14 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   height: 500px;
   float: right;
 }
+
+#chartdiv {
+  width: 480px;
+  height: 500px;
+  float: left;
+}
+#chart2div {
+  width: 480px;
+  height: 500px;
+  float: right;
+}
