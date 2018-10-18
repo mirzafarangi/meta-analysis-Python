@@ -386,6 +386,36 @@ ul#menu li a:hover, ul#menu li.selected a, ul#menu li.selected a:hover
   opacity: 0
 }
 
+#index-page ul.a {list-style-type: circle;}
+
+.about {
+  font-size: 120%;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 150%;
+}
+
+#about-page .circular--portrait {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  margin-right: 150px;
+  margin-left: 150px;
+  border-radius: 40%;
+  align-items: center;
+}
+
+#about-page .circular--portrait img {
+  width: 100%;
+  height: auto;
+}
+
+#about-page .side {
+  display:inline-block;
+}
+
 #fixedModelChartDiv {
   width: 480px;
   height: 500px;
