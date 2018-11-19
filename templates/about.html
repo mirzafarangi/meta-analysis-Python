@@ -1,16 +1,6 @@
 {% extends "layout.html" %}
 {% block app %}
-
-<style>
-.about {
-font-size: 120%;
-  text-align: justify;
-  text-justify: inter-word;
-  line-height: 150%;
-}
-
-</style>
-
+<div id="about-page">
 <div class="side" align="center">
 <div class="circular--portrait">
 <a href="https://www.uni-marburg.de/fb04/team-christiansen/mitarbeiter/christiansen" style="text-decoration:none"><img src="static/dr-christiansen.jpeg" /></a>
@@ -36,28 +26,5 @@ The first version of the application Meta-Mar was developed in two steps: The fi
 We have developed Meta-Mar as a free online web application and validated its function by comparing its results. The first version of the program is able to calculate effect sizes based on standardized mean differences as well as correlation coefficients and risk ratios, weight each effect, and present the heterogeneity of the analysis as well as the forest plot. Furthermore, along the meta-analysis, meta regression, a regression analysis based on effect sizes and a moderator variable is available. We are currently working on Meta-Meta-Mar, a tool for synthesizing meta-analyses while correcting for the inclusion of primary articles cited in more than one meta-analysis.
 
 </div>
-<style>
-.circular--portrait {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  margin-right: 150px;
-  margin-left: 150px;
-  border-radius: 40%;
-  align-items: center;
-}
-
-.circular--portrait img {
-  width: 100%;
-  height: auto;
-}
-
-.side {
-display:inline-block;
-}
-</style>
-
-
+</div>
 {% endblock %}
