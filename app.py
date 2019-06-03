@@ -703,17 +703,19 @@ def result_ratios():
                 t2=(qq-degf)/c
                 I2=(qq-degf)/qq
 
-            df["weight_random model"]= 1/((df['V']**2)+t2)
+            df['weight_random model']= 1/((df['V']**2)+t2)
             df['LnRR*w_random']=df['weight_random model']*df['LnRR']
             df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
             df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
 
-            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df["weight_random model"])
-            se_total_random=(1/np.sum(df["weight_random model"]))**0.5
+
+
+            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df['weight_random model'])
+            se_total_random=(1/np.sum(df['weight_random model']))**0.5
             lower_LnRR_random=LnRR_total_random-1.96*se_total_random
             upper_LnRR_random=LnRR_total_random+1.96*se_total_random
-            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df["weight_fixed model"])
-            se_total_fixed=(1/np.sum(df["weight_fixed model"]))**0.5
+            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df['weight_fixed model'])
+            se_total_fixed=(1/np.sum(df['weight_fixed model']))**0.5
             lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
             upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
             RRave_random=np.exp(LnRR_total_random)
@@ -814,8 +816,10 @@ def uploader_ratios():
             df['LnRR*w_fixed']=df['weight_fixed model']*df['RiskRatio']
             df['LnRR2*w_fixed']=df['weight_fixed model']*df['RiskRatio']**2
             df['d']=df['LnRR']*(3**0.5)*3.1415
+            df['Ln*w_fixed']=df['weight_fixed model']*df['LnRR']
+            df['Ln2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
 
-            qq=np.sum(df['weight_fixed model']*df['d']**2)-((np.sum(df['weight_fixed model']*df['d']))**2/np.sum(df['weight_fixed model']))
+            qq=np.sum(df['Ln2*w_fixed'])-((np.sum(df['Ln*w_fixed']))**2/np.sum(df['weight_fixed model']))
             c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
             degf= len(df.index)-1
             if qq <= degf or degf==0:
@@ -830,12 +834,12 @@ def uploader_ratios():
             df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
             df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
 
-            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df["weight_random model"])
-            se_total_random=(1/np.sum(df["weight_random model"]))**0.5
+            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df['weight_random model'])
+            se_total_random=(1/np.sum(df['weight_random model']))**0.5
             lower_LnRR_random=LnRR_total_random-1.96*se_total_random
             upper_LnRR_random=LnRR_total_random+1.96*se_total_random
-            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df["weight_fixed model"])
-            se_total_fixed=(1/np.sum(df["weight_fixed model"]))**0.5
+            LnRR_total_fixed=np.sum(df['Ln*w_fixed'])/np.sum(df['weight_fixed model'])
+            se_total_fixed=(1/np.sum(df['weight_fixed model']))**0.5
             lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
             upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
             RRave_random=np.exp(LnRR_total_random)
@@ -859,7 +863,7 @@ def uploader_ratios():
             moder=results.as_html()
 
 
-            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model', 'd'] ,inplace=True, axis=1)
+            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model', 'd', 'Ln*w_fixed', 'Ln2*w_fixed'] ,inplace=True, axis=1)
             df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'weight(%)_random model', 'weight(%)_fixed model' ]
             df.index+=1
 
@@ -883,7 +887,7 @@ def uploader_ratios():
                 'lower_RRave_random': float("{0:.3f}".format(lower_RRave_random)),
                 'upper_RRave_random': float("{0:.3f}".format(upper_RRave_random)),
                 'Het_random': 100*float("{0:.3f}".format(I2)),
-                't2': float("{0:.3f}".format(t2)),
+                't2':float("{0:.3f}".format(t2)),
                 'LnRR_total_fixed': float("{0:.2f}".format(LnRR_total_fixed)),
                 'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
                 'se_total_fixed': float("{0:.3f}".format(se_total_fixed)),
