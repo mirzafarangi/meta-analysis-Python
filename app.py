@@ -53,13 +53,12 @@ def result():
 
             table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd, moderator]
 
-            print(moderator)
 
-            for n in moderator:
-                print(type(n))
-                if type(n) == str:
-                    n = float(n)
-                    print(n)
+            for n, i in enumerate(moderator):
+
+                if type(i) == str:
+                    moderator[n] = 0
+
 
 
 
@@ -392,7 +391,8 @@ def upload_file():
 
 
 
-            dict_sub = {}
+            dict_sub_fixed = {}
+            dict_sub_random = {}
             dict_sub_g_per_study = {}
             counter= 0
             ki_ki = []
@@ -500,8 +500,11 @@ def upload_file():
 
                 I2_random_sub=I2_fixed_sub
 
-                dict_sub [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub]
+                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub]
                 dict_sub_g_per_study [key] = list(g_per_study_sub)
+
+                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub]
+
 
 
 
@@ -511,16 +514,25 @@ def upload_file():
                 ki_ki = []
             else:
                 ki_ki.append("total")
-                dict_sub.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random]})
-                df_dict_sub = pd.DataFrame.from_dict(dict_sub, orient='index')
-                df_dict_sub.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
+                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed]})
+                df_dict_sub_fixed = pd.DataFrame.from_dict(dict_sub_fixed, orient='index')
+                df_dict_sub_fixed.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
+                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random]})
+                df_dict_sub_random = pd.DataFrame.from_dict(dict_sub_random, orient='index')
+                df_dict_sub_random.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
+
                 list_g = dict_sub_g_per_study.values()
-                list_gg = list(df_dict_sub["Hedges's g"])
-                gg_low = list(df_dict_sub["95%CI lower"])
-                gg_upp = list(df_dict_sub["95%CI upper"])
-                g_k = {k: v for k, v in zip(ki_ki,list_gg)}
-                print(ki_ki)
-                print(list_gg)
+
+                list_gg_fixed = list(df_dict_sub_fixed["Hedges's g"])
+                gg_low_fixed = list(df_dict_sub_fixed["95%CI lower"])
+                gg_upp_fixed = list(df_dict_sub_fixed["95%CI upper"])
+                g_k_fixed = {k: v for k, v in zip(ki_ki,list_gg_fixed)}
+
+                list_gg_random = list(df_dict_sub_random["Hedges's g"])
+                gg_low_random = list(df_dict_sub_random["95%CI lower"])
+                gg_upp_random = list(df_dict_sub_random["95%CI upper"])
+                g_k_random = {k: v for k, v in zip(ki_ki,list_gg_random)}
+
                 fvalue, pvalue = scipy.stats.f_oneway(*list_g)
                 print(fvalue, pvalue)
 
@@ -531,18 +543,28 @@ def upload_file():
                 print(k_sub)
                 new_k = [x-1 for x in k_sub]
 
-                df_dict_sub.insert(0, 'k', k_sub)
-                df_dict_sub.insert(8, 'df', new_k)
+                df_dict_sub_fixed.insert(0, 'k', k_sub)
+                df_dict_sub_fixed.insert(8, 'df', new_k)
+
+                df_dict_sub_random.insert(0, 'k', k_sub)
+                df_dict_sub_random.insert(8, 'df', new_k)
 
             study_list = list(map(lambda x: str(x), df['Study'].tolist()))
             resultData = {
                 'study_list': study_list,
-                'list_gg': list_gg,
                 'ke_ke':ki_ki,
-                'gg_low': gg_low,
-                'gg_upp': gg_upp,
                 'fvalue': fvalue,
                 'pvalue': pvalue,
+
+                'list_gg_fixed': list_gg_fixed,
+                'gg_low_fixed': gg_low_fixed,
+                'gg_upp_fixed': gg_upp_fixed,
+
+
+                'list_gg_random': list_gg_random,
+                'gg_low_random': gg_low_random,
+                'gg_upp_random': gg_upp_random,
+
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'seg_list': df["SEg"].tolist(),
                 'g_lower_list': df["95%CI-Lower"].tolist(),
@@ -550,7 +572,8 @@ def upload_file():
                 'weight_random_list': df["weight(%)-random model %"].tolist(),
                 'weight_fixed_list': df["weight(%)-fixed model"].tolist(),
                 'total': HTML(df.to_html(classes="responsive-table-2 rt cf")),
-                'total2': HTML(df_dict_sub.to_html(classes="responsive-table-2 rt cf")),
+                'total_random': HTML(df_dict_sub_random.to_html(classes="responsive-table-2 rt cf")),
+                'total_fixed': HTML(df_dict_sub_fixed.to_html(classes="responsive-table-2 rt cf")),
                 'ave_g_fixed': float("{0:.2f}".format(g_total_fixed)),
                 'ave_SEg_fixed': float("{0:.2f}".format(sg_total_fixed)),
                 'lower_gg_fixed': float("{0:.2f}".format(lower_g_fixed)),
@@ -590,6 +613,11 @@ def result_corr():
 
 
             table=[study, correlation, sample, moderator]
+            for n, i in enumerate(moderator):
+
+                if type(i) == str:
+                    moderator[n] = 0
+
             df2=pd.DataFrame(table)
             df2 = df2.transpose()
 
@@ -890,6 +918,11 @@ def result_ratios():
             moderator = [row['moderator'] for row in request.json]
 
             table=[study, g1_e, g1_ne, g2_e, g2_ne, moderator]
+            for n, i in enumerate(moderator):
+
+                if type(i) == str:
+                    moderator[n] = 0
+
             df2=pd.DataFrame(table)
             df2 = df2.transpose()
 

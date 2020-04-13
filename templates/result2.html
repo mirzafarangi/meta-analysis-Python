@@ -12,7 +12,7 @@
 </div>
 <p></p>
 <p></p>
-<h4>Table.2 Summary of results</h4>
+<h4>Table.2 Summary of results - fixed and random effect models</h4>
 <div id="table" align="left">
   <table style="width:100%">
     <thead>
@@ -136,18 +136,24 @@
 </div>
 <p></p>
 <p></p>
-<h4>Table.4 Results of Subgroup Analysis </h4>
+<h4>Table.4 Results of Subgroup Analysis - fixed and random effect models</h4>
 <p></p>
-  {{total2}}
+<h5>fixed model</h5>
+  {{total_fixed}}
+<p></p>
+<h5>random model</h5>
+<p></p>
+  {{total_random}}
 <p></p>
 <h5>Results of ANOVA for subgroups </h5>
-<p></p>
-F = {{fvalue}} , p value = {{pvalue}}
-<p></p>
-<p></p>
-<h4>Fig.4 Intervals of effect sizes for subgroups</h4>
+<p> F value = {{fvalue}}, p value = {{pvalue}}</p>
+<h4>Fig.4 Intervals of effect sizes for subgroups - fixed and random effect models</h4>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
-<div id="chart_div"></div>
+<h5>fixed model</h5>
+<div id="chart_div_fixed"></div>
+<p></p>
+<h5>random model</h5>
+<div id="chart_div_random"></div>
 <p></p>
 
 
@@ -356,7 +362,7 @@ var g_ave = {{ave_g_random}};
     yaxis: {
       range: [0, 1.5]
     },
-    title:'Funnel Plot random effect (Y: Standard Error (SEg) - X: Effect Size (g))'
+    title:'Funnel Plot random model (Y: Standard Error (SEg) - X: Effect Size (g))'
   };
 
   Plotly.newPlot('myDiv0', data, layout);
@@ -407,7 +413,7 @@ var g_ave = {{ave_g_random}};
       yaxis: {
         range: [0, 1.5]
       },
-      title:'Funnel Plot random effect (Y: Standard Error (SEg) - X: Effect Size (g))'
+      title:'Funnel Plot fixed model (Y: Standard Error (SEg) - X: Effect Size (g))'
     };
 
     Plotly.newPlot('myDiv1', data, layout);
@@ -425,19 +431,19 @@ var g_ave = {{ave_g_random}};
       data.addColumn('number', 'effect size');
       data.addColumn({type: 'number', role: 'interval'});
       data.addColumn({type: 'number', role: 'interval'});
-  var list_gg = {{list_gg}};
+  var list_gg_random = {{list_gg_random}};
   var ke_ke = {{ke_ke | safe}};
-  var gg_low = {{gg_low}};
-  var gg_upp = {{gg_upp}};
+  var gg_low_random = {{gg_low_random}};
+  var gg_upp_random = {{gg_upp_random}};
   arrSum = function(arr){
     return arr.reduce(function(a,b){
       return a + b
     }, 0);
-    sum_gg = arrSum(list_gg)
+    sum_gg_random = arrSum(list_gg_random)
   }
-  for (var i=0; i<gg_low.length; i++) {
+  for (var i=0; i<gg_low_random.length; i++) {
       data.addRows([
-        [ke_ke[i], list_gg[i], '.', gg_low[i], gg_upp[i], list_gg[i], gg_low[i], gg_upp[i]]
+        [ke_ke[i], list_gg_random[i], '.', gg_low_random[i], gg_upp_random[i], list_gg_random[i], gg_low_random[i], gg_upp_random[i]]
       ])};
 
       var options = {
@@ -460,7 +466,61 @@ var g_ave = {{ave_g_random}};
         },
       };
 
-      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div_random'));
+      chart.draw(data, options);
+    },
+    packages: ['corechart']
+  });
+  </script>
+  <script>
+    google.charts.load('current', {
+    callback: function () {
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'string', role: 'annotation'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+  var list_gg_fixed = {{list_gg_fixed}};
+  var ke_ke = {{ke_ke | safe}};
+  var gg_low_fixed = {{gg_low_fixed}};
+  var gg_upp_fixed = {{gg_upp_fixed}};
+  arrSum = function(arr){
+    return arr.reduce(function(a,b){
+      return a + b
+    }, 0);
+    sum_gg_fixed = arrSum(list_gg_fixed)
+  }
+  for (var i=0; i<gg_low_fixed.length; i++) {
+      data.addRows([
+        [ke_ke[i], list_gg_fixed[i], '.', gg_low_fixed[i], gg_upp_fixed[i], list_gg_fixed[i], gg_low_fixed[i], gg_upp_fixed[i]]
+      ])};
+
+      var options = {
+        annotations: {
+          stem: {
+            color: 'transparent',
+            length: -6
+          },
+          textStyle: {
+            auraColor: '#ffffff',
+            color: '#000000'
+          }
+        },
+        pointSize: 3,
+        legend: 'none',
+        orientation: 'horizontal',
+        vAxis: {
+          minValue: -1,
+          ticks: [0, 1, 2, 3, 4, 5, 6, 7,8,7]
+        },
+      };
+
+      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div_fixed'));
       chart.draw(data, options);
     },
     packages: ['corechart']
