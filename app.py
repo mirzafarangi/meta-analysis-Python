@@ -52,14 +52,21 @@ def result():
 
 
             table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd, moderator]
-            df=pd.DataFrame(table)
-            df = df.transpose()
+            df2=pd.DataFrame(table)
+            df2 = df2.transpose()
 
-            df.index+=1
+            df2.index+=1
 
-            df = df.convert_objects(convert_numeric=True)
+            df = pd.DataFrame()
+
+            list = [0,1,2,3,4,5,6,7]
+
+            for i in list:
+                df[i] =  pd.to_numeric(df2[i], errors='ignore')
+
 
             df['Spooled']=(((df[1]-1)*df[3]**2+(df[4]-1)*df[6]**2)/(df[1]+df[4]-2))**0.5
+
 
             df['d']=(df[5]-df[2])/df['Spooled']
             df['g']=df['d']*(1-(3/(4*(df[1]+df[4])-9)))
@@ -126,6 +133,8 @@ def result():
 
             I2_random=I2_fixed
 
+
+
             #moderator-regression analysis
 
             moderator_=df[7]
@@ -146,6 +155,8 @@ def result():
             writer = pd.ExcelWriter('results/MetaMar_result_smd.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
+
+            print(df)
 
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
@@ -567,11 +578,16 @@ def result_corr():
 
 
             table=[study, correlation, sample, moderator]
-            df=pd.DataFrame(table)
-            df = df.transpose()
+            df2=pd.DataFrame(table)
+            df2 = df2.transpose()
 
 
-            df = df.convert_objects(convert_numeric=True)
+            df = pd.DataFrame()
+            list = [0,1,2,3]
+
+            for i in list:
+                df[i] =  pd.to_numeric(df2[i], errors='ignore')
+
 
             #fixed
 
@@ -862,9 +878,19 @@ def result_ratios():
             moderator = [row['moderator'] for row in request.json]
 
             table=[study, g1_e, g1_ne, g2_e, g2_ne, moderator]
-            df=pd.DataFrame(table)
-            df = df.transpose()
-            df = df.convert_objects(convert_numeric=True)
+            df2=pd.DataFrame(table)
+            df2 = df2.transpose()
+
+            df2.index+=1
+
+            df = pd.DataFrame()
+
+            list = [0,1,2,3,4,5]
+
+            for i in list:
+                df[i] =  pd.to_numeric(df2[i], errors='ignore')
+
+
 
             df['RiskRatio']=(df[1]/(df[1]+df[2]))/(df[3]/(df[3]+df[4]))
             df['LnRR']=np.log(df['RiskRatio'])

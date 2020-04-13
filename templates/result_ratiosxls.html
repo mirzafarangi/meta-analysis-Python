@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
 {% block app %}
 
-
+<a href="/return-file-ratioxl/" target="blank">
+  <h5 align="center">Please Click to Download the results as an Excel file</h5>
+</a>
 <p></p>
-<h4>Table of effect sizes, weights(fixed and random model) and 95%CIs for studies</h4>
+<h4>Table.1 summary of studies</h4>
 <div style="overflow-x:auto;">
       {{result_table}}
 </div>
 
 
 <p></p>
-<h4>Summary of results</h4>
+<h4>Table.2 Summary of results</h4>
 <div id="table" align="left">
   <table style="width:100%">
     <thead>
@@ -83,7 +85,7 @@
 </div>
 
 <div class="forest">
-      <h4>  Forestplot - fixed and random effect models</h4>
+      <h4> Fig.1 Forestplot - fixed and random effect models</h4>
 
       <div id="chartdiv"></div>
       <div id="chart2div"></div>
@@ -91,7 +93,7 @@
 
 <div class="regress" style="display:inline-block;">
   <p></p>
-  <h4>Meta regression results</h4>
+  <h4>Table.3 Results of Meta regression </h4>
   <p></p>
   <div style="overflow-x:auto;">
         {{moder | safe}}
@@ -101,9 +103,6 @@
   <p></p>
 
 <br>
-<a href="/return-file-ratioxl/" target="blank">
-  <h4 align="center">Please Click to Download the results as an Excel file</h4>
-</a>
 
 <p></p>
 
