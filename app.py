@@ -52,6 +52,17 @@ def result():
 
 
             table=[study, g1_sample, g1_mean, g1_sd, g2_sample, g2_mean, g2_sd, moderator]
+
+            print(moderator)
+
+            for n in moderator:
+                print(type(n))
+                if type(n) == str:
+                    n = float(n)
+                    print(n)
+
+
+
             df2=pd.DataFrame(table)
             df2 = df2.transpose()
 
@@ -63,6 +74,8 @@ def result():
 
             for i in list:
                 df[i] =  pd.to_numeric(df2[i], errors='ignore')
+
+
 
 
             df['Spooled']=(((df[1]-1)*df[3]**2+(df[4]-1)*df[6]**2)/(df[1]+df[4]-2))**0.5
@@ -156,7 +169,6 @@ def result():
             df.to_excel(writer,'Sheet1')
             writer.save()
 
-            print(df)
 
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
