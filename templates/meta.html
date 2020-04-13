@@ -1,8 +1,8 @@
 {% extends "layout.html" %} {% block app %}
 <br>
-
+<img src="/static/freud.jpg" alt="freud" align="right" style="width:442px;height:373px;">
 <h1>Meta-analysis: SMD Model</h1>
-<h4>In order to start your analysis please click on your preferred method:</h4>
+<h5>select your preferred method: manual data entry or Excel file upload? </h5>
 <br>
 
 <div id="table" align="left">
@@ -67,8 +67,9 @@
             <center> <b> <font color="#FE642E"> Group 2 </font> </b> </center>
           </td>
           <td rowspan="2">
-            <center> <b> <font color="#FF0000"> Moderator </font> </b> </center>
+            <center> <b> <font color="brown"> Moderator </font> </b> </center>
           </td>
+
         </tr>
 
         <tr>
@@ -113,7 +114,7 @@
           <td> <input type="number" step="0.001" v-model="row.g2_sample" name="g2_sample" required></td>
           <td> <input type="number" step="0.001" v-model="row.g2_mean" name="g2_mean" required></td>
           <td> <input type="number" step="0.001" v-model="row.g2_sd" name="g2_sd" required></td>
-          <td> <input type="number" step="0.001" v-model="row.moderator" name="moderator" required></td>
+          <td> <input type="number" step="0.001" v-model="row.moderator" name="moderator"></td>
           <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
         </tr>
       </tbody>
@@ -146,8 +147,9 @@
   </div>
 </div>
 </div>
-
 <div v-if="uploadMethod" class="data-entry-method method2">
+  <h4>Meta-analysis including meta regression and subgroup analysis </h4>
+  <p></p>
   <form action="/uploader" method="POST" enctype="multipart/form-data">
     <b>  &nbsp;Step1:</b> Download the raw excel file: <a href="/static/analysis_mean.xlsx" download> analysis_mean.xlsx </a>
     <p></p>
@@ -184,6 +186,7 @@
         g2_mean: "",
         g2_sd: "",
         moderator: ""
+
       }, ]
     },
     methods: {
@@ -197,6 +200,7 @@
             g2_mean: "",
             g2_sd: "",
             moderator: ""
+
           });
       },
       removeRow: function (index) {

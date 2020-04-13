@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
 {% block app %}
-<h4> <a href="/meta">Back to previous page </a></h4>
+<h4> <a href="/meta">Back </a></h4>
 <p></p>
 <p></p>
-<p></p>
-<p></p>
-<h4>Table of effect sizes, weights(fixed and random model) and 95%CIs for studies</h4>
+<a href="/return-file-smdxl/" target="blank">
+  <h5 align="center">Please Click to Download the results as an Excel file</h5>
+</a>
+<h4>Table.1 summary of studies</h4>
 <div style="overflow-x:auto;">
   {{total}}
 </div>
 <p></p>
 <p></p>
-<h4>Summary of results</h4>
+<h4>Table.2 Summary of results</h4>
 <div id="table" align="left">
   <table style="width:100%">
     <thead>
@@ -31,7 +32,7 @@
           <center>
             <font color="#2E9AFE"> SEg </font>
           </center>
-          </font>
+
         </td>
         <td>
           <center>
@@ -114,14 +115,20 @@
 
 <p></p>
 <div class="forest">
-  <h4> Forestplot - fixed and random effect models</h4>
+  <h4> Fig.1 Forestplot - fixed and random effect models</h4>
   <div id="fixedModelChartDiv"></div>
   <div id="randomModelChartDiv"></div>
 </div>
-
+<p></p>
+<p></p>
+<h4>Fig.2 Funnel Plot - fixed and random effect models </h4>
+	<div id='myDiv0'><!-- Plotly chart will be drawn inside this DIV --></div>
+  <p></p>
+<div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+<p></p>
 <div class="regress" style="display:inline-block;">
   <p></p>
-  <h4>Meta regression results</h4>
+  <h4>Table.3 Results of Meta regression </h4>
   <p></p>
   <div style="overflow-x:auto;">
     {{moder | safe}}
@@ -129,12 +136,21 @@
 </div>
 <p></p>
 <p></p>
-
-<a href="/return-file-smdxl/" target="blank">
-  <h4 align="center"><b>Please Click to Download the results as an Excel file</h4></b>
-</a>
-
+<h4>Table.4 Results of Subgroup Analysis </h4>
 <p></p>
+  {{total2}}
+<p></p>
+<h5>Results of ANOVA for subgroups </h5>
+<p></p>
+F = {{fvalue}} , p value = {{pvalue}}
+<p></p>
+<p></p>
+<h4>Fig.4 Intervals of effect sizes for subgroups</h4>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="chart_div"></div>
+<p></p>
+
+
 
 
 {% endblock %}
@@ -296,4 +312,158 @@ AmCharts.makeChart("randomModelChartDiv", {
 });
 
 </script>
+<script type="text/javascript">
+var gg = {{g_list}};
+var sgg = {{seg_list}};
+var g_ave = {{ave_g_random}};
+
+  var trace1 = {
+    x: gg,
+    y: sgg,
+    mode: 'markers',
+    type: 'scatter',
+    marker: { size: 12 },
+    name: "Hedges' g"
+  };
+  var trace2 = {
+    x: [g_ave, g_ave, g_ave],
+    y: [0, 0.5, 1],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+  var trace3 = {
+    x: [Math.min.apply(Math, gg)-0.5, g_ave, 2*g_ave - Math.min.apply(Math, gg)+0.5],
+    y: [0, 1, 0],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+  var trace4 = {
+    x: [g_ave, g_ave, g_ave],
+    y: [0, 1, 2],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+
+  var data = [ trace1, trace2, trace3, trace4 ];
+
+  var layout = {
+    xaxis: {
+      range: [ 0, 6 ]
+    },
+    yaxis: {
+      range: [0, 1.5]
+    },
+    title:'Funnel Plot random effect (Y: Standard Error (SEg) - X: Effect Size (g))'
+  };
+
+  Plotly.newPlot('myDiv0', data, layout);
+
+
+</script>
+<script>
+  var gg = {{g_list}};
+  var sgg = {{seg_list}};
+  var g_ave_f = {{ave_g_fixed}};
+
+    var trace1 = {
+      x: gg,
+      y: sgg,
+      mode: 'markers',
+      type: 'scatter',
+      marker: { size: 12 },
+      name: "Hedges' g"
+    };
+    var trace2 = {
+      x: [g_ave_f, g_ave_f, g_ave_f],
+      y: [0, 0.5, 1],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+    var trace3 = {
+      x: [Math.min.apply(Math, gg)-0.5, g_ave_f, 2*g_ave_f - Math.min.apply(Math, gg)+0.5],
+      y: [0, 1, 0],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+    var trace4 = {
+      x: [g_ave_f, g_ave_f, g_ave_f],
+      y: [0, 1, 2],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+
+    var data = [ trace1, trace2, trace3, trace4 ];
+
+    var layout = {
+      xaxis: {
+        range: [ 0, 6 ]
+      },
+      yaxis: {
+        range: [0, 1.5]
+      },
+      title:'Funnel Plot random effect (Y: Standard Error (SEg) - X: Effect Size (g))'
+    };
+
+    Plotly.newPlot('myDiv1', data, layout);
+</script>
+  <script>
+    google.charts.load('current', {
+    callback: function () {
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'string', role: 'annotation'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+  var list_gg = {{list_gg}};
+  var ke_ke = {{ke_ke | safe}};
+  var gg_low = {{gg_low}};
+  var gg_upp = {{gg_upp}};
+  arrSum = function(arr){
+    return arr.reduce(function(a,b){
+      return a + b
+    }, 0);
+    sum_gg = arrSum(list_gg)
+  }
+  for (var i=0; i<gg_low.length; i++) {
+      data.addRows([
+        [ke_ke[i], list_gg[i], '.', gg_low[i], gg_upp[i], list_gg[i], gg_low[i], gg_upp[i]]
+      ])};
+
+      var options = {
+        annotations: {
+          stem: {
+            color: 'transparent',
+            length: -6
+          },
+          textStyle: {
+            auraColor: '#ffffff',
+            color: '#000000'
+          }
+        },
+        pointSize: 3,
+        legend: 'none',
+        orientation: 'horizontal',
+        vAxis: {
+          minValue: -1,
+          ticks: [0, 1, 2, 3, 4, 5, 6, 7,8,7]
+        },
+      };
+
+      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    },
+    packages: ['corechart']
+  });
+  </script>
 {% endblock %}
