@@ -78,7 +78,7 @@
           <td> <input type="text" v-model="row.study" name="study" required></td>
           <td> <input type="number" step="0.00001" v-model="row.correlation" name="correlation" required></td>
           <td> <input type="number" step="0.00001" v-model="row.sample" name="sample" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.moderator" name="moderator" required></td>
+          <td> <input type="number" step="0.00001" v-model="row.moderator" name="moderator" ></td>
 
           <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
         </tr>
