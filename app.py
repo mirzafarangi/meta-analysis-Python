@@ -10,6 +10,7 @@ from IPython.display import display, HTML
 import statsmodels.api as sm
 from sklearn import datasets
 import scipy.stats
+from decimal import Decimal
 
 
 DEBUG = True
@@ -146,6 +147,35 @@ def result():
             I2_random=I2_fixed
 
 
+#Fail N safe calculation
+
+#method The file-drawer problem (Rosenthal, 1984)/Orwin/  Fail safe for critical effect size of .20, 0.6, 0.8 = ***
+
+            n_ziro = len(df['g'])
+            n_fs_random_larg = Decimal((n_ziro*(z_score_random-0.8))/0.8)
+            n_fs_random_medium = Decimal((n_ziro*(g_total_random-0.6))/0.6)
+            n_fs_random_small = Decimal((n_ziro*(g_total_random-0.2))/0.2)
+
+            n_fs_fixed_larg = Decimal((n_ziro*(g_total_fixed-0.8))/0.8)
+            n_fs_fixed_medium = Decimal((n_ziro*(g_total_fixed-0.6))/0.6)
+            n_fs_fixed_small = Decimal((n_ziro*(g_total_fixed-0.2))/0.2)
+#method classic
+            n_fs_random_05_two = Decimal((n_ziro*(z_score_random-1.96))/1.96)
+            n_fs_random_05_one_right = Decimal((n_ziro*(z_score_random-1.64))/1.64)
+
+            n_fs_random_01_two = Decimal((n_ziro*(z_score_random-2.58))/2.58)
+            n_fs_random_01_one_right = Decimal((n_ziro*(z_score_random-2.33))/2.33)
+
+
+            n_fs_fixed_05_two = Decimal((n_ziro*(z_score_fixed-1.96))/1.96)
+            n_fs_fixed_05_one_right = Decimal((n_ziro*(z_score_fixed-1.64))/1.64)
+
+            n_fs_fixed_01_two = Decimal((n_ziro*(z_score_fixed-2.58))/2.58)
+            n_fs_fixed_01_one_right = Decimal((n_ziro*(z_score_fixed-2.33))/2.33)
+
+
+
+
 
             #moderator-regression analysis
 
@@ -186,7 +216,21 @@ def result():
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
-                'moder': moder
+                'moder': moder,
+                'n_fs_random_larg': round(n_fs_random_larg, 2),
+                'n_fs_random_medium': round(n_fs_random_medium, 2),
+                'n_fs_random_small': round(n_fs_random_small, 2),
+                'n_fs_fixed_larg': round(n_fs_fixed_larg, 2),
+                'n_fs_fixed_medium': round(n_fs_fixed_medium, 2),
+                'n_fs_fixed_small': round(n_fs_fixed_small, 2),
+                'n_fs_random_05_two': round(n_fs_random_05_two, 2),
+                'n_fs_random_05_one_right': round(n_fs_random_05_one_right, 2),
+                'n_fs_random_01_two': round(n_fs_random_01_two, 2),
+                'n_fs_random_01_one_right': round(n_fs_random_01_one_right, 2),
+                'n_fs_fixed_05_two': round(n_fs_fixed_05_two, 2),
+                'n_fs_fixed_05_one_right': round(n_fs_fixed_05_one_right, 2),
+                'n_fs_fixed_01_two': round(n_fs_fixed_01_two, 2),
+                'n_fs_fixed_01_one_right': round(n_fs_fixed_01_one_right, 2)
             }
 
             content = render_template("result1.html", **resultData)
@@ -350,6 +394,34 @@ def upload_file():
 
             z_score_random=g_total_random/sg_total_random
             p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+#Fail N safe calculation
+
+#method The file-drawer problem (Rosenthal, 1984)/Orwin/  Fail safe for critical effect size of .20, 0.6, 0.8 = ***
+            listp = g_lower_per_study
+            n_ziro = len(listp)
+            n_fs_random_larg = Decimal((n_ziro*(z_score_random-0.8))/0.8)
+            n_fs_random_medium = Decimal((n_ziro*(g_total_random-0.6))/0.6)
+            n_fs_random_small = Decimal((n_ziro*(g_total_random-0.2))/0.2)
+
+            n_fs_fixed_larg = Decimal((n_ziro*(g_total_fixed-0.8))/0.8)
+            n_fs_fixed_medium = Decimal((n_ziro*(g_total_fixed-0.6))/0.6)
+            n_fs_fixed_small = Decimal((n_ziro*(g_total_fixed-0.2))/0.2)
+#method classic
+            n_fs_random_05_two = Decimal((n_ziro*(z_score_random-1.96))/1.96)
+            n_fs_random_05_one_right = Decimal((n_ziro*(z_score_random-1.64))/1.64)
+
+            n_fs_random_01_two = Decimal((n_ziro*(z_score_random-2.58))/2.58)
+            n_fs_random_01_one_right = Decimal((n_ziro*(z_score_random-2.33))/2.33)
+
+
+            n_fs_fixed_05_two = Decimal((n_ziro*(z_score_fixed-1.96))/1.96)
+            n_fs_fixed_05_one_right = Decimal((n_ziro*(z_score_fixed-1.64))/1.64)
+
+            n_fs_fixed_01_two = Decimal((n_ziro*(z_score_fixed-2.58))/2.58)
+            n_fs_fixed_01_one_right = Decimal((n_ziro*(z_score_fixed-2.33))/2.33)
+
+
 
             #Heterogeneity
             #random model
@@ -578,6 +650,21 @@ def upload_file():
                 'list_gg_random': list_gg_random,
                 'gg_low_random': gg_low_random,
                 'gg_upp_random': gg_upp_random,
+
+                'n_fs_random_larg': round(n_fs_random_larg, 2),
+                'n_fs_random_medium': round(n_fs_random_medium, 2),
+                'n_fs_random_small': round(n_fs_random_small, 2),
+                'n_fs_fixed_larg': round(n_fs_fixed_larg, 2),
+                'n_fs_fixed_medium': round(n_fs_fixed_medium, 2),
+                'n_fs_fixed_small': round(n_fs_fixed_small, 2),
+                'n_fs_random_05_two': round(n_fs_random_05_two, 2),
+                'n_fs_random_05_one_right': round(n_fs_random_05_one_right, 2),
+                'n_fs_random_01_two': round(n_fs_random_01_two, 2),
+                'n_fs_random_01_one_right': round(n_fs_random_01_one_right, 2),
+                'n_fs_fixed_05_two': round(n_fs_fixed_05_two, 2),
+                'n_fs_fixed_05_one_right': round(n_fs_fixed_05_one_right, 2),
+                'n_fs_fixed_01_two': round(n_fs_fixed_01_two, 2),
+                'n_fs_fixed_01_one_right': round(n_fs_fixed_01_one_right, 2),
 
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'seg_list': df["SEg"].tolist(),

@@ -1,8 +1,8 @@
 {% extends "layout.html" %} {% block app %}
 
-<h1>Effect Size Calculator</h1>
-<h2>Select the effect size Model:</h2>
-
+<h4>Effect Size Calculator</h4>
+<p></p>
+<p></p>
   <input type="radio" name="effectmodel" value="SMD" v-on:click="smd_model = true; r_model = false; ratio_model = false;" checked> SMD &nbsp;&nbsp;
   <input type="radio" name="effectmodel" value="r" v-on:click="smd_model = false; r_model = true; ratio_model = false;"> Correlation &nbsp;&nbsp;
   <input type="radio" name="effectmodel" value="ratio" v-on:click="smd_model = false; r_model = false; ratio_model = true;"> Risk Ratio &nbsp;&nbsp;
