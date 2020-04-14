@@ -521,6 +521,20 @@ def upload_file():
                 df_dict_sub_random = pd.DataFrame.from_dict(dict_sub_random, orient='index')
                 df_dict_sub_random.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
 
+
+
+
+
+                for n, i in enumerate(ki_ki):
+
+                    if type(i) == float:
+                        ki_ki[n] = 'NaN'
+
+                ko_ko = ki_ki
+
+                print(ko_ko)
+
+
                 list_g = dict_sub_g_per_study.values()
 
                 list_gg_fixed = list(df_dict_sub_fixed["Hedges's g"])
@@ -531,7 +545,7 @@ def upload_file():
                 list_gg_random = list(df_dict_sub_random["Hedges's g"])
                 gg_low_random = list(df_dict_sub_random["95%CI lower"])
                 gg_upp_random = list(df_dict_sub_random["95%CI upper"])
-                g_k_random = {k: v for k, v in zip(ki_ki,list_gg_random)}
+                g_k_random = {k: v for k, v in zip(ko_ko,list_gg_random)}
 
                 fvalue, pvalue = scipy.stats.f_oneway(*list_g)
                 print(fvalue, pvalue)
@@ -552,7 +566,7 @@ def upload_file():
             study_list = list(map(lambda x: str(x), df['Study'].tolist()))
             resultData = {
                 'study_list': study_list,
-                'ke_ke':ki_ki,
+                'ke_ke':ko_ko,
                 'fvalue': fvalue,
                 'pvalue': pvalue,
 
