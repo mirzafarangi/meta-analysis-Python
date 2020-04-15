@@ -1,0 +1,682 @@
+{% extends "layout.html" %}
+{% block app %}
+<h4> <a href="/meta">Back </a></h4>
+<p></p>
+<p></p>
+<a href="/return-file-smdxl/" target="blank">
+  <h5 align="center">Please Click to Download the results as an Excel file</h5>
+</a>
+<h4>Table.1 summary of studies</h4>
+<div style="overflow-x:auto;">
+  {{total}}
+</div>
+<p></p>
+<p></p>
+<h4>Table.2 Summary of results - fixed and random effect models</h4>
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center>
+              <font color="black"> </font>
+            </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> Hedges'g (SMD) </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> SEg </font>
+          </center>
+
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> 95%CI </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> z score </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> p value </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> Heterogeneity (I<sup>2</sup>) </font>
+          </center>
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> Fixed Effect Model </font>
+          </center>
+        </td>
+        <td>
+          <center>{{ave_g_fixed}}</center>
+        </td>
+        <td>
+          <center>{{ave_SEg_fixed}} </center>
+        </td>
+        <td>
+          <center>[{{lower_gg_fixed}},{{upper_gg_fixed}}] </center>
+        </td>
+        <td>
+          <center>{{z_score_fixed}} </center>
+        </td>
+        <td>
+          <center>{{p_value_fixed}} </center>
+        </td>
+        <td>
+          <center>{{Het_fixed}}% </center>
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> Random Effect Model </font>
+          </center>
+        </td>
+        <td>
+          <center>{{ave_g_random}}</center>
+        </td>
+        <td>
+          <center>{{ave_SEg_random}} </center>
+        </td>
+        <td>
+          <center>[{{lower_gg_random}},{{upper_gg_random}}]</center>
+        </td>
+        <td>
+          <center>{{z_score_random}} </center>
+        </td>
+        <td>
+          <center>{{p_value_random}} </center>
+        </td>
+        <td>
+          <center>{{Het_random}}%, T<sup>2</sup>={{t2}} </center>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+<div class="forest">
+  <h4> Fig.1 Forestplot - fixed and random effect models</h4>
+  <div id="fixedModelChartDiv"></div>
+  <div id="randomModelChartDiv"></div>
+</div>
+<p></p>
+<p></p>
+<h4>Fig.2 Funnel Plot - fixed and random effect models </h4>
+	<div id='myDiv0'><!-- Plotly chart will be drawn inside this DIV --></div>
+  <p></p>
+<div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+<p></p>
+<h4>Table.3 Fail-N Safe - fixed and random effect models </h4>
+<p></p>
+
+
+<div id="table" align="left">
+  <table style="width:100%">
+    <thead>
+      <tr>
+        <td>
+          <center>
+              <font color="black"> <b>Bias of the analysis regarding file-drawer problem</b> </font>
+            </center>
+        </td>
+
+        <td>
+          <center>
+            <font color="#2E9AFE"> fixed model </font>
+          </center>
+        </td>
+        <td>
+          <center>
+            <font color="#2E9AFE"> random model </font>
+          </center>
+
+        </td>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <td colspan="3">
+
+            <font color="grey"> Orwin's Fail-N Safe (1983), based on Rosenthal (1979) <br> Fail safe for critical effect size of: </font>
+
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> small (critical g = 0.2) </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_small}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_small}} </center>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> medium (critical g = 0.6) </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_medium}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_medium}} </center>
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900">  larg (critical g = 0.8) </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_larg}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_larg}} </center>
+        </td>
+
+      </tr>
+      <tr>
+        <td colspan="3">
+
+              <font color="grey"> <p></p> Rosenberg's Fail-N Safe (2005)<br> Fail safe for critical Z score of: </font>
+
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> &alpha; = 0.05 two-tailed </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_05_two}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_05_two}} </center>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900"> &alpha; = 0.05 one-tailed </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_05_one_right}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_05_one_right}} </center>
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900">  &alpha; = 0.01 two-tailed </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_01_two}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_01_two}} </center>
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <font color="#FF9900">  &alpha; = 0.01 one-tailed </font>
+          </center>
+        </td>
+        <td>
+          <center>{{n_fs_fixed_01_one_right}}</center>
+        </td>
+        <td>
+          <center>{{n_fs_random_01_one_right}} </center>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="regress" style="display:inline-block;">
+  <p></p>
+  <h4>Table.4 Results of Meta regression </h4>
+  <p></p>
+  <div style="overflow-x:auto;">
+    {{moder | safe}}
+  </div>
+</div>
+<p></p>
+<p></p>
+<h4>Table.5 Results of Subgroup Analysis - fixed and random effect models</h4>
+
+<p></p>
+<h5>fixed model</h5>
+  {{total_fixed}}
+<p></p>
+<h5>random model</h5>
+<p></p>
+  {{total_random}}
+<p></p>
+<h5>Results of ANOVA for subgroups </h5>
+<p> F value = {{fvalue}}, p value = {{pvalue}}</p>
+<h4>Fig.4 Intervals of effect sizes for subgroups - fixed and random effect models</h4>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<h5>fixed model</h5>
+<div id="chart_div_fixed"></div>
+<p></p>
+<h5>random model</h5>
+<div id="chart_div_random"></div>
+<p></p>
+
+
+
+
+{% endblock %}
+{% block script %}
+<script>
+const study = {{study_list | safe}}
+const g = {{g_list}}
+const g_lower = {{g_lower_list}}
+const g_upper = {{g_upper_list}}
+const g_wf = {{weight_fixed_list}}
+const g_w = {{weight_random_list}}
+const list = []
+
+let fixedModelChartData = []
+let randomModelChartData = []
+
+fixedModelChartData.push({
+  "category": "",
+  "measure": 0,
+  "bullet": "",
+  "bulletSize": 0,
+  "high": 0,
+  "low": 0
+})
+
+
+for (var i=0; i<g.length; i++) {
+  fixedModelChartData.push({
+    "category": study[i],
+    "measure": g[i].toFixed(3),
+    "bullet": "square",
+    "bulletSize": g_wf[i].toFixed(0),
+    "high": g_upper[i].toFixed(3),
+    "low": g_lower[i].toFixed(3)
+  })
+}
+
+fixedModelChartData.push({
+  "category": "g(ave) fixed model",
+  "measure": {{ave_g_fixed}},
+  "bullet": "diamond",
+  "bulletSize": 25,
+  "high": {{upper_gg_fixed}},
+  "low": {{lower_gg_fixed}}
+})
+
+AmCharts.makeChart("fixedModelChartDiv", {
+  "type": "serial",
+  "theme": "light",
+  "rotate": true,
+  "fontSize": 18,
+  "categoryAxis": {
+    "gridAlpha": 0,
+  },
+  "valueAxes": [{
+    "guides": [{
+      "value": 2.2,
+      "dashLength": 3,
+      "lineThickness": 2
+    }]
+  }],
+  "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+  },
+  "dataProvider": fixedModelChartData,
+  "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+  }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+  }],
+  "categoryField": "category"
+});
+
+
+randomModelChartData.push({
+  "category": "",
+  "measure": 0,
+  "bullet": "",
+  "bulletSize": 0,
+  "high": 0,
+  "low": 0
+})
+
+for (var i = 0; i < g.length; i++) {
+  randomModelChartData.push({
+    "category": study[i],
+    "measure": g[i].toFixed(3),
+    "bullet": "square",
+    "bulletSize": g_w[i].toFixed(0),
+    "high": g_upper[i].toFixed(3),
+    "low": g_lower[i].toFixed(3)
+  })
+}
+
+randomModelChartData.push({
+  "category": "g(ave) random model",
+  "measure": {{ave_g_random}},
+  "bullet": "diamond",
+  "bulletSize": 25,
+  "high": {{upper_gg_random}},
+  "low": {{lower_gg_random}}
+})
+
+AmCharts.makeChart("randomModelChartDiv", {
+  "type": "serial",
+  "theme": "light",
+  "rotate": true,
+  "fontSize": 18,
+  "categoryAxis": {
+    "gridAlpha": 0,
+  },
+  "valueAxes": [{
+    "guides": [{
+      "value": 2.2,
+      "dashLength": 3,
+      "lineThickness": 2
+    }]
+  }],
+  "chartCursor": {
+    "fullWidth": true,
+    "graphBulletSize": 1,
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0.1
+  },
+  "dataProvider": randomModelChartData,
+  "graphs": [{
+    "lineAlpha": 0,
+    "bulletField": "bullet",
+    "bulletSizeField": "bulletSize",
+    "valueField": "measure",
+    "lineColor": "#00c20d",
+    "balloonText": "<strong>[[value]]</strong> 95%CI([[low]],[[high]])"
+  }, {
+    "type": "ohlc",
+    "highField": "high",
+    "lowField": "low",
+    "openField": "measure",
+    "closeField": "measure",
+    "fixedColumnWidth": 1,
+    "lineColor": "#00c20d",
+    "showBalloon": false
+  }],
+  "categoryField": "category"
+});
+
+</script>
+<script type="text/javascript">
+var gg = {{g_list}};
+var sgg = {{seg_list}};
+var g_ave = {{ave_g_random}};
+
+  var trace1 = {
+    x: gg,
+    y: sgg,
+    mode: 'markers',
+    type: 'scatter',
+    marker: { size: 12 },
+    name: "Hedges' g"
+  };
+  var trace2 = {
+    x: [g_ave, g_ave, g_ave],
+    y: [0, 0.5, 1],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+  var trace3 = {
+    x: [Math.min.apply(Math, gg)-0.5, g_ave, 2*g_ave - Math.min.apply(Math, gg)+0.5],
+    y: [0, 1, 0],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+  var trace4 = {
+    x: [g_ave, g_ave, g_ave],
+    y: [0, 1, 2],
+    mode: 'lines',
+    type: 'scatter',
+    name: ''
+  };
+
+  var data = [ trace1, trace2, trace3, trace4 ];
+
+  var layout = {
+    xaxis: {
+      range: [ 0, 6 ]
+    },
+    yaxis: {
+      range: [0, 1.5]
+    },
+    title:'Funnel Plot random model (Y: Standard Error (SEg) - X: Effect Size (g))'
+  };
+
+  Plotly.newPlot('myDiv0', data, layout);
+
+
+</script>
+<script>
+  var gg = {{g_list}};
+  var sgg = {{seg_list}};
+  var g_ave_f = {{ave_g_fixed}};
+
+    var trace1 = {
+      x: gg,
+      y: sgg,
+      mode: 'markers',
+      type: 'scatter',
+      marker: { size: 12 },
+      name: "Hedges' g"
+    };
+    var trace2 = {
+      x: [g_ave_f, g_ave_f, g_ave_f],
+      y: [0, 0.5, 1],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+    var trace3 = {
+      x: [Math.min.apply(Math, gg)-0.5, g_ave_f, 2*g_ave_f - Math.min.apply(Math, gg)+0.5],
+      y: [0, 1, 0],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+    var trace4 = {
+      x: [g_ave_f, g_ave_f, g_ave_f],
+      y: [0, 1, 2],
+      mode: 'lines',
+      type: 'scatter',
+      name: ''
+    };
+
+    var data = [ trace1, trace2, trace3, trace4 ];
+
+    var layout = {
+      xaxis: {
+        range: [ 0, 6 ]
+      },
+      yaxis: {
+        range: [0, 1.5]
+      },
+      title:'Funnel Plot fixed model (Y: Standard Error (SEg) - X: Effect Size (g))'
+    };
+
+    Plotly.newPlot('myDiv1', data, layout);
+</script>
+  <script>
+    google.charts.load('current', {
+    callback: function () {
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'string', role: 'annotation'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+  var list_gg_random = {{list_gg_random}};
+  var ke_ke = {{ke_ke | safe}};
+  var g_ave_r = {{ave_g_random}};
+  var gg_low_random = {{gg_low_random}};
+  var gg_upp_random = {{gg_upp_random}};
+  arrSum = function(arr){
+    return arr.reduce(function(a,b){
+      return a + b
+    }, 0);
+    sum_gg_random = arrSum(list_gg_random)
+  }
+  for (var i=0; i<gg_low_random.length; i++) {
+      data.addRows([
+        [ke_ke[i], list_gg_random[i], '.', gg_low_random[i], gg_upp_random[i], list_gg_random[i], gg_low_random[i], gg_upp_random[i]]
+      ])};
+
+      var options = {
+        annotations: {
+          stem: {
+            color: 'transparent',
+            length: -6
+          },
+          textStyle: {
+            auraColor: '#ffffff',
+            color: '#000000'
+          }
+        },
+        pointSize: 3,
+        legend: 'none',
+        orientation: 'horizontal',
+        vAxis: {
+          minValue: -1,
+          ticks: [0, 1, 2, 3, parseInt(3+g_ave_r)],
+          gridlines: {color: '#333', minSpacing: 1}
+        },
+      };
+
+      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div_random'));
+      chart.draw(data, options);
+    },
+    packages: ['corechart']
+  });
+  </script>
+  <script>
+    google.charts.load('current', {
+    callback: function () {
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'string', role: 'annotation'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn('number', 'effect size');
+      data.addColumn({type: 'number', role: 'interval'});
+      data.addColumn({type: 'number', role: 'interval'});
+  var list_gg_fixed = {{list_gg_fixed}};
+  var ke_ke = {{ke_ke | safe}};
+  var g_ave_f = {{ave_g_fixed}};
+
+  var gg_low_fixed = {{gg_low_fixed}};
+  var gg_upp_fixed = {{gg_upp_fixed}};
+  arrSum = function(arr){
+    return arr.reduce(function(a,b){
+      return a + b
+    }, 0);
+    sum_gg_fixed = arrSum(list_gg_fixed)
+  }
+  for (var i=0; i<gg_low_fixed.length; i++) {
+      data.addRows([
+        [ke_ke[i], list_gg_fixed[i], '.', gg_low_fixed[i], gg_upp_fixed[i], list_gg_fixed[i], gg_low_fixed[i], gg_upp_fixed[i]]
+      ])};
+
+      var options = {
+        annotations: {
+          stem: {
+            color: 'transparent',
+            length: -6
+          },
+          textStyle: {
+            auraColor: '#ffffff',
+            color: '#000000'
+          }
+        },
+        pointSize: 3,
+        legend: 'none',
+        orientation: 'horizontal',
+        vAxis: {
+          minValue: -1,
+          ticks: [0, 1, 2, 3, parseInt(1+g_ave_f)],
+          gridlines: {color: '#333', minSpacing: 1}
+        },
+
+      };
+
+      var chart = new google.visualization.ScatterChart(document.getElementById('chart_div_fixed'));
+      chart.draw(data, options);
+    },
+    packages: ['corechart']
+  });
+  </script>
+{% endblock %}

@@ -699,6 +699,444 @@ def upload_file():
             print(error)
             return render_template('error_content.html')
 
+@app.route('/example', methods = ['GET', 'POST'])
+def example():
+    if 1+1 == 2:
+        try:
+
+            xl=pd.ExcelFile('static/analysis_mean.xlsx')
+            df=xl.parse('Data')
+
+
+            def SE(sd_c,n_c,sd_a,n_a):
+                SE=(((n_c-1)*sd_c**2+(n_a-1)*sd_a**2)/(n_c+n_a-2))**0.5
+                return SE
+
+            def d(s,m_c,m_a):
+                d=(m_a-m_c)/s
+                return abs(d)
+
+            def g(d,n_c,n_a):
+                g=d*(1-(3/(4*(n_c+n_a)-9)))
+                return g
+
+            def i_n(n_c,n_a):
+                i=(1-(3/(4*(n_c+n_a)-9)))
+                return i
+
+            subgroup_dictionary = {}
+            for i in range(len(df['subgroup'])):
+                if not(df['subgroup'][i] in subgroup_dictionary.keys()):
+                    subgroup_dictionary[df['subgroup'][i]] = {'Study':[df['Study'][i]],'N1':[df['N1'][i]],'Mean1':[df['Mean1'][i]],'Sd1':[df['Sd1'][i]],'N2':[df['N2'][i]],'Mean2':[df['Mean2'][i]],'Sd2':[df['Sd2'][i]], 'Moderator': [df['Moderator'][i]], 'subgroup': [df['subgroup'][i]]}
+                else:
+                    subgroup_dictionary[df['subgroup'][i]]['Study'].append(df['Study'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['N1'].append(df['N1'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['Mean1'].append(df['Mean1'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['Sd1'].append(df['Sd1'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['N2'].append(df['N2'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['Mean2'].append(df['Mean2'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['Sd2'].append(df['Sd2'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['Moderator'].append(df['Moderator'][i])
+                    subgroup_dictionary[df['subgroup'][i]]['subgroup'].append(df['subgroup'][i])
+
+
+
+
+
+
+            s_per_study=SE(df['Sd1'],df['N1'],df['Sd2'],df['N2'])
+
+
+
+            d_per_study=abs(d(s_per_study,df['Mean1'],df['Mean2']))
+
+
+
+            g_per_study=g(d_per_study, df['N1'], df['N2'])
+
+
+
+            i_per_study=i_n(df['N1'], df['N2'])
+
+
+
+
+
+            n=df['N1']+df['N2']
+            n_1=(1/df['N1'])+(1/df['N2'])
+
+            se_d_per_study=((n_1+(d_per_study**2/(2*n))))**0.5
+            se_g_per_study=se_d_per_study*(1-3/(4*(n)-9))
+
+            d_lower_per_study=d_per_study-1.96*se_d_per_study
+            d_upper_per_study=d_per_study+1.96*se_d_per_study
+
+            g_lower_per_study=g_per_study-1.96*se_g_per_study
+            g_upper_per_study=g_per_study+1.96*se_g_per_study
+
+            w_s_d=1/se_d_per_study**2
+            d_s=w_s_d*d_per_study
+
+            w_s_g_fixed=1/se_g_per_study**2
+            g_s_fixed=w_s_g_fixed*g_per_study
+            g2_s_fixed=w_s_g_fixed*g_per_study**2
+
+
+            qq=np.sum(g2_s_fixed)-((np.sum(g_s_fixed))**2/np.sum(w_s_g_fixed))
+            c=np.sum(w_s_g_fixed)-((np.sum(w_s_g_fixed**2))/(np.sum(w_s_g_fixed)))
+            degf= len(df.index)-1
+            if qq<=degf or degf==0:
+                t2=0
+                I2_fixed=0
+            else:
+                t2=(qq-degf)/c
+                q_fixed=qq
+                I2_fixed=(q_fixed-degf)/q_fixed
+
+            w_s_g_random= 1/((se_g_per_study**2)+t2)
+            g_s_random=w_s_g_random*g_per_study
+            g_total_random=np.sum(g_s_random)/np.sum(w_s_g_random)
+            sg_total_random=(1/np.sum(w_s_g_random))**0.5
+
+            lower_g_random=g_total_random-1.96*sg_total_random
+            upper_g_random=g_total_random+1.96*sg_total_random
+
+            g_s_random=w_s_g_random*g_per_study
+
+            d_total=np.sum(d_s)/np.sum(w_s_d)
+            s_total=(1/np.sum(w_s_d))**0.5
+
+            lower_d=d_total-1.96*s_total
+            upper_d=d_total+1.96*s_total
+
+            g_total_fixed=np.sum(g_s_fixed)/np.sum(w_s_g_fixed)
+            sg_total_fixed=(1/np.sum(w_s_g_fixed))**0.5
+
+            lower_g_fixed=g_total_fixed-1.96*sg_total_fixed
+            upper_g_fixed=g_total_fixed+1.96*sg_total_fixed
+
+            df["Cohen's d"]=d_per_study
+            df["CorrectionFactor"]=i_per_study
+
+            df["Hedges'g (SMD)"]=g_per_study
+            df["SEg"]=se_g_per_study
+
+            df["95%CI-Lower"]= g_lower_per_study
+            df["95%CI-Upper"]= g_upper_per_study
+
+            df["weight(%)-fixed model"]=(w_s_g_fixed/sum(w_s_g_fixed))*100
+            df["weight(%)-random model %"]=(w_s_g_random/sum(w_s_g_random))*100
+
+            z_score_fixed=g_total_fixed/sg_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            z_score_random=g_total_random/sg_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+#Fail N safe calculation
+
+#method The file-drawer problem (Rosenthal, 1984)/Orwin/  Fail safe for critical effect size of .20, 0.6, 0.8 = ***
+            listp = g_lower_per_study
+            n_ziro = len(listp)
+            n_fs_random_larg = Decimal((n_ziro*(z_score_random-0.8))/0.8)
+            n_fs_random_medium = Decimal((n_ziro*(g_total_random-0.6))/0.6)
+            n_fs_random_small = Decimal((n_ziro*(g_total_random-0.2))/0.2)
+
+            n_fs_fixed_larg = Decimal((n_ziro*(g_total_fixed-0.8))/0.8)
+            n_fs_fixed_medium = Decimal((n_ziro*(g_total_fixed-0.6))/0.6)
+            n_fs_fixed_small = Decimal((n_ziro*(g_total_fixed-0.2))/0.2)
+#method classic
+            n_fs_random_05_two = Decimal((n_ziro*(z_score_random-1.96))/1.96)
+            n_fs_random_05_one_right = Decimal((n_ziro*(z_score_random-1.64))/1.64)
+
+            n_fs_random_01_two = Decimal((n_ziro*(z_score_random-2.58))/2.58)
+            n_fs_random_01_one_right = Decimal((n_ziro*(z_score_random-2.33))/2.33)
+
+
+            n_fs_fixed_05_two = Decimal((n_ziro*(z_score_fixed-1.96))/1.96)
+            n_fs_fixed_05_one_right = Decimal((n_ziro*(z_score_fixed-1.64))/1.64)
+
+            n_fs_fixed_01_two = Decimal((n_ziro*(z_score_fixed-2.58))/2.58)
+            n_fs_fixed_01_one_right = Decimal((n_ziro*(z_score_fixed-2.33))/2.33)
+
+
+
+            #Heterogeneity
+            #random model
+
+            I2_random=I2_fixed
+
+            #moderator-regression analysis
+            moderator_=df['Moderator']
+            effect_size=g_per_study
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+
+
+            df2=pd.DataFrame(index=['Fixed Effect Model','Random Effect Model'], columns=["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'Heterogeneity %'])
+            df2.xs('Fixed Effect Model')["Hedges's g"]= g_total_fixed
+            df2.xs('Fixed Effect Model')["SEg"]= sg_total_fixed
+            df2.xs('Fixed Effect Model')["95%CI lower"]= lower_g_fixed
+            df2.xs('Fixed Effect Model')["95%CI upper"]= upper_g_fixed
+            df2.xs('Fixed Effect Model')['Heterogeneity %']= 100*I2_fixed
+            df2.xs('Random Effect Model')["Hedges's g"]= g_total_random
+            df2.xs('Random Effect Model')["SEg"]= sg_total_random
+            df2.xs('Random Effect Model')["95%CI lower"]= lower_g_random
+            df2.xs('Random Effect Model')["95%CI upper"]= upper_g_random
+            df2.xs('Random Effect Model')['Heterogeneity %']= 100*I2_random
+
+            #Save the analysis
+
+            df.index+=1
+            writer = pd.ExcelWriter('results/MetaMar_result_smdxl.xlsx')
+            df.to_excel(writer,'Results per study')
+            df2.to_excel(writer,'Total Results')
+            writer.save()
+
+
+
+
+
+            dict_sub_fixed = {}
+            dict_sub_random = {}
+            dict_sub_g_per_study = {}
+            counter= 0
+            ki_ki = []
+            for index, key in enumerate(subgroup_dictionary):
+                print(key)
+                counter = counter +1
+
+                ki_ki.append(key)
+                df_sub = pd.DataFrame.from_dict(list(subgroup_dictionary.values())[index])
+
+
+
+                s_per_study_sub=SE(df_sub['Sd1'],df_sub['N1'],df_sub['Sd2'],df_sub['N2'])
+
+
+                d_per_study_sub=abs(d(s_per_study_sub,df_sub['Mean1'],df_sub['Mean2']))
+
+
+
+
+
+                g_per_study_sub=g(d_per_study_sub, df_sub['N1'], df_sub['N2'])
+
+
+
+                i_per_study_sub=i_n(df_sub['N1'], df_sub['N2'])
+
+
+
+
+
+
+                n_sub=df_sub['N1']+df_sub['N2']
+                n_1_sub=(1/df_sub['N1'])+(1/df_sub['N2'])
+
+                se_d_per_study_sub=((n_1_sub+(d_per_study_sub**2/(2*n_sub))))**0.5
+                se_g_per_study_sub=se_d_per_study_sub*(1-3/(4*(n_sub)-9))
+
+                d_lower_per_study_sub=d_per_study_sub-1.96*se_d_per_study_sub
+                d_upper_per_study_sub=d_per_study_sub+1.96*se_d_per_study_sub
+
+
+                g_lower_per_study_sub=g_per_study_sub-1.96*se_g_per_study_sub
+                g_upper_per_study_sub=g_per_study_sub+1.96*se_g_per_study_sub
+
+                w_s_d_sub=1/se_d_per_study_sub**2
+                d_s_sub=w_s_d_sub*d_per_study_sub
+
+                w_s_g_fixed_sub=1/se_g_per_study_sub**2
+                g_s_fixed_sub=w_s_g_fixed_sub*g_per_study_sub
+                g2_s_fixed_sub=w_s_g_fixed_sub*g_per_study_sub**2
+
+
+                qq_sub=np.sum(g2_s_fixed_sub)-((np.sum(g_s_fixed_sub))**2/np.sum(w_s_g_fixed_sub))
+                c_sub=np.sum(w_s_g_fixed_sub)-((np.sum(w_s_g_fixed_sub**2))/(np.sum(w_s_g_fixed_sub)))
+                degf_sub= len(df_sub.index)-1
+                if qq_sub<=degf_sub or degf_sub==0:
+                    t2_sub=0
+                    I2_fixed_sub=0
+                else:
+                    t2_sub=(qq_sub-degf_sub)/c_sub
+                    q_fixed_sub=qq_sub
+                    I2_fixed_sub=(q_fixed_sub-degf_sub)/q_fixed_sub
+
+                w_s_g_random_sub= 1/((se_g_per_study_sub**2)+t2_sub)
+                g_s_random_sub=w_s_g_random_sub*g_per_study_sub
+                g_total_random_sub=np.sum(g_s_random_sub)/np.sum(w_s_g_random_sub)
+                sg_total_random_sub=(1/np.sum(w_s_g_random_sub))**0.5
+
+                lower_g_random_sub=g_total_random_sub-1.96*sg_total_random_sub
+                upper_g_random_sub=g_total_random_sub+1.96*sg_total_random_sub
+
+                g_s_random_sub=w_s_g_random_sub*g_per_study_sub
+
+                d_total_sub=np.sum(d_s_sub)/np.sum(w_s_d_sub)
+                s_total_sub=(1/np.sum(w_s_d_sub))**0.5
+
+                lower_d_sub=d_total_sub-1.96*s_total_sub
+                upper_d_sub=d_total_sub+1.96*s_total_sub
+
+                g_total_fixed_sub=np.sum(g_s_fixed_sub)/np.sum(w_s_g_fixed_sub)
+                sg_total_fixed_sub=(1/np.sum(w_s_g_fixed_sub))**0.5
+
+                lower_g_fixed_sub=g_total_fixed_sub-1.96*sg_total_fixed_sub
+                upper_g_fixed_sub=g_total_fixed_sub+1.96*sg_total_fixed_sub
+
+                df_sub["Cohen's d"]=d_per_study_sub
+                df_sub["CorrectionFactor"]=i_per_study_sub
+
+                df_sub["Hedges'g (SMD)"]=g_per_study_sub
+                df_sub["SEg"]=se_g_per_study_sub
+
+                df_sub["95%CI-Lower"]= g_lower_per_study_sub
+                df_sub["95%CI-Upper"]= g_upper_per_study_sub
+
+                df_sub["weight(%)-fixed model"]=(w_s_g_fixed_sub/sum(w_s_g_fixed_sub))*100
+                df_sub["weight(%)-random model %"]=(w_s_g_random_sub/sum(w_s_g_random_sub))*100
+
+                z_score_fixed_sub=g_total_fixed_sub/sg_total_fixed_sub
+                p_value_fixed_sub = scipy.stats.norm.sf(abs(z_score_fixed_sub))*2
+
+                z_score_random_sub=g_total_random_sub/sg_total_random_sub
+                p_value_random_sub = scipy.stats.norm.sf(abs(z_score_random_sub))*2
+
+
+                I2_random_sub=I2_fixed_sub
+
+                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub]
+                dict_sub_g_per_study [key] = list(g_per_study_sub)
+
+                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub]
+
+
+
+
+            if counter < 2:
+                df_dict_sub = pd.DataFrame({'subgroup analysis': ['Oops! There should be at least 2 subgroups for running this analysis!']})
+                list_g = []
+                ki_ki = []
+            else:
+                ki_ki.append("total")
+                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed]})
+                df_dict_sub_fixed = pd.DataFrame.from_dict(dict_sub_fixed, orient='index')
+                df_dict_sub_fixed.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
+                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random]})
+                df_dict_sub_random = pd.DataFrame.from_dict(dict_sub_random, orient='index')
+                df_dict_sub_random.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
+
+
+
+
+
+                for n, i in enumerate(ki_ki):
+
+                    if type(i) == float:
+                        ki_ki[n] = 'NaN'
+
+                ko_ko = ki_ki
+
+                print(ko_ko)
+
+
+                list_g = dict_sub_g_per_study.values()
+
+                list_gg_fixed = list(df_dict_sub_fixed["Hedges's g"])
+                gg_low_fixed = list(df_dict_sub_fixed["95%CI lower"])
+                gg_upp_fixed = list(df_dict_sub_fixed["95%CI upper"])
+                g_k_fixed = {k: v for k, v in zip(ki_ki,list_gg_fixed)}
+
+                list_gg_random = list(df_dict_sub_random["Hedges's g"])
+                gg_low_random = list(df_dict_sub_random["95%CI lower"])
+                gg_upp_random = list(df_dict_sub_random["95%CI upper"])
+                g_k_random = {k: v for k, v in zip(ko_ko,list_gg_random)}
+
+                fvalue, pvalue = scipy.stats.f_oneway(*list_g)
+                print(fvalue, pvalue)
+
+                k_sub = []
+                for x in dict_sub_g_per_study.values():
+                    k_sub.append(len(x))
+                k_sub.append(len(list(i_per_study)))
+                print(k_sub)
+                new_k = [x-1 for x in k_sub]
+
+                df_dict_sub_fixed.insert(0, 'k', k_sub)
+                df_dict_sub_fixed.insert(8, 'df', new_k)
+
+                df_dict_sub_random.insert(0, 'k', k_sub)
+                df_dict_sub_random.insert(8, 'df', new_k)
+
+            study_list = list(map(lambda x: str(x), df['Study'].tolist()))
+            resultData = {
+                'study_list': study_list,
+                'ke_ke':ko_ko,
+                'fvalue': fvalue,
+                'pvalue': pvalue,
+
+                'list_gg_fixed': list_gg_fixed,
+                'gg_low_fixed': gg_low_fixed,
+                'gg_upp_fixed': gg_upp_fixed,
+
+
+                'list_gg_random': list_gg_random,
+                'gg_low_random': gg_low_random,
+                'gg_upp_random': gg_upp_random,
+
+                'n_fs_random_larg': round(n_fs_random_larg, 2),
+                'n_fs_random_medium': round(n_fs_random_medium, 2),
+                'n_fs_random_small': round(n_fs_random_small, 2),
+                'n_fs_fixed_larg': round(n_fs_fixed_larg, 2),
+                'n_fs_fixed_medium': round(n_fs_fixed_medium, 2),
+                'n_fs_fixed_small': round(n_fs_fixed_small, 2),
+                'n_fs_random_05_two': round(n_fs_random_05_two, 2),
+                'n_fs_random_05_one_right': round(n_fs_random_05_one_right, 2),
+                'n_fs_random_01_two': round(n_fs_random_01_two, 2),
+                'n_fs_random_01_one_right': round(n_fs_random_01_one_right, 2),
+                'n_fs_fixed_05_two': round(n_fs_fixed_05_two, 2),
+                'n_fs_fixed_05_one_right': round(n_fs_fixed_05_one_right, 2),
+                'n_fs_fixed_01_two': round(n_fs_fixed_01_two, 2),
+                'n_fs_fixed_01_one_right': round(n_fs_fixed_01_one_right, 2),
+
+                'g_list': df["Hedges'g (SMD)"].tolist(),
+                'seg_list': df["SEg"].tolist(),
+                'g_lower_list': df["95%CI-Lower"].tolist(),
+                'g_upper_list': df["95%CI-Upper"].tolist(),
+                'weight_random_list': df["weight(%)-random model %"].tolist(),
+                'weight_fixed_list': df["weight(%)-fixed model"].tolist(),
+                'total': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+                'total_random': HTML(df_dict_sub_random.to_html(classes="responsive-table-2 rt cf")),
+                'total_fixed': HTML(df_dict_sub_fixed.to_html(classes="responsive-table-2 rt cf")),
+                'ave_g_fixed': float("{0:.2f}".format(g_total_fixed)),
+                'ave_SEg_fixed': float("{0:.2f}".format(sg_total_fixed)),
+                'lower_gg_fixed': float("{0:.2f}".format(lower_g_fixed)),
+                'upper_gg_fixed': float("{0:.2f}".format(upper_g_fixed)),
+                'ave_g_random': float("{0:.2f}".format(g_total_random)),
+                'ave_SEg_random': float("{0:.3f}".format(sg_total_random)),
+                'lower_gg_random': float("{0:.3f}".format(lower_g_random)),
+                'upper_gg_random': float("{0:.3f}".format(upper_g_random)),
+                'Het_fixed': 100 * float("{0:.3f}".format(I2_fixed)),
+                'Het_random': 100 * float("{0:.2f}".format(I2_random)),
+                't2': float("{0:.2f}".format(t2)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+
+                'moder': moder
+            }
+
+            return render_template("result2.html", **resultData)
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
+
 @app.route('/return-file-smdxl/')
 def return_file_smdxl():
     return send_file('results/MetaMar_result_smdxl.xlsx', attachment_filename='MetaMar_result_smdxl.xlsx')
