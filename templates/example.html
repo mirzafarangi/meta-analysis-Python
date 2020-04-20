@@ -126,40 +126,35 @@
   <p></p>
 <div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
 <p></p>
-<h4>Table.3 Fail-N Safe - fixed and random effect models </h4>
+<h4>Table.3 Fail-N Safe </h4>
 <p></p>
-
-
+<b>Bias of the analysis regarding the file-drawer problem</b> <<p></p>
+Fail-N Safe is the number of studies that would have changed the observed significance level (p value < {{p_val}}) to the expected significance level (p value = 0.05).
+<p></p>
+References:<br>
+* Rosenberg, M. S. (2005). The file‐drawer problem revisited: a general weighted method for calculating fail‐safe numbers in meta‐analysis. Evolution, 59(2), 464-468.
+<br>
+* Rosenthal, R. (1979). The file drawer problem and tolerance for null results. Psychological bulletin, 86(3), 638.
 <div id="table" align="left">
   <table style="width:100%">
-    <thead>
+
+    <tbody>
       <tr>
         <td>
           <center>
-              <font color="black"> <b>Bias of the analysis regarding file-drawer problem</b> </font>
+              <font color="black"> <b></b> </font>
             </center>
         </td>
 
         <td>
           <center>
-            <font color="#2E9AFE"> fixed model </font>
+            <font color="#FF7F50"> Rosenthal (1979) </font>
           </center>
         </td>
         <td>
           <center>
-            <font color="#2E9AFE"> random model </font>
+            <font color="#3CB371"> Rosenberg (2005) </font>
           </center>
-
-        </td>
-
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-
-        <td colspan="3">
-
-            <font color="grey"> Orwin's Fail-N Safe (1983), based on Rosenthal (1979) <br> Fail safe for critical effect size of: </font>
 
         </td>
 
@@ -167,111 +162,27 @@
       <tr>
         <td>
           <center>
-            <font color="#FF9900"> small (critical g = 0.2) </font>
-          </center>
+              <font color="black"> <b>Fail-N Safe</b> </font>
+            </center>
         </td>
-        <td>
-          <center>{{n_fs_fixed_small}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_small}} </center>
-        </td>
-      </tr>
-      <tr>
+
         <td>
           <center>
-            <font color="#FF9900"> medium (critical g = 0.6) </font>
+            <font color="#2E9AFE"> {{fns_rosenthal}} </font>
           </center>
         </td>
-        <td>
-          <center>{{n_fs_fixed_medium}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_medium}} </center>
-        </td>
-
-      </tr>
-      <tr>
         <td>
           <center>
-            <font color="#FF9900">  larg (critical g = 0.8) </font>
+            <font color="#2E9AFE"> {{fns_rosenberg}} </font>
           </center>
-        </td>
-        <td>
-          <center>{{n_fs_fixed_larg}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_larg}} </center>
-        </td>
 
-      </tr>
-      <tr>
-        <td colspan="3">
-
-              <font color="grey"> <p></p> Rosenberg's Fail-N Safe (2005)<br> Fail safe for critical Z score of: </font>
-
-        </td>
-
-      </tr>
-      <tr>
-        <td>
-          <center>
-            <font color="#FF9900"> &alpha; = 0.05 two-tailed </font>
-          </center>
-        </td>
-        <td>
-          <center>{{n_fs_fixed_05_two}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_05_two}} </center>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <center>
-            <font color="#FF9900"> &alpha; = 0.05 one-tailed </font>
-          </center>
-        </td>
-        <td>
-          <center>{{n_fs_fixed_05_one_right}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_05_one_right}} </center>
-        </td>
-
-      </tr>
-      <tr>
-        <td>
-          <center>
-            <font color="#FF9900">  &alpha; = 0.01 two-tailed </font>
-          </center>
-        </td>
-        <td>
-          <center>{{n_fs_fixed_01_two}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_01_two}} </center>
-        </td>
-
-      </tr>
-      <tr>
-        <td>
-          <center>
-            <font color="#FF9900">  &alpha; = 0.01 one-tailed </font>
-          </center>
-        </td>
-        <td>
-          <center>{{n_fs_fixed_01_one_right}}</center>
-        </td>
-        <td>
-          <center>{{n_fs_random_01_one_right}} </center>
         </td>
 
       </tr>
     </tbody>
   </table>
 </div>
-
+<p></p>
 <div class="regress" style="display:inline-block;">
   <p></p>
   <h4>Table.4 Results of Meta regression </h4>

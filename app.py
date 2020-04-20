@@ -819,31 +819,22 @@ def example():
             p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
 
 #Fail N safe calculation
-
-#method The file-drawer problem (Rosenthal, 1984)/Orwin/  Fail safe for critical effect size of .20, 0.6, 0.8 = ***
-
             listp = g_lower_per_study
-            n_ziro = len(listp)
-            n_fs_random_larg = Decimal((n_ziro*(z_score_random-0.8))/0.8)
-            n_fs_random_medium = Decimal((n_ziro*(g_total_random-0.6))/0.6)
-            n_fs_random_small = Decimal((n_ziro*(g_total_random-0.2))/0.2)
-
-            n_fs_fixed_larg = Decimal((n_ziro*(g_total_fixed-0.8))/0.8)
-            n_fs_fixed_medium = Decimal((n_ziro*(g_total_fixed-0.6))/0.6)
-            n_fs_fixed_small = Decimal((n_ziro*(g_total_fixed-0.2))/0.2)
-#method classic
-            n_fs_random_05_two = Decimal((n_ziro*(z_score_random-1.96))/1.96)
-            n_fs_random_05_one_right = Decimal((n_ziro*(z_score_random-1.64))/1.64)
-
-            n_fs_random_01_two = Decimal((n_ziro*(z_score_random-2.58))/2.58)
-            n_fs_random_01_one_right = Decimal((n_ziro*(z_score_random-2.33))/2.33)
+            n_study = len(listp)
+            n_ziro = n_study
+            z_per = (d_per_study) / se_d_per_study
+            fns_rosenthal= ((sum(z_per)**2)/(1.645**2)) - n_study
 
 
-            n_fs_fixed_05_two = Decimal((n_ziro*(z_score_fixed-1.96))/1.96)
-            n_fs_fixed_05_one_right = Decimal((n_ziro*(z_score_fixed-1.64))/1.64)
+            wi_z_05 = (sum(g_s_fixed)**2)/(1.812**2)-sum(w_s_g_fixed)
+            fns_rosenberg = (n_study*wi_z_05)/(sum(w_s_g_fixed))
 
-            n_fs_fixed_01_two = Decimal((n_ziro*(z_score_fixed-2.58))/2.58)
-            n_fs_fixed_01_one_right = Decimal((n_ziro*(z_score_fixed-2.33))/2.33)
+            print(fns_rosenberg)
+            print(fns_rosenthal)
+            p_val = p_value_fixed
+
+            if p_val < 0.0001:
+                p_val = 0.0001
 
 
 
@@ -1061,6 +1052,7 @@ def example():
 
             study_list = list(map(lambda x: str(x), df['Study'].tolist()))
             resultData = {
+
                 'study_list': study_list,
                 'ke_ke':ko_ko,
                 'fvalue': fvalue,
@@ -1075,20 +1067,8 @@ def example():
                 'gg_low_random': gg_low_random,
                 'gg_upp_random': gg_upp_random,
 
-                'n_fs_random_larg': round(n_fs_random_larg, 2),
-                'n_fs_random_medium': round(n_fs_random_medium, 2),
-                'n_fs_random_small': round(n_fs_random_small, 2),
-                'n_fs_fixed_larg': round(n_fs_fixed_larg, 2),
-                'n_fs_fixed_medium': round(n_fs_fixed_medium, 2),
-                'n_fs_fixed_small': round(n_fs_fixed_small, 2),
-                'n_fs_random_05_two': round(n_fs_random_05_two, 2),
-                'n_fs_random_05_one_right': round(n_fs_random_05_one_right, 2),
-                'n_fs_random_01_two': round(n_fs_random_01_two, 2),
-                'n_fs_random_01_one_right': round(n_fs_random_01_one_right, 2),
-                'n_fs_fixed_05_two': round(n_fs_fixed_05_two, 2),
-                'n_fs_fixed_05_one_right': round(n_fs_fixed_05_one_right, 2),
-                'n_fs_fixed_01_two': round(n_fs_fixed_01_two, 2),
-                'n_fs_fixed_01_one_right': round(n_fs_fixed_01_one_right, 2),
+                'fns_rosenberg': round(fns_rosenberg, 2),
+                'fns_rosenthal': round(fns_rosenthal, 2),
 
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'seg_list': df["SEg"].tolist(),
@@ -1111,13 +1091,13 @@ def example():
                 'Het_random': 100 * float("{0:.2f}".format(I2_random)),
                 't2': float("{0:.2f}".format(t2)),
                 'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_val': float("{0:.5f}".format(p_val)),
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
 
                 'moder': moder
             }
-
             return render_template("result2.html", **resultData)
         except Exception as error:
             print(error)
