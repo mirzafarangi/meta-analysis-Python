@@ -646,6 +646,7 @@ def upload_file():
                 'list_gg_random': list_gg_random,
                 'gg_low_random': gg_low_random,
                 'gg_upp_random': gg_upp_random,
+                'n_study': n_study,
 
                 'fns_rosenberg': round(fns_rosenberg, 2),
                 'fns_rosenthal': round(fns_rosenthal, 2),
