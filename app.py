@@ -1069,6 +1069,7 @@ def example():
 
                 'fns_rosenberg': round(fns_rosenberg, 2),
                 'fns_rosenthal': round(fns_rosenthal, 2),
+                'n_study': n_study,
 
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'seg_list': df["SEg"].tolist(),
