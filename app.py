@@ -404,13 +404,13 @@ def upload_file():
             n_ziro = n_study
             z_per = (d_per_study) / se_d_per_study
             fns_rosenthal= ((sum(z_per)**2)/(1.645**2)) - n_study
+            t_c = scipy.stats.t.ppf(0.95,n_study)
 
 
-            wi_z_05 = (sum(g_s_fixed)**2)/(1.812**2)-sum(w_s_g_fixed)
+            wi_z_05 = (sum(g_s_fixed)**2)/(t_c**2)-sum(w_s_g_fixed)
             fns_rosenberg = (n_study*wi_z_05)/(sum(w_s_g_fixed))
 
-            print(fns_rosenberg)
-            print(fns_rosenthal)
+
             p_val = p_value_fixed
 
             if p_val < 0.0001:
@@ -465,7 +465,7 @@ def upload_file():
             counter= 0
             ki_ki = []
             for index, key in enumerate(subgroup_dictionary):
-                print(key)
+
                 counter = counter +1
 
                 ki_ki.append(key)
@@ -600,7 +600,7 @@ def upload_file():
 
                 ko_ko = ki_ki
 
-                print(ko_ko)
+
 
 
                 list_g = dict_sub_g_per_study.values()
@@ -616,13 +616,13 @@ def upload_file():
                 g_k_random = {k: v for k, v in zip(ko_ko,list_gg_random)}
 
                 fvalue, pvalue = scipy.stats.f_oneway(*list_g)
-                print(fvalue, pvalue)
+
 
                 k_sub = []
                 for x in dict_sub_g_per_study.values():
                     k_sub.append(len(x))
                 k_sub.append(len(list(i_per_study)))
-                print(k_sub)
+
                 new_k = [x-1 for x in k_sub]
 
                 df_dict_sub_fixed.insert(0, 'k', k_sub)
@@ -647,6 +647,7 @@ def upload_file():
                 'gg_low_random': gg_low_random,
                 'gg_upp_random': gg_upp_random,
                 'n_study': n_study,
+                't_c': round(t_c, 3),
 
                 'fns_rosenberg': round(fns_rosenberg, 2),
                 'fns_rosenthal': round(fns_rosenthal, 2),
@@ -826,12 +827,15 @@ def example():
             z_per = (d_per_study) / se_d_per_study
             fns_rosenthal= ((sum(z_per)**2)/(1.645**2)) - n_study
 
+            t_c = scipy.stats.t.ppf(0.95,n_study)
 
-            wi_z_05 = (sum(g_s_fixed)**2)/(1.812**2)-sum(w_s_g_fixed)
+            print(t_c)
+
+
+            wi_z_05 = (sum(g_s_fixed)**2)/(t_c**2)-sum(w_s_g_fixed)
             fns_rosenberg = (n_study*wi_z_05)/(sum(w_s_g_fixed))
 
-            print(fns_rosenberg)
-            print(fns_rosenthal)
+
             p_val = p_value_fixed
 
             if p_val < 0.0001:
@@ -885,7 +889,7 @@ def example():
             counter= 0
             ki_ki = []
             for index, key in enumerate(subgroup_dictionary):
-                print(key)
+
                 counter = counter +1
 
                 ki_ki.append(key)
@@ -1020,7 +1024,7 @@ def example():
 
                 ko_ko = ki_ki
 
-                print(ko_ko)
+
 
 
                 list_g = dict_sub_g_per_study.values()
@@ -1036,13 +1040,13 @@ def example():
                 g_k_random = {k: v for k, v in zip(ko_ko,list_gg_random)}
 
                 fvalue, pvalue = scipy.stats.f_oneway(*list_g)
-                print(fvalue, pvalue)
+
 
                 k_sub = []
                 for x in dict_sub_g_per_study.values():
                     k_sub.append(len(x))
                 k_sub.append(len(list(i_per_study)))
-                print(k_sub)
+
                 new_k = [x-1 for x in k_sub]
 
                 df_dict_sub_fixed.insert(0, 'k', k_sub)
@@ -1071,6 +1075,7 @@ def example():
                 'fns_rosenberg': round(fns_rosenberg, 2),
                 'fns_rosenthal': round(fns_rosenthal, 2),
                 'n_study': n_study,
+                't_c': round(t_c, 3),
 
                 'g_list': df["Hedges'g (SMD)"].tolist(),
                 'seg_list': df["SEg"].tolist(),
