@@ -269,6 +269,10 @@ def upload_file():
             f = request.files['file']
             xl=pd.ExcelFile(f)
             df=xl.parse('Data')
+            df['Moderator'] = df['Moderator'].fillna(0)
+            df['subgroup'] = df['subgroup'].fillna('NAN')
+            df['subgroup'] = df['subgroup'].astype(str)
+
 
 
             def SE(sd_c,n_c,sd_a,n_a):
@@ -424,8 +428,13 @@ def upload_file():
 
             I2_random=I2_fixed
 
+
+
+
+
+
             #moderator-regression analysis
-            moderator_=df['Moderator']
+            moderator_= df['Moderator']
             effect_size=g_per_study
             moderator_ = sm.add_constant(moderator_)
             model = sm.OLS(effect_size, moderator_).fit()
@@ -579,7 +588,17 @@ def upload_file():
             if counter < 2:
                 df_dict_sub = pd.DataFrame({'subgroup analysis': ['Oops! There should be at least 2 subgroups for running this analysis!']})
                 list_g = []
-                ki_ki = []
+                ko_ko = []
+                fvalue=0
+                pvalue = 0
+                list_gg_fixed = []
+                gg_low_fixed = []
+                gg_upp_fixed = []
+                list_gg_random = []
+                gg_low_random = []
+                gg_upp_random = []
+                df_dict_sub_random = pd.DataFrame({'subgroup analysis': ['Oops! There should be at least 2 subgroups for running this analysis!']})
+                df_dict_sub_fixed = pd.DataFrame({'subgroup analysis': ['Oops! There should be at least 2 subgroups for running this analysis!']})
             else:
                 ki_ki.append("total")
                 dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed]})
@@ -592,11 +611,6 @@ def upload_file():
 
 
 
-
-                for n, i in enumerate(ki_ki):
-
-                    if type(i) == float:
-                        ki_ki[n] = 'NaN'
 
                 ko_ko = ki_ki
 
