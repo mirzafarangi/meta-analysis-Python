@@ -5,7 +5,7 @@
 <p></p>
   <input type="radio" name="effectmodel" value="SMD" v-on:click="smd_model = true; r_model = false; ratio_model = false;" checked> SMD &nbsp;&nbsp;
   <input type="radio" name="effectmodel" value="r" v-on:click="smd_model = false; r_model = true; ratio_model = false;"> Correlation &nbsp;&nbsp;
-  <input type="radio" name="effectmodel" value="ratio" v-on:click="smd_model = false; r_model = false; ratio_model = true;"> Risk Ratio &nbsp;&nbsp;
+  <input type="radio" name="effectmodel" value="ratio" v-on:click="smd_model = false; r_model = false; ratio_model = true;"> Risk Ratio/Odds Ratio &nbsp;&nbsp;
   <p></p>
   <p></p>
 
@@ -144,7 +144,7 @@
   </table>
   <table>
       <tr>
-      <td>RiskRatio</td>
+      <td>Risk Ratio</td>
       <td> <input id="rr"v-model="rr"> </td>
       </tr>
       <tr>
@@ -158,6 +158,24 @@
       <tr>
       <td>95%CI<sub>LnRR</td>
       <td> <input id="cirr"v-model="cirr"> </td>
+      </tr>
+  </table>
+  <table>
+      <tr>
+      <td>Odds Ratio</td>
+      <td> <input id="rr"v-model="or"> </td>
+      </tr>
+      <tr>
+      <td>LnOR</td>
+      <td> <input id="lnrr"v-model="lnor"> </td>
+      </tr>
+      <tr>
+      <td>SE<sub>LnOR</td>
+      <td> <input id="srr"v-model="sor"> </td>
+      </tr>
+      <tr>
+      <td>95%CI<sub>LnOR</td>
+      <td> <input id="cirr"v-model="cior"> </td>
       </tr>
   </table>
   </form>
@@ -233,6 +251,18 @@
                 },
                 cirr: function(){
                   return (this.lnrr*1-1.96*this.srr).toFixed(3)+','+(this.lnrr*1+1.96*this.srr*1).toFixed(3);
+                },
+                or: function(){
+                  return ((this.g1_e*this.g2_ne*1)/(this.g2_e*this.g1_ne*1)).toFixed(3);
+                },
+                lnor: function(){
+                  return (Math.log(this.or*1)).toFixed(3);
+                },
+                sor: function(){
+                  return (((1/this.g1_ne*1)+(1/this.g2_ne*1)+(1/this.g1_e*1)+(1/this.g2_e*1))**0.5).toFixed(3);
+                },
+                cior: function(){
+                  return (this.lnor*1-1.96*this.sor).toFixed(3)+','+(this.lnor*1+1.96*this.sor*1).toFixed(3);
                 },
             }
     });
