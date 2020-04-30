@@ -691,6 +691,8 @@ def upload_file():
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'qq': float("{0:.2f}".format(qq)),
+                'degf': degf,
 
                 'moder': moder
             }
@@ -1116,6 +1118,8 @@ def example():
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'qq': float("{0:.2f}".format(qq)),
+                'degf': degf,
 
                 'moder': moder
             }
@@ -1485,7 +1489,7 @@ def result_ratios():
                 t2=(qq-degf)/c
                 I2=(qq-degf)/qq
 
-            df['weight_random model']= 1/((df['V']**2)+t2)
+            df['weight_random model']= 1/(df['V']+t2)
             df['LnRR*w_random']=df['weight_random model']*df['LnRR']
             df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
             df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
@@ -1594,14 +1598,16 @@ def uploader_ratios():
             df['upper_lnRR']=df['LnRR']+1.96*df['SE']
             df['lower_RR']=np.exp(df['lower_lnRR'])
             df['upper_RR']=np.exp(df['upper_lnRR'])
-            df['weight_fixed model']=1/df['V']
-            df['LnRR*w_fixed']=df['weight_fixed model']*df['RiskRatio']
-            df['LnRR2*w_fixed']=df['weight_fixed model']*df['RiskRatio']**2
-            df['d']=df['LnRR']*(3**0.5)*3.1415
-            df['Ln*w_fixed']=df['weight_fixed model']*df['LnRR']
-            df['Ln2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
 
-            qq=np.sum(df['Ln2*w_fixed'])-((np.sum(df['Ln*w_fixed']))**2/np.sum(df['weight_fixed model']))
+            df['weight_fixed model']=1/df['V']
+            df['d']=df['LnRR']*(3**0.5)*3.1415
+
+            df['d_w'] = df['d'] * df['weight_fixed model']
+            df['LnRR*w_fixed']=df['weight_fixed model']*df['LnRR']
+            df['LnRR2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
+
+
+            qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
             c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
             degf= len(df.index)-1
             if qq <= degf or degf==0:
@@ -1611,16 +1617,53 @@ def uploader_ratios():
                 t2=(qq-degf)/c
                 I2=(qq-degf)/qq
 
-            df["weight_random model"]= 1/((df['V']**2)+t2)
-            df['LnRR*w_random']=df['weight_random model']*df['LnRR']
+            df["weight_random model"]= 1/(df['V']+t2)
+            df['LnRR*w_random'] = df['weight_random model']*df['LnRR']
             df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
             df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
+
+            #OddsRatio
+
+            df['OddsRatio']=(df['Events (g1)']*df['Non-Events (g2)'])/(df['Events (g2)']*df['Non-Events (g1)'])
+            df['LnOR']=np.log(df['OddsRatio'])
+            df['V_OR']=(1/df['Events (g1)'])+(1/(df['Non-Events (g1)']))+(1/df['Events (g2)'])+(1/(df['Non-Events (g2)']))
+            df['SE_OR']=df['V_OR']**0.5
+            df['lower_lnOR']=df['LnOR']-1.96*df['SE_OR']
+            df['upper_lnOR']=df['LnOR']+1.96*df['SE_OR']
+            df['lower_OR']=np.exp(df['lower_lnOR'])
+            df['upper_OR']=np.exp(df['upper_lnOR'])
+            df['weight_fixed model_OR']=1/df['V_OR']
+            df['d_OR']=df['LnOR']*(3**0.5)*3.1415
+            df['d_w_OR'] = df['d_OR'] * df['weight_fixed model_OR']
+            df['LnOR*w_fixed_OR']=df['weight_fixed model_OR']*df['LnOR']
+            df['LnOR2*w_fixed_OR']=df['weight_fixed model_OR']*df['LnOR']**2
+
+
+            qq_OR=np.sum(df['LnOR2*w_fixed_OR'])-((np.sum(df['LnOR*w_fixed_OR']))**2/np.sum(df['weight_fixed model_OR']))
+
+            c_OR=np.sum(df['weight_fixed model_OR'])-((np.sum(df['weight_fixed model_OR']**2))/(np.sum(df['weight_fixed model_OR'])))
+            degf_OR= len(df.index)-1
+
+            if qq_OR <= degf_OR or degf_OR==0:
+                I2_OR=0
+                t2_OR=0
+            else:
+                t2_OR=(qq_OR-degf_OR)/c_OR
+                I2_OR=(qq_OR-degf_OR)/qq_OR
+
+
+
+            df["weight_random model_OR"]= 1/(df['V_OR']+t2_OR)
+            df['LnOR*w_random']=df['weight_random model_OR']*df['LnOR']
+            df['weight(%)_random model_OR']=100*df['weight_random model_OR']/np.sum(df['weight_random model_OR'])
+            df['weight(%)_fixed model_OR']=100*df['weight_fixed model_OR']/np.sum(df['weight_fixed model_OR'])
+
 
             LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df['weight_random model'])
             se_total_random=(1/np.sum(df['weight_random model']))**0.5
             lower_LnRR_random=LnRR_total_random-1.96*se_total_random
             upper_LnRR_random=LnRR_total_random+1.96*se_total_random
-            LnRR_total_fixed=np.sum(df['Ln*w_fixed'])/np.sum(df['weight_fixed model'])
+            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df['weight_fixed model'])
             se_total_fixed=(1/np.sum(df['weight_fixed model']))**0.5
             lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
             upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
@@ -1635,6 +1678,50 @@ def uploader_ratios():
             z_score_random=LnRR_total_random/se_total_random
             p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
 
+
+            #OddsRatio
+
+            LnOR_total_random=np.sum(df['LnOR*w_random'])/np.sum(df['weight_random model_OR'])
+            se_total_random_OR=(1/np.sum(df['weight_random model_OR']))**0.5
+            lower_LnOR_random=LnOR_total_random-1.96*se_total_random_OR
+            upper_LnOR_random=LnOR_total_random+1.96*se_total_random_OR
+            LnOR_total_fixed=np.sum(df['LnOR*w_fixed_OR'])/np.sum(df['weight_fixed model_OR'])
+            se_total_fixed_OR=(1/np.sum(df['weight_fixed model_OR']))**0.5
+            lower_LnOR_fixed=LnOR_total_fixed-1.96*se_total_fixed_OR
+            upper_LnOR_fixed=LnOR_total_fixed+1.96*se_total_fixed_OR
+            ORave_random=np.exp(LnOR_total_random)
+            lower_ORave_random=np.exp(lower_LnOR_random)
+            upper_ORave_random=np.exp(upper_LnOR_random)
+            ORave_fixed=np.exp(LnOR_total_fixed)
+            lower_ORave_fixed=np.exp(lower_LnOR_fixed)
+            upper_ORave_fixed=np.exp(upper_LnOR_fixed)
+            z_score_fixed_OR=LnOR_total_fixed/se_total_fixed_OR
+            p_value_fixed_OR = scipy.stats.norm.sf(abs(z_score_fixed_OR))*2
+            z_score_random_OR=LnOR_total_random/se_total_random_OR
+            p_value_random_OR = scipy.stats.norm.sf(abs(z_score_random_OR))*2
+
+            listp = np.array(df['OddsRatio'].tolist())
+            list_s = np.array(df['SE_OR'].tolist())
+
+            n_study = len(listp)
+            n_ziro = n_study
+            z_per = (listp) / list_s
+            fns_rosenthal= ((sum(z_per)**2)/(1.645**2)) - n_study
+
+            t_c = scipy.stats.t.ppf(0.95,n_study)
+
+            print(t_c)
+
+
+            wi_z_05 = (sum(df['LnOR*w_fixed_OR'])**2)/(t_c**2)-sum(df['weight_fixed model_OR'])
+            fns_rosenberg = (n_study*wi_z_05)/(sum(df['weight_fixed model_OR']))
+
+
+            p_val = p_value_fixed
+
+            if p_val < 0.0001:
+                p_val = 0.0001
+
             #moderator-regression analysis
             moderator_=df['Moderator']
             effect_size=df['LnRR']
@@ -1644,9 +1731,11 @@ def uploader_ratios():
             results=model.summary()
             moder=results.as_html()
 
+            print(df['d'])
 
-            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model', 'd', 'Ln*w_fixed', 'Ln2*w_fixed'] ,inplace=True, axis=1)
-            df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'weight(%)_random model', 'weight(%)_fixed model' ]
+
+            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model',  'd_w', 'LnOR*w_fixed_OR','LnOR2*w_fixed_OR','weight_random model_OR','LnOR*w_random','weight_fixed model_OR', 'd_OR', 'd_w_OR'] ,inplace=True, axis=1)
+            df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'd','weight(%)_random model', 'weight(%)_fixed model','OddsRatio', 'LnOR' , 'V_OR', 'SE_OR', 'lower_lnOR', 'upper_lnOR', 'lower_OR', 'upper_OR', 'weight(%)_random model_OR', 'weight(%)_fixed model_OR'  ]
             df.index+=1
 
             df2=df.to_dict(orient="dict")
@@ -1659,27 +1748,67 @@ def uploader_ratios():
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
                 'study_list': study_list,
                 'RR_list': df['RiskRatio'].tolist(),
+                'se_RR_list': df['SE'].tolist(),
                 'lower_RR_list': df['lower_RR'].tolist(),
                 'upper_RR_list': df['upper_RR'].tolist(),
                 'weight_fixed_list': df['weight(%)_fixed model'].tolist(),
                 'weight_random_list': df['weight(%)_random model'].tolist(),
                 'LnRR_total_random': float("{0:.2f}".format(LnRR_total_random)),
                 'RRave_random': float("{0:.2f}".format(RRave_random)),
+                'lower_RRave_random': float("{0:.2f}".format(lower_RRave_random)),
+                'upper_RRave_random': float("{0:.2f}".format(upper_RRave_random)),
                 'se_total_random': float("{0:.3f}".format(se_total_random)),
-                'lower_RRave_random': float("{0:.3f}".format(lower_RRave_random)),
-                'upper_RRave_random': float("{0:.3f}".format(upper_RRave_random)),
+                'lower_LnRR_random': float("{0:.3f}".format(lower_LnRR_random)),
+                'upper_LnRR_random': float("{0:.3f}".format(upper_LnRR_random)),
                 'Het_random': 100*float("{0:.3f}".format(I2)),
                 't2':float("{0:.3f}".format(t2)),
                 'LnRR_total_fixed': float("{0:.2f}".format(LnRR_total_fixed)),
                 'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
+                'lower_RRave_fixed': float("{0:.2f}".format(lower_RRave_fixed)),
+                'upper_RRave_fixed': float("{0:.2f}".format(upper_RRave_fixed)),
                 'se_total_fixed': float("{0:.3f}".format(se_total_fixed)),
-                'lower_RRave_fixed': float("{0:.3f}".format(lower_RRave_fixed)),
-                'upper_RRave_fixed': float("{0:.3f}".format(upper_RRave_fixed)),
+                'lower_LnRR_fixed': float("{0:.3f}".format(lower_LnRR_fixed)),
+                'upper_LnRR_fixed': float("{0:.3f}".format(upper_LnRR_fixed)),
                 'Het_fixed': 100*float("{0:.3f}".format(I2)),
                 'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'qq_OR':float("{0:.3f}".format(qq_OR)),
+                'qq':float("{0:.3f}".format(qq)),
+                'degf':degf,
+                'degf_OR':degf_OR,
+
+                #OddsRatio
+
+                'LnOR_total_random': float("{0:.2f}".format(LnOR_total_random)),
+                'ORave_random': float("{0:.2f}".format(ORave_random)),
+                'se_total_random_OR': float("{0:.3f}".format(se_total_random_OR)),
+                'lower_LnOR_random': float("{0:.3f}".format(lower_LnOR_random)),
+                'upper_LnOR_random': float("{0:.3f}".format(upper_LnOR_random)),
+                'Het_random_OR': 100*float("{0:.3f}".format(I2_OR)),
+                't2_OR':float("{0:.3f}".format(t2_OR)),
+                'LnOR_total_fixed': float("{0:.2f}".format(LnOR_total_fixed)),
+                'ORave_fixed': float("{0:.2f}".format(ORave_fixed)),
+                'se_total_fixed_OR': float("{0:.3f}".format(se_total_fixed_OR)),
+                'lower_LnOR_fixed': float("{0:.3f}".format(lower_LnOR_fixed)),
+                'upper_LnOR_fixed': float("{0:.3f}".format(upper_LnOR_fixed)),
+                'Het_fixed_OR': 100*float("{0:.3f}".format(I2_OR)),
+                'p_value_fixed_OR': float("{0:.6f}".format(p_value_fixed_OR)),
+                'p_value_random_OR': float("{0:.6f}".format(p_value_random_OR)),
+                'z_score_fixed_OR': float("{0:.3f}".format(z_score_fixed_OR)),
+                'z_score_random_OR': float("{0:.3f}".format(z_score_random_OR)),
+                'lower_ORave_random': float("{0:.3f}".format(lower_ORave_random)),
+                'upper_ORave_random': float("{0:.3f}".format(upper_ORave_random)),
+                'lower_ORave_fixed': float("{0:.3f}".format(lower_ORave_fixed)),
+                'upper_ORave_fixed': float("{0:.3f}".format(upper_ORave_fixed)),
+
+                'n_study': n_study,
+                't_c': round(t_c, 3),
+                'fns_rosenberg': round(fns_rosenberg, 2),
+                'fns_rosenthal': round(fns_rosenthal, 2),
+                'p_val': float("{0:.5f}".format(p_val)),
+
                 'moder': moder
             }
 
@@ -1690,6 +1819,247 @@ def uploader_ratios():
         except Exception as error:
             print(error)
             return render_template('error_content.html')
+
+
+@app.route('/example_2', methods = ['GET', 'POST'])
+def example_2():
+    if 1+1==2:
+        try:
+            f = 'static/analysis_ratios.xlsx'
+            xl=pd.ExcelFile(f)
+            df=xl.parse('Data')
+
+            df.columns = ['Study name','Events (g1)', 'Non-Events (g1)', 'Events (g2)', 'Non-Events (g2)', 'Moderator']
+            df['RiskRatio']=(df['Events (g1)']/(df['Events (g1)']+df['Non-Events (g1)']))/(df['Events (g2)']/(df['Events (g2)']+df['Non-Events (g2)']))
+            df['LnRR']=np.log(df['RiskRatio'])
+            df['V']=(1/df['Events (g1)'])-(1/(df['Events (g1)']+df['Non-Events (g1)']))+(1/df['Events (g2)'])-(1/(df['Events (g2)']+df['Non-Events (g2)']))
+            df['SE']=df['V']**0.5
+            df['lower_lnRR']=df['LnRR']-1.96*df['SE']
+            df['upper_lnRR']=df['LnRR']+1.96*df['SE']
+            df['lower_RR']=np.exp(df['lower_lnRR'])
+            df['upper_RR']=np.exp(df['upper_lnRR'])
+
+            df['weight_fixed model']=1/df['V']
+            df['d']=df['LnRR']*(3**0.5)*3.1415
+
+            df['d_w'] = df['d'] * df['weight_fixed model']
+            df['LnRR*w_fixed']=df['weight_fixed model']*df['LnRR']
+            df['LnRR2*w_fixed']=df['weight_fixed model']*df['LnRR']**2
+
+
+            qq=np.sum(df['LnRR2*w_fixed'])-((np.sum(df['LnRR*w_fixed']))**2/np.sum(df['weight_fixed model']))
+            c=np.sum(df['weight_fixed model'])-((np.sum(df['weight_fixed model']**2))/(np.sum(df['weight_fixed model'])))
+            degf= len(df.index)-1
+            if qq <= degf or degf==0:
+                I2=0
+                t2=0
+            else:
+                t2=(qq-degf)/c
+                I2=(qq-degf)/qq
+
+            df["weight_random model"]= 1/(df['V']+t2)
+            df['LnRR*w_random'] = df['weight_random model']*df['LnRR']
+            df['weight(%)_random model']=100*df['weight_random model']/np.sum(df['weight_random model'])
+            df['weight(%)_fixed model']=100*df['weight_fixed model']/np.sum(df['weight_fixed model'])
+
+            #OddsRatio
+
+            df['OddsRatio']=(df['Events (g1)']*df['Non-Events (g2)'])/(df['Events (g2)']*df['Non-Events (g1)'])
+            df['LnOR']=np.log(df['OddsRatio'])
+            df['V_OR']=(1/df['Events (g1)'])+(1/(df['Non-Events (g1)']))+(1/df['Events (g2)'])+(1/(df['Non-Events (g2)']))
+            df['SE_OR']=df['V_OR']**0.5
+            df['lower_lnOR']=df['LnOR']-1.96*df['SE_OR']
+            df['upper_lnOR']=df['LnOR']+1.96*df['SE_OR']
+            df['lower_OR']=np.exp(df['lower_lnOR'])
+            df['upper_OR']=np.exp(df['upper_lnOR'])
+            df['weight_fixed model_OR']=1/df['V_OR']
+            df['d_OR']=df['LnOR']*(3**0.5)*3.1415
+            df['d_w_OR'] = df['d_OR'] * df['weight_fixed model_OR']
+            df['LnOR*w_fixed_OR']=df['weight_fixed model_OR']*df['LnOR']
+            df['LnOR2*w_fixed_OR']=df['weight_fixed model_OR']*df['LnOR']**2
+
+
+            qq_OR=np.sum(df['LnOR2*w_fixed_OR'])-((np.sum(df['LnOR*w_fixed_OR']))**2/np.sum(df['weight_fixed model_OR']))
+
+            c_OR=np.sum(df['weight_fixed model_OR'])-((np.sum(df['weight_fixed model_OR']**2))/(np.sum(df['weight_fixed model_OR'])))
+            degf_OR= len(df.index)-1
+
+            if qq_OR <= degf_OR or degf_OR==0:
+                I2_OR=0
+                t2_OR=0
+            else:
+                t2_OR=(qq_OR-degf_OR)/c_OR
+                I2_OR=(qq_OR-degf_OR)/qq_OR
+
+
+
+            df["weight_random model_OR"]= 1/(df['V_OR']+t2_OR)
+            df['LnOR*w_random']=df['weight_random model_OR']*df['LnOR']
+            df['weight(%)_random model_OR']=100*df['weight_random model_OR']/np.sum(df['weight_random model_OR'])
+            df['weight(%)_fixed model_OR']=100*df['weight_fixed model_OR']/np.sum(df['weight_fixed model_OR'])
+
+
+            LnRR_total_random=np.sum(df['LnRR*w_random'])/np.sum(df['weight_random model'])
+            se_total_random=(1/np.sum(df['weight_random model']))**0.5
+            lower_LnRR_random=LnRR_total_random-1.96*se_total_random
+            upper_LnRR_random=LnRR_total_random+1.96*se_total_random
+            LnRR_total_fixed=np.sum(df['LnRR*w_fixed'])/np.sum(df['weight_fixed model'])
+            se_total_fixed=(1/np.sum(df['weight_fixed model']))**0.5
+            lower_LnRR_fixed=LnRR_total_fixed-1.96*se_total_fixed
+            upper_LnRR_fixed=LnRR_total_fixed+1.96*se_total_fixed
+            RRave_random=np.exp(LnRR_total_random)
+            lower_RRave_random=np.exp(lower_LnRR_random)
+            upper_RRave_random=np.exp(upper_LnRR_random)
+            RRave_fixed=np.exp(LnRR_total_fixed)
+            lower_RRave_fixed=np.exp(lower_LnRR_fixed)
+            upper_RRave_fixed=np.exp(upper_LnRR_fixed)
+            z_score_fixed=LnRR_total_fixed/se_total_fixed
+            p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+            z_score_random=LnRR_total_random/se_total_random
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+
+            #OddsRatio
+
+            LnOR_total_random=np.sum(df['LnOR*w_random'])/np.sum(df['weight_random model_OR'])
+            se_total_random_OR=(1/np.sum(df['weight_random model_OR']))**0.5
+            lower_LnOR_random=LnOR_total_random-1.96*se_total_random_OR
+            upper_LnOR_random=LnOR_total_random+1.96*se_total_random_OR
+            LnOR_total_fixed=np.sum(df['LnOR*w_fixed_OR'])/np.sum(df['weight_fixed model_OR'])
+            se_total_fixed_OR=(1/np.sum(df['weight_fixed model_OR']))**0.5
+            lower_LnOR_fixed=LnOR_total_fixed-1.96*se_total_fixed_OR
+            upper_LnOR_fixed=LnOR_total_fixed+1.96*se_total_fixed_OR
+            ORave_random=np.exp(LnOR_total_random)
+            lower_ORave_random=np.exp(lower_LnOR_random)
+            upper_ORave_random=np.exp(upper_LnOR_random)
+            ORave_fixed=np.exp(LnOR_total_fixed)
+            lower_ORave_fixed=np.exp(lower_LnOR_fixed)
+            upper_ORave_fixed=np.exp(upper_LnOR_fixed)
+            z_score_fixed_OR=LnOR_total_fixed/se_total_fixed_OR
+            p_value_fixed_OR = scipy.stats.norm.sf(abs(z_score_fixed_OR))*2
+            z_score_random_OR=LnOR_total_random/se_total_random_OR
+            p_value_random_OR = scipy.stats.norm.sf(abs(z_score_random_OR))*2
+
+            listp = np.array(df['OddsRatio'].tolist())
+            list_s = np.array(df['SE_OR'].tolist())
+
+            n_study = len(listp)
+            n_ziro = n_study
+            z_per = (listp) / list_s
+            fns_rosenthal= ((sum(z_per)**2)/(1.645**2)) - n_study
+
+            t_c = scipy.stats.t.ppf(0.95,n_study)
+
+            print(t_c)
+
+
+            wi_z_05 = (sum(df['LnOR*w_fixed_OR'])**2)/(t_c**2)-sum(df['weight_fixed model_OR'])
+            fns_rosenberg = (n_study*wi_z_05)/(sum(df['weight_fixed model_OR']))
+
+
+            p_val = p_value_fixed
+
+            if p_val < 0.0001:
+                p_val = 0.0001
+
+            #moderator-regression analysis
+            moderator_=df['Moderator']
+            effect_size=df['LnRR']
+            moderator_ = sm.add_constant(moderator_)
+            model = sm.OLS(effect_size, moderator_).fit()
+            predictions = model.predict(moderator_)
+            results=model.summary()
+            moder=results.as_html()
+
+            print(df['d'])
+
+
+            df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model',  'd_w', 'LnOR*w_fixed_OR','LnOR2*w_fixed_OR','weight_random model_OR','LnOR*w_random','weight_fixed model_OR', 'd_OR', 'd_w_OR'] ,inplace=True, axis=1)
+            df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'd','weight(%)_random model', 'weight(%)_fixed model','OddsRatio', 'LnOR' , 'V_OR', 'SE_OR', 'lower_lnOR', 'upper_lnOR', 'lower_OR', 'upper_OR', 'weight(%)_random model_OR', 'weight(%)_fixed model_OR'  ]
+            df.index+=1
+
+            df2=df.to_dict(orient="dict")
+            writer = pd.ExcelWriter('results/MetaMar_result_ratioxl.xlsx')
+            df.to_excel(writer,'Sheet1')
+            writer.save()
+
+            study_list = list(map(lambda x: str(x), df['Study name'].tolist()))
+            resultData = {
+                'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
+                'study_list': study_list,
+                'RR_list': df['RiskRatio'].tolist(),
+                'se_RR_list': df['SE'].tolist(),
+                'lower_RR_list': df['lower_RR'].tolist(),
+                'upper_RR_list': df['upper_RR'].tolist(),
+                'weight_fixed_list': df['weight(%)_fixed model'].tolist(),
+                'weight_random_list': df['weight(%)_random model'].tolist(),
+                'LnRR_total_random': float("{0:.2f}".format(LnRR_total_random)),
+                'RRave_random': float("{0:.2f}".format(RRave_random)),
+                'lower_RRave_random': float("{0:.2f}".format(lower_RRave_random)),
+                'upper_RRave_random': float("{0:.2f}".format(upper_RRave_random)),
+                'se_total_random': float("{0:.3f}".format(se_total_random)),
+                'lower_LnRR_random': float("{0:.3f}".format(lower_LnRR_random)),
+                'upper_LnRR_random': float("{0:.3f}".format(upper_LnRR_random)),
+                'Het_random': 100*float("{0:.3f}".format(I2)),
+                't2':float("{0:.3f}".format(t2)),
+                'LnRR_total_fixed': float("{0:.2f}".format(LnRR_total_fixed)),
+                'RRave_fixed': float("{0:.2f}".format(RRave_fixed)),
+                'lower_RRave_fixed': float("{0:.2f}".format(lower_RRave_fixed)),
+                'upper_RRave_fixed': float("{0:.2f}".format(upper_RRave_fixed)),
+                'se_total_fixed': float("{0:.3f}".format(se_total_fixed)),
+                'lower_LnRR_fixed': float("{0:.3f}".format(lower_LnRR_fixed)),
+                'upper_LnRR_fixed': float("{0:.3f}".format(upper_LnRR_fixed)),
+                'Het_fixed': 100*float("{0:.3f}".format(I2)),
+                'p_value_fixed': float("{0:.6f}".format(p_value_fixed)),
+                'p_value_random': float("{0:.6f}".format(p_value_random)),
+                'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
+                'z_score_random': float("{0:.3f}".format(z_score_random)),
+                'qq_OR':float("{0:.3f}".format(qq_OR)),
+                'qq':float("{0:.3f}".format(qq)),
+                'degf':degf,
+                'degf_OR':degf_OR,
+
+                #OddsRatio
+
+                'LnOR_total_random': float("{0:.2f}".format(LnOR_total_random)),
+                'ORave_random': float("{0:.2f}".format(ORave_random)),
+                'se_total_random_OR': float("{0:.3f}".format(se_total_random_OR)),
+                'lower_LnOR_random': float("{0:.3f}".format(lower_LnOR_random)),
+                'upper_LnOR_random': float("{0:.3f}".format(upper_LnOR_random)),
+                'Het_random_OR': 100*float("{0:.3f}".format(I2_OR)),
+                't2_OR':float("{0:.3f}".format(t2_OR)),
+                'LnOR_total_fixed': float("{0:.2f}".format(LnOR_total_fixed)),
+                'ORave_fixed': float("{0:.2f}".format(ORave_fixed)),
+                'se_total_fixed_OR': float("{0:.3f}".format(se_total_fixed_OR)),
+                'lower_LnOR_fixed': float("{0:.3f}".format(lower_LnOR_fixed)),
+                'upper_LnOR_fixed': float("{0:.3f}".format(upper_LnOR_fixed)),
+                'Het_fixed_OR': 100*float("{0:.3f}".format(I2_OR)),
+                'p_value_fixed_OR': float("{0:.6f}".format(p_value_fixed_OR)),
+                'p_value_random_OR': float("{0:.6f}".format(p_value_random_OR)),
+                'z_score_fixed_OR': float("{0:.3f}".format(z_score_fixed_OR)),
+                'z_score_random_OR': float("{0:.3f}".format(z_score_random_OR)),
+                'lower_ORave_random': float("{0:.3f}".format(lower_ORave_random)),
+                'upper_ORave_random': float("{0:.3f}".format(upper_ORave_random)),
+                'lower_ORave_fixed': float("{0:.3f}".format(lower_ORave_fixed)),
+                'upper_ORave_fixed': float("{0:.3f}".format(upper_ORave_fixed)),
+
+                'n_study': n_study,
+                't_c': round(t_c, 3),
+                'fns_rosenberg': round(fns_rosenberg, 2),
+                'fns_rosenthal': round(fns_rosenthal, 2),
+                'p_val': float("{0:.5f}".format(p_val)),
+
+                'moder': moder
+            }
+
+            return render_template("result_ratiosxls.html", **resultData)
+
+
+
+        except Exception as error:
+            print(error)
+            return render_template('error_content.html')
+
 
 
 
