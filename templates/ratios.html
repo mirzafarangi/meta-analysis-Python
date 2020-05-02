@@ -2,6 +2,7 @@
 <br>
 <img src="/static/freud_4.jpg" alt="freud_4" align="right" style="width:442px;height:373px;">
 <h1>Meta-analysis: risk/odds ratio Model</h1>
+
 <h5>select your preferred method: manual data entry or Excel file upload? </h5>
 <br>
 
@@ -132,10 +133,9 @@
     <div v-if="ajaxResult" id="fixedModelChartDiv">fixedModelChartDiv</div>
     <div v-if="ajaxResult" id="randomModelChartDiv">randomModelChartDiv</div>
 
-
   </div>
   </div>
-
+</div>
 
 <div v-if="uploadMethod" class="data-entry-method method2">
   <form action="/uploader_ratios" method="POST" enctype="multipart/form-data">
@@ -361,5 +361,4 @@
           "categoryField": "category"
         });}
 </script>
-
 {% endblock %}
