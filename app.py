@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+', '.join(ip_list)#!/usr/bin/env python
 import os
 from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
@@ -13,11 +13,17 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+import ipinfo
 
 
 DEBUG = True
 app = Flask(__name__)
-
+handler = ipinfo.getHandler(access_token='2051bfc56e7021')
+details = handler.getDetails()
+ip_con = details.country_name
+ip_cit = details.city
+ip_ad = details.ip
+ip_list = [ip_ad, ip_con, ip_cit]
 app.secret_key = os.environ.get('APP_SECRET_KEY', 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502')
 ELASTICMAIL_API_KEY = os.environ.get('ELASTICMAIL_API_KEY', '')
 
@@ -205,11 +211,8 @@ def result():
 
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+
+            msg = Message(subject=', '.join(ip_list),
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -476,11 +479,7 @@ def upload_file():
             writer.save()
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+            msg = Message(subject=', '.join(ip_list),
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -1274,11 +1273,8 @@ def result_corr():
             writer.save()
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+
+            msg = Message(subject=', '.join(ip_list),
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -1442,11 +1438,8 @@ def upload_file_corr():
             writer.save()
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+
+            msg = Message(subject=', '.join(ip_list),
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -1675,11 +1668,8 @@ def result_ratios():
             writer.save()
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+
+            msg = Message(subject=', '.join(ip_list),
                          sender='meta.mar00@gmail.com',
                          recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -1939,11 +1929,8 @@ def uploader_ratios():
             writer.save()
 
             #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
+
+            msg = Message(subject=', '.join(ip_list),
                             sender='meta.mar00@gmail.com',
                             recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
