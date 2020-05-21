@@ -1,4 +1,3 @@
-', '.join(ip_list)#!/usr/bin/env python
 import os
 from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
