@@ -205,7 +205,10 @@ def result():
 
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
@@ -473,7 +476,10 @@ def upload_file():
             writer.save()
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
@@ -1268,7 +1274,10 @@ def result_corr():
             writer.save()
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
@@ -1433,7 +1442,10 @@ def upload_file_corr():
             writer.save()
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
@@ -1663,7 +1675,10 @@ def result_ratios():
             writer.save()
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                          sender='meta.mar00@gmail.com',
                          recipients=['meta.mar00@gmail.com'])
@@ -1924,7 +1939,10 @@ def uploader_ratios():
             writer.save()
 
             #data send
-            ip_ad = request.remote_addr
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
                             sender='meta.mar00@gmail.com',
                             recipients=['meta.mar00@gmail.com'])
