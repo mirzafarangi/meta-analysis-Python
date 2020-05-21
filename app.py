@@ -210,6 +210,8 @@ def result():
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_smd.xlsx") as fp:
+                 msg.attach("results/MetaMar_result_smd.xlsx", "results/MetaMar_result_smd.xlsx", fp.read())
             mail.send(msg)
 
 
@@ -470,6 +472,16 @@ def upload_file():
             df2.to_excel(writer,'Total Results')
             writer.save()
 
+            #data send
+            ip_ad = request.remote_addr
+            msg = Message(subject=ip_ad,
+                      sender='meta.mar00@gmail.com',
+                      recipients=['meta.mar00@gmail.com'])
+            msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_smdxl.xlsx") as fp:
+                 msg.attach("results/MetaMar_result_smdxl.xlsx", "results/MetaMar_result_smdxl.xlsx", fp.read())
+            mail.send(msg)
+
 
 
 
@@ -653,13 +665,7 @@ def upload_file():
 
             study_list = list(map(lambda x: str(x), df['Study'].tolist()))
 
-            #data send
-            ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            mail.send(msg)
+
 
             resultData = {
                 'study_list': study_list,
@@ -1267,7 +1273,10 @@ def result_corr():
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_corr.xlsx") as fp:
+                 msg.attach("results/MetaMar_result_corr.xlsx", "results/MetaMar_result_corr.xlsx", fp.read())
             mail.send(msg)
+
 
 
 
@@ -1429,6 +1438,8 @@ def upload_file_corr():
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_corrxl.xlsx") as fp:
+                 msg.attach("results/MetaMar_result_corrxl.xlsx", "results/MetaMar_result_corrxl.xlsx", fp.read())
             mail.send(msg)
 
             study_list = list(map(lambda x: str(x), df['study name'].tolist()))
@@ -1654,10 +1665,15 @@ def result_ratios():
             #data send
             ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
+                         sender='meta.mar00@gmail.com',
+                         recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_ratio.xlsx") as fp:
+                    msg.attach("results/MetaMar_result_ratio.xlsx", "results/MetaMar_result_ratio.xlsx", fp.read())
             mail.send(msg)
+
+
+
 
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
@@ -1910,12 +1926,14 @@ def uploader_ratios():
             #data send
             ip_ad = request.remote_addr
             msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
+                            sender='meta.mar00@gmail.com',
+                            recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
+            with app.open_resource("results/MetaMar_result_ratioxl.xlsx") as fp:
+                    msg.attach("results/MetaMar_result_ratioxl.xlsx", "results/MetaMar_result_ratioxl.xlsx", fp.read())
             mail.send(msg)
 
-            
+
             study_list = list(map(lambda x: str(x), df['Study name'].tolist()))
             resultData = {
                 'result_table': HTML(df.to_html(classes="responsive-table-2 rt cf")),
