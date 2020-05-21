@@ -12,15 +12,23 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+from mailjet_rest import Client
+
+
 
 
 
 
 DEBUG = True
 app = Flask(__name__)
-app.secret_key = os.environ.get('APP_SECRET_KEY', 'QqWwEeRrAaSsDdFfZzXxCcVv@@!!17502')
-ELASTICMAIL_API_KEY = os.environ.get('ELASTICMAIL_API_KEY', '')
 
+#mailjet_rest
+api_key = '7aabd1af2896ce16aa74baaac0350285'
+api_secret = 'f821137c0f5436a262da209cde17127f'
+mailjet = Client(auth=(api_key, api_secret), version='v3.1')
+
+
+#mail data
 app.config.update(
     MAIL_SERVER= 'smtp.gmail.com',
     MAIL_PORT= 465,
@@ -2315,20 +2323,42 @@ def contact():
 
 @app.route('/submitcontact', methods = ['POST', 'GET'])
 def submitcontact():
+
     if request.method == 'POST':
+        if request.headers.getlist("X-Forwarded-For"):
+            ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+
+        else:
+            ip_ad = request.remote_addr
+
         your_name = request.form['your_name']
         your_email = request.form['your_email']
         your_message = request.form['your_message']
 
-        requests.post("https://api.elasticemail.com/v2/email/send",
-            data={
-                "apiKey": ELASTICMAIL_API_KEY,
-                "from": your_email,
-                "fromName": your_name,
-                "to": ["s.ashkan.beheshti@gmail.com"],
-                "subject": "Meta Mar User",
-                "bodyHtml": your_message
-            })
+
+
+        data = {
+        'Messages': [
+        {
+        "From": {
+            "Email": "mirzafarangii@gmail.com",
+            "Name": 'Meta-Mar'
+            },
+            "To": [
+            {
+            "Email": "meta.mar00@gmail.com",
+            "Name": 'Meta-Mar'
+            }
+            ],
+            "Subject": 'contact',
+            "TextPart": "summary of contact:",
+            "HTMLPart": "<b>ip: </b>"+ip_ad+"<p></p>"+"<b>Name: </b>"+your_name+"<p></p>"+"<b> Email: </b>"+your_email+"<p></p>"+"<b>Message: </b>"+your_message
+
+
+            }
+            ]
+            }
+        result = mailjet.send.create(data=data)
         return render_template("sent.html")
 
 
