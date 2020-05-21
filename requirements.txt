@@ -1,6 +1,8 @@
 appnope==0.1.0
 backcall==0.1.0
+backoff==1.10.0
 blinker==1.4
+cachetools==4.1.0
 certifi==2020.4.5.1
 chardet==3.0.4
 click==7.1.1
@@ -8,7 +10,9 @@ decorator==4.4.2
 et-xmlfile==1.0.1
 Flask==1.1.2
 Flask-Mail==0.9.1
+Flask-Simple-GeoIP==0.1.1
 idna==2.9
+ipinfo==3.0.0
 ipython==7.13.0
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
@@ -32,6 +36,7 @@ pytz==2019.3
 requests==2.23.0
 scikit-learn==0.22.2.post1
 scipy==1.4.1
+simple-geoip==0.1.0
 six==1.14.0
 sklearn==0.0
 statsmodels==0.11.1
