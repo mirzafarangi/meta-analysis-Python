@@ -21,12 +21,6 @@ from flask_mail import Mail, Message
 DEBUG = True
 app = Flask(__name__)
 
-#mailjet_rest
-api_key = '7aabd1af2896ce16aa74baaac0350285'
-api_secret = 'f821137c0f5436a262da209cde17127f'
-mailjet = Client(auth=(api_key, api_secret), version='v3.1')
-
-
 #mail data
 app.config.update(
     MAIL_SERVER= 'smtp.gmail.com',
