@@ -12,7 +12,6 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
-from mailjet_rest import Client
 
 
 
@@ -2354,30 +2353,14 @@ def submitcontact():
         your_email = request.form['your_email']
         your_message = request.form['your_message']
 
+                #email send
+        msg = Message(subject= "contact",
+                  sender= 'meta.mar00@gmail.com',
+                  recipients=['meta.mar00@gmail.com'])
 
+        msg.body= "ip: "+ip_ad+"\n"+"\n Name : "+your_name+"\n"+"\n Email: "+your_email+"\n"+"\n Message:  \n"+"\n"+your_message
+        mail.send(msg)
 
-        data = {
-        'Messages': [
-        {
-        "From": {
-            "Email": "mirzafarangii@gmail.com",
-            "Name": 'Meta-Mar'
-            },
-            "To": [
-            {
-            "Email": "meta.mar00@gmail.com",
-            "Name": 'Meta-Mar'
-            }
-            ],
-            "Subject": 'contact',
-            "TextPart": "summary of contact:",
-            "HTMLPart": "<b>ip: </b>"+ip_ad+"<p></p>"+"<b>Name: </b>"+your_name+"<p></p>"+"<b> Email: </b>"+your_email+"<p></p>"+"<b>Message: </b>"+your_message
-
-
-            }
-            ]
-            }
-        result = mailjet.send.create(data=data)
         return render_template("sent.html")
 
 
