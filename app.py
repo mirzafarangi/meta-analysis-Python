@@ -1208,33 +1208,38 @@ def result_corr():
             df['w_fixed']=1/df['Var']
 
 
+
+
             df['r_lower']=df[1]-1.96*df['SE']
             df['r_upper']=df[1]+1.96*df['SE']
 
             df['Fisher z']=0.5*np.log((1+df[1])/(1-df[1]))
             df['zw_fixed']=df['Fisher z']*df['w_fixed']
-
-            df['d']=2*df[1]/((1-df[1]**2)**0.5)
-            df['dw_fixed']=df['d']*df['w_fixed']
-
-
+            df['z2w_fixed']=df['Fisher z']**2*df['w_fixed']
+            df['w2_fixed']=df['w_fixed']**2
 
 
             z_total_fixed=np.sum(df['zw_fixed'])/np.sum(df['w_fixed'])
             s_total_fixed=(1/np.sum(df['w_fixed']))**0.5
-            r_total_fixed= (-1+np.exp(2*z_total_fixed))/(1+np.exp(2*z_total_fixed))
-            d_total_fixed=2*r_total_fixed/((1-r_total_fixed**2)**0.5)
-            lower_r_fixed=r_total_fixed-1.96*s_total_fixed
-            upper_r_fixed=r_total_fixed+1.96*s_total_fixed
-            z_score_fixed = abs(d_total_fixed/s_total_fixed)
+            z_low_fixed = z_total_fixed-1.96*s_total_fixed
+            z_upp_fixed = z_total_fixed+1.96*s_total_fixed
+            z_score_fixed = abs(z_total_fixed/s_total_fixed)
             p_value_fixed = scipy.stats.norm.sf(abs(z_score_fixed))*2
+
+            r_total_fixed= (-1+np.exp(2*z_total_fixed))/(1+np.exp(2*z_total_fixed))
+            r_low_fixed = (-1+np.exp(2*z_low_fixed))/(1+np.exp(2*z_low_fixed))
+            r_upp_fixed = (-1+np.exp(2*z_upp_fixed))/(1+np.exp(2*z_upp_fixed))
 
 
             #random
 
-            q=np.sum(df['w_fixed']*df['d']**2)-((np.sum(df['dw_fixed'])**2)/np.sum(df['w_fixed']))
-            c=np.sum(df['w_fixed'])-((np.sum(df['w_fixed']**2))/(np.sum(df['w_fixed'])))
+            sum_z2w = np.sum(df['z2w_fixed'])
+            sum_zw_2 = np.sum(df['zw_fixed'])**2
+            sum_w = np.sum(df['w_fixed'])
+
+            q=sum_z2w - (sum_zw_2/sum_w)
             degf= len(df.index)-1
+            c=np.sum(df['w_fixed'])-((np.sum(df['w_fixed']**2))/(np.sum(df['w_fixed'])))
             if q<=degf or degf==0:
                 t2=0
                 I2=0
@@ -1242,25 +1247,29 @@ def result_corr():
                 t2=(q-degf)/c
                 q_fixed=q
                 I2=(q_fixed-degf)/q_fixed
-
+            print(t2)
             df['w_random']=1/(df['Var']+t2)
+            df['zw_random']=df['Fisher z']*df['w_random']
+            df['z2w_random']=df['Fisher z']**2*df['w_random']
+            df['w2_random']=df['w_random']**2
+
+
+            z_total_random=np.sum(df['zw_random'])/np.sum(df['w_random'])
+            print(df['w_random'])
+            s_total_random=(1/np.sum(df['w_random']))**0.5
+            z_low_random = z_total_random-1.96*s_total_random
+            z_upp_random = z_total_random+1.96*s_total_random
+            z_score_random = abs(z_total_random/s_total_random)
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+            r_total_random= (-1+np.exp(2*z_total_random))/(1+np.exp(2*z_total_random))
+            r_low_random = (-1+np.exp(2*z_low_random))/(1+np.exp(2*z_low_random))
+            r_upp_random = (-1+np.exp(2*z_upp_random))/(1+np.exp(2*z_upp_random))
+
+
+
             df['Weight(%)_fixed']=100*df['w_fixed']/np.sum(df['w_fixed'])
             df['Weight(%)_random']=100*df['w_random']/np.sum(df['w_random'])
-
-            df['wz_random']=df['Fisher z']*df['w_random']
-            df['wr_random']=df[1]*df['w_random']
-            df['wd_random']=df['d']*df['w_random']
-
-
-
-            z_total_random=np.sum(df['wz_random'])/np.sum(df['w_random'])
-            s_total_random=(1/np.sum(df['w_random']))**0.5
-            r_total_random= (-1+np.exp(2*z_total_random))/(1+np.exp(2*z_total_random))
-            d_total_random=2*r_total_random/((1-r_total_random**2)**0.5)
-            lower_r_random=r_total_random-1.96*s_total_random
-            upper_r_random=r_total_random+1.96*s_total_random
-            z_score_random = abs(d_total_random/s_total_random)
-            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
 
 
 
@@ -1274,10 +1283,10 @@ def result_corr():
 
 
 
-            df.drop(['Var','w_fixed','zw_fixed','dw_fixed', 'w_random', 'wz_random', 'wr_random','wd_random'] ,inplace=True, axis=1)
+            df.drop(['Var','w_fixed','zw_fixed','z2w_fixed','w2_fixed', 'w_random', 'zw_random', 'z2w_random', 'w2_random'] ,inplace=True, axis=1)
 
 
-            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'r_lower', 'r_upper', 'Fisher z','d', 'Weight(%)_fixed', 'Weight(%)_random']
+            df.columns = ['study name', 'r', 'n', 'moderator', 'SE', 'r_lower', 'r_upper', 'Fisher z', 'Weight(%)_fixed', 'Weight(%)_random']
 
 
             df.index+=1
@@ -1311,13 +1320,13 @@ def result_corr():
                 'ave_z_random': float("{0:.2f}".format(z_total_random)),
                 'ave_r_random': float("{0:.2f}".format(r_total_random)),
                 'ave_SE_random': float("{0:.3f}".format(s_total_random)),
-                'lower_r_random': float("{0:.3f}".format(lower_r_random)),
-                'upper_r_random': float("{0:.3f}".format(upper_r_random)),
+                'lower_r_random': float("{0:.3f}".format(r_low_random)),
+                'upper_r_random': float("{0:.3f}".format(r_upp_random)),
                 'ave_z_fixed': float("{0:.2f}".format(z_total_fixed)),
                 'ave_r_fixed': float("{0:.2f}".format(r_total_fixed)),
                 'ave_SE_fixed': float("{0:.3f}".format(s_total_fixed)),
-                'lower_r_fixed': float("{0:.3f}".format(lower_r_fixed)),
-                'upper_r_fixed': float("{0:.3f}".format(upper_r_fixed)),
+                'lower_r_fixed': float("{0:.3f}".format(r_low_fixed)),
+                'upper_r_fixed': float("{0:.3f}".format(r_upp_fixed)),
                 'Het': 100*float("{0:.3f}".format(I2)),
                 't2': float("{0:.3f}".format(t2)),
                 'p_value_random': float("{0:.4f}".format(p_value_random)),
@@ -1337,11 +1346,11 @@ def result_corr():
                 'weight_random_list': df["Weight(%)_random"].tolist(),
                 'weight_fixed_list': df["Weight(%)_fixed"].tolist(),
                 'ave_r_random': float("{0:.2f}".format(r_total_random)),
-                'lower_r_random': float("{0:.2f}".format(lower_r_random)),
-                'upper_r_random': float("{0:.2f}".format(upper_r_random)),
+                'lower_r_random': float("{0:.2f}".format(r_low_random)),
+                'upper_r_random': float("{0:.2f}".format(r_upp_random)),
                 'ave_r_fixed': float("{0:.2f}".format(r_total_fixed)),
-                'lower_r_fixed': float("{0:.2f}".format(lower_r_fixed)),
-                'upper_r_fixed': float("{0:.2f}".format(upper_r_fixed))
+                'lower_r_fixed': float("{0:.2f}".format(r_low_fixed)),
+                'upper_r_fixed': float("{0:.2f}".format(r_upp_fixed))
             })
 
         except Exception as error:
@@ -1374,25 +1383,26 @@ def upload_file_corr():
             df["Fisher z"]=0.5*(np.log((1+df['r'])/(1-df['r'])))
 
             df['z*w']=df['Fisher z']*df['weight']
+            df['z2*w']=df['Fisher z']**2*df['weight']
+            df['w2']=df['weight']**2
 
             z_total=np.sum(df['z*w'])/np.sum(df['weight'])
             s_total=(1/np.sum(df['weight']))**0.5
+            z_low_fixed = z_total - 1.96*s_total
+            z_upp_fixed = z_total + 1.96*s_total
+
+
             r_total= (-1+np.exp(2*z_total))/(1+np.exp(2*z_total))
-            d_total= 2*r_total/((1-r_total**2)**0.5)
+            lower_r = (-1+np.exp(2*z_low_fixed))/(1+np.exp(2*z_low_fixed))
+            upper_r = (-1+np.exp(2*z_upp_fixed))/(1+np.exp(2*z_upp_fixed))
 
-            lower_r=r_total-1.96*s_total
-            upper_r=r_total+1.96*s_total
-
-            df['d']=2*df['r']/(1-df['r']**2)
-            df['d*w']=df['d']*df['weight']
-
-            z_score = abs(d_total/s_total)
+            z_score = abs(z_total/s_total)
             p_value = scipy.stats.norm.sf(abs(z_score))*2
 
             #random
 
-            q=np.sum(df['weight']*df['d']**2)-((np.sum(df['d*w'])**2)/np.sum(df['weight']))
-            c=np.sum(df['weight'])-((np.sum(df['weight']**2))/(np.sum(df['weight'])))
+            q=np.sum(df['z2*w'])-((np.sum(df['z*w'])**2)/np.sum(df['weight']))
+            c=np.sum(df['weight'])-((np.sum(df['w2']))/(np.sum(df['weight'])))
             degf= len(df.index)-1
             if q<=degf or degf==0:
                 t2=0
@@ -1403,22 +1413,25 @@ def upload_file_corr():
                 I2=(q_fixed-degf)/q_fixed
 
             df['w_random']=1/(df['Var']+t2)
+            df['z*w_random']=df['Fisher z']*df['w_random']
+            df['z2*w_random']=df['Fisher z']**2*df['w_random']
+
+            z_total_random=np.sum(df['z*w_random'])/np.sum(df['w_random'])
+            s_total_random=(1/np.sum(df['w_random']))**0.5
+            z_low_random = z_total_random - 1.96*s_total_random
+            z_upp_random = z_total_random + 1.96*s_total_random
+
+
+            r_total_random= (-1+np.exp(2*z_total_random))/(1+np.exp(2*z_total_random))
+            lower_r_random = (-1+np.exp(2*z_low_random))/(1+np.exp(2*z_low_random))
+            upper_r_random = (-1+np.exp(2*z_upp_random))/(1+np.exp(2*z_upp_random))
+
+            z_score_random = abs(z_total_random/s_total_random)
+            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
+
+
             df['Weight(%)_fixed']=100*df['weight']/np.sum(df['weight'])
             df['Weight(%)_random']=100*df['w_random']/np.sum(df['w_random'])
-
-
-            df['wz_random']=df['Fisher z']*df['w_random']
-
-            z_total_random=np.sum(df['wz_random'])/np.sum(df['w_random'])
-            s_total_random=(1/np.sum(df['w_random']))**0.5
-            r_total_random= (-1+np.exp(2*z_total_random))/(1+np.exp(2*z_total_random))
-            d_total_random= 2*r_total_random/((1-r_total_random**2)**0.5)
-
-            lower_r_random=r_total_random-1.96*s_total_random
-            upper_r_random=r_total_random+1.96*s_total_random
-
-            z_score_random = abs(d_total_random/s_total_random)
-            p_value_random = scipy.stats.norm.sf(abs(z_score_random))*2
 
             #moderator-regression analysis
             moderator_=df['Moderator']
@@ -1429,7 +1442,7 @@ def upload_file_corr():
             results=model.summary()
             moder=results.as_html()
 
-            df.drop(['Var','weight','z*w','d','d*w', 'w_random', 'wz_random'] ,inplace=True, axis=1)
+            df.drop(['Var','weight','z*w','z2*w','w2', 'w_random', 'z*w_random','z2*w_random'] ,inplace=True, axis=1)
 
             df.columns = ['study name', 'N', 'r', 'moderator', 'SE', 'r_lower', 'r_upper', 'Fisher z', 'Weight(%)_fixed','Weight(%)_random']
 
