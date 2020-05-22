@@ -615,10 +615,10 @@ def upload_file():
 
                 I2_random_sub=I2_fixed_sub
 
-                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub]
+                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub*100]
                 dict_sub_g_per_study [key] = list(g_per_study_sub)
 
-                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub]
+                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub*100]
 
 
 
@@ -639,10 +639,10 @@ def upload_file():
                 df_dict_sub_fixed = pd.DataFrame({'subgroup analysis': ['Oops! There should be at least 2 subgroups for running this analysis!']})
             else:
                 ki_ki.append("total")
-                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed]})
+                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed*100]})
                 df_dict_sub_fixed = pd.DataFrame.from_dict(dict_sub_fixed, orient='index')
                 df_dict_sub_fixed.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
-                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random]})
+                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random*100]})
                 df_dict_sub_random = pd.DataFrame.from_dict(dict_sub_random, orient='index')
                 df_dict_sub_random.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
 
@@ -1050,10 +1050,10 @@ def example():
 
                 I2_random_sub=I2_fixed_sub
 
-                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub]
+                dict_sub_random [key] = [g_total_random_sub, sg_total_random_sub, lower_g_random_sub, upper_g_random_sub, z_score_random_sub,p_value_random_sub,I2_random_sub*100]
                 dict_sub_g_per_study [key] = list(g_per_study_sub)
 
-                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub]
+                dict_sub_fixed [key] = [g_total_fixed_sub, sg_total_fixed_sub, lower_g_fixed_sub, upper_g_fixed_sub, z_score_fixed_sub,p_value_fixed_sub,I2_fixed_sub*100]
 
 
 
@@ -1064,10 +1064,10 @@ def example():
                 ki_ki = []
             else:
                 ki_ki.append("total")
-                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed]})
+                dict_sub_fixed.update({"total":[g_total_fixed, sg_total_fixed, lower_g_fixed, upper_g_fixed, z_score_fixed,p_value_fixed,I2_fixed*100]})
                 df_dict_sub_fixed = pd.DataFrame.from_dict(dict_sub_fixed, orient='index')
                 df_dict_sub_fixed.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
-                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random]})
+                dict_sub_random.update({"total":[g_total_random, sg_total_random, lower_g_random, upper_g_random, z_score_random,p_value_random,I2_random*100]})
                 df_dict_sub_random = pd.DataFrame.from_dict(dict_sub_random, orient='index')
                 df_dict_sub_random.columns = ["Hedges's g",'SEg', "95%CI lower", "95%CI upper", 'z score','p value','Heterogeneity %']
 
@@ -1243,6 +1243,7 @@ def result_corr():
             if q<=degf or degf==0:
                 t2=0
                 I2=0
+                q=0
             else:
                 t2=(q-degf)/c
                 q_fixed=q
@@ -1333,7 +1334,9 @@ def result_corr():
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
                 'p_value_fixed': float("{0:.4f}".format(p_value_fixed)),
                 'z_score_fixed': float("{0:.3f}".format(z_score_fixed)),
-                'moder': moder
+                'moder': moder,
+                'qq': float("{0:.3f}".format(q)),
+                'degf': degf
             }
 
             content = render_template("result_corr.html", **resultData)
@@ -1407,6 +1410,7 @@ def upload_file_corr():
             if q<=degf or degf==0:
                 t2=0
                 I2=0
+                q=0
             else:
                 t2=(q-degf)/c
                 q_fixed=q
@@ -1510,7 +1514,9 @@ def upload_file_corr():
                 't2': float("{0:.3f}".format(t2)),
                 'p_value_random': float("{0:.6f}".format(p_value_random)),
                 'z_score_random': float("{0:.3f}".format(z_score_random)),
-                'moder': moder
+                'moder': moder,
+                'qq': float("{0:.3f}".format(q)),
+                'degf': degf
             }
 
             return render_template("result_corrxls.html", **resultData)
