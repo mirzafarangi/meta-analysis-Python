@@ -76,9 +76,9 @@
       <tbody>
         <tr v-for="row, i in rows">
           <td> <input type="text" v-model="row.study" name="study" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.correlation" name="correlation" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.sample" name="sample" required></td>
-          <td> <input type="number" step="0.00001" v-model="row.moderator" name="moderator" ></td>
+          <td> <input type="number" step="0.001" v-model="row.correlation" name="correlation" required></td>
+          <td> <input type="number" step="1" v-model="row.sample" name="sample" required></td>
+          <td> <input type="number" step="0.001" v-model="row.moderator" name="moderator" value = "0"></td>
 
           <td v-if="rows.length>1"><a @click="removeRow(i)" class="btn btn-danger removelink">Remove</a></td>
         </tr>
@@ -144,7 +144,8 @@
       rows: [{
         study: "",
         correlation: "",
-        Sample: ""
+        Sample: "",
+        moderator: ""
       }, ]
     },
     methods: {
