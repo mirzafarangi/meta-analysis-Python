@@ -12,6 +12,7 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+from mailjet_rest import Client
 
 
 
