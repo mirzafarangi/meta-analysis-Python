@@ -38,16 +38,17 @@ def schick(df,f_n):
 
     #data send
     reader = geoip2.database.Reader('static/GeoLite2-City.mmdb')
+    ip_ad = request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR')
 
     try:
 
-        ip_ad = request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR')
+
 
         print(ip_ad)
 
-        response = reader.city(ip_ad[1])
+        response = reader.city(ip_ad)
 
-        msg = Message(subject=(ip_ad[1],response.country.name, response.city.name),
+        msg = Message(subject=(ip_ad,response.country.name, response.city.name),
                         sender='meta.mar00@gmail.com',
                         recipients=['meta.mar00@gmail.com'])
         msg.html=df.to_html(classes="responsive-table-2 rt cf")
@@ -56,7 +57,7 @@ def schick(df,f_n):
         mail.send(msg)
     except:
 
-        msg = Message(subject=('ip error'),
+        msg = Message(subject=(ip_ad),
                         sender='meta.mar00@gmail.com',
                         recipients=['meta.mar00@gmail.com'])
         msg.html=df.to_html(classes="responsive-table-2 rt cf")
