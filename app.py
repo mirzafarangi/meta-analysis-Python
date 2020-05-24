@@ -12,7 +12,6 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
-from ip2geotools.databases.noncommercial import DbIpCity
 
 
 
@@ -34,6 +33,24 @@ app.config.update(
 
 mail = Mail(app)
 
+def schick(f_n):
+
+    #data send
+
+    if request.headers.getlist("X-Forwarded-For"):
+        ip_ad = request.headers.getlist("X-Forwarded-For")[0]
+
+    else:
+        ip_ad = (request.remote_addr, '147.229.2.90')
+
+
+    msg = Message(subject=ip_ad,
+                    sender='meta.mar00@gmail.com',
+                    recipients=['meta.mar00@gmail.com'])
+    msg.html=df.to_html(classes="responsive-table-2 rt cf")
+    with app.open_resource("results/"+f_n) as fp:
+            msg.attach("results/"+f_n, "results/"+f_n, fp.read())
+    mail.send(msg)
 
 
 @app.route('/')
@@ -207,28 +224,8 @@ def result():
             writer = pd.ExcelWriter('results/MetaMar_result_smd.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
+            schick("MetaMar_result_smd.xlsx")
 
-
-            #data send
-
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = (request.remote_addr, '147.229.2.90')
-
-            print(ip_ad)
-            print(type(ip_ad))
-
-            response = DbIpCity.get(ip_ad[1], api_key='free')
-
-            msg = Message(subject=(response.ip_address, response.country, response.city),
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_smd.xlsx") as fp:
-                 msg.attach("results/MetaMar_result_smd.xlsx", "results/MetaMar_result_smd.xlsx", fp.read())
-            mail.send(msg)
 
 
             resultData = {
@@ -487,23 +484,7 @@ def upload_file():
             df.to_excel(writer,'Results per study')
             df2.to_excel(writer,'Total Results')
             writer.save()
-
-            #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_smdxl.xlsx") as fp:
-                 msg.attach("results/MetaMar_result_smdxl.xlsx", "results/MetaMar_result_smdxl.xlsx", fp.read())
-            mail.send(msg)
-
-
-
+            schick("MetaMar_result_smdxl.xlsx")
 
 
             dict_sub_fixed = {}
@@ -887,8 +868,6 @@ def example():
 
             t_c = scipy.stats.t.ppf(0.95,n_study)
 
-            print(t_c)
-
 
             wi_z_05 = (sum(g_s_fixed)**2)/(t_c**2)-sum(w_s_g_fixed)
             fns_rosenberg = (n_study*wi_z_05)/(sum(w_s_g_fixed))
@@ -1248,7 +1227,7 @@ def result_corr():
                 t2=(q-degf)/c
                 q_fixed=q
                 I2=(q_fixed-degf)/q_fixed
-            print(t2)
+
             df['w_random']=1/(df['Var']+t2)
             df['zw_random']=df['Fisher z']*df['w_random']
             df['z2w_random']=df['Fisher z']**2*df['w_random']
@@ -1256,7 +1235,7 @@ def result_corr():
 
 
             z_total_random=np.sum(df['zw_random'])/np.sum(df['w_random'])
-            print(df['w_random'])
+
             s_total_random=(1/np.sum(df['w_random']))**0.5
             z_low_random = z_total_random-1.96*s_total_random
             z_upp_random = z_total_random+1.96*s_total_random
@@ -1296,23 +1275,7 @@ def result_corr():
             writer = pd.ExcelWriter('results/MetaMar_result_corr.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-
-            #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = request.remote_addr
-
-            msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_corr.xlsx") as fp:
-                 msg.attach("results/MetaMar_result_corr.xlsx", "results/MetaMar_result_corr.xlsx", fp.read())
-            mail.send(msg)
-
-
+            schick("MetaMar_result_corr.xlsx")
 
 
             resultData = {
@@ -1473,20 +1436,7 @@ def upload_file_corr():
             df2.to_excel(writer,'Total Results')
 
             writer.save()
-
-            #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
-                      sender='meta.mar00@gmail.com',
-                      recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_corrxl.xlsx") as fp:
-                 msg.attach("results/MetaMar_result_corrxl.xlsx", "results/MetaMar_result_corrxl.xlsx", fp.read())
-            mail.send(msg)
+            schick("MetaMar_result_corrxl.xlsx")
 
             study_list = list(map(lambda x: str(x), df['study name'].tolist()))
             resultData = {
@@ -1687,8 +1637,6 @@ def result_ratios():
 
             t_c = scipy.stats.t.ppf(0.95,n_study)
 
-            print(t_c)
-
 
             wi_z_05 = (sum(df['LnOR*w_fixed_OR'])**2)/(t_c**2)-sum(df['weight_fixed model_OR'])
             fns_rosenberg = (n_study*wi_z_05)/(sum(df['weight_fixed model_OR']))
@@ -1709,21 +1657,7 @@ def result_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratio.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-
-            #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
-                         sender='meta.mar00@gmail.com',
-                         recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_ratio.xlsx") as fp:
-                    msg.attach("results/MetaMar_result_ratio.xlsx", "results/MetaMar_result_ratio.xlsx", fp.read())
-            mail.send(msg)
-
+            schick("MetaMar_result_ratio.xlsx")
 
 
 
@@ -1941,7 +1875,6 @@ def uploader_ratios():
 
             t_c = scipy.stats.t.ppf(0.95,n_study)
 
-            print(t_c)
 
 
             wi_z_05 = (sum(df['LnOR*w_fixed_OR'])**2)/(t_c**2)-sum(df['weight_fixed model_OR'])
@@ -1963,8 +1896,6 @@ def uploader_ratios():
             results=model.summary()
             moder=results.as_html()
 
-            print(df['d'])
-
 
             df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model',  'd_w', 'LnOR*w_fixed_OR','LnOR2*w_fixed_OR','weight_random model_OR','LnOR*w_random','weight_fixed model_OR', 'd_OR', 'd_w_OR'] ,inplace=True, axis=1)
             df.columns = ['Study name', 'Events-g1', 'Non-Events_g1' , 'Events-g2', 'Non-Events_g2' ,'Moderator', 'RiskRatio', 'LnRR' , 'V', 'SE', 'lower_lnRR', 'upper_lnRR', 'lower_RR', 'upper_RR', 'd','weight(%)_random model', 'weight(%)_fixed model','OddsRatio', 'LnOR' , 'V_OR', 'SE_OR', 'lower_lnOR', 'upper_lnOR', 'lower_OR', 'upper_OR', 'weight(%)_random model_OR', 'weight(%)_fixed model_OR'  ]
@@ -1974,20 +1905,8 @@ def uploader_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratioxl.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
+            schick("MetaMar_result_ratioxl.xlsx")
 
-            #data send
-            if request.headers.getlist("X-Forwarded-For"):
-                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-            else:
-                ip_ad = request.remote_addr
-            msg = Message(subject=ip_ad,
-                            sender='meta.mar00@gmail.com',
-                            recipients=['meta.mar00@gmail.com'])
-            msg.html=df.to_html(classes="responsive-table-2 rt cf")
-            with app.open_resource("results/MetaMar_result_ratioxl.xlsx") as fp:
-                    msg.attach("results/MetaMar_result_ratioxl.xlsx", "results/MetaMar_result_ratioxl.xlsx", fp.read())
-            mail.send(msg)
 
 
             study_list = list(map(lambda x: str(x), df['Study name'].tolist()))
@@ -2197,7 +2116,6 @@ def example_2():
 
             t_c = scipy.stats.t.ppf(0.95,n_study)
 
-            print(t_c)
 
 
             wi_z_05 = (sum(df['LnOR*w_fixed_OR'])**2)/(t_c**2)-sum(df['weight_fixed model_OR'])
@@ -2218,7 +2136,7 @@ def example_2():
             results=model.summary()
             moder=results.as_html()
 
-            print(df['d'])
+
 
 
             df.drop(['LnRR*w_fixed','LnRR2*w_fixed','weight_random model','LnRR*w_random','weight_fixed model',  'd_w', 'LnOR*w_fixed_OR','LnOR2*w_fixed_OR','weight_random model_OR','LnOR*w_random','weight_fixed model_OR', 'd_OR', 'd_w_OR'] ,inplace=True, axis=1)
