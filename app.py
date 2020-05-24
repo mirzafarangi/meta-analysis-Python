@@ -40,11 +40,14 @@ def schick(df,f_n):
     reader = geoip2.database.Reader('static/GeoLite2-City.mmdb')
 
     try:
-        ip_ad = request.remote_addr
 
-        response = reader.city(ip_ad)
+        ip_ad = request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR')
 
-        msg = Message(subject=(ip_ad,response.country.name, response.city.name),
+        print(ip_ad)
+
+        response = reader.city(ip_ad[1])
+
+        msg = Message(subject=(ip_ad[1],response.country.name, response.city.name),
                         sender='meta.mar00@gmail.com',
                         recipients=['meta.mar00@gmail.com'])
         msg.html=df.to_html(classes="responsive-table-2 rt cf")
