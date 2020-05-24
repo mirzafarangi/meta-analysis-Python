@@ -57,9 +57,7 @@ def schick(df,f_n):
         mail.send(msg)
     except:
 
-        response = reader.city('141.101.77.100')
-
-        msg = Message(subject=(ip_ad[1],response.country.name, response.city.name),
+        msg = Message(subject=('ip error'),
                         sender='meta.mar00@gmail.com',
                         recipients=['meta.mar00@gmail.com'])
         msg.html=df.to_html(classes="responsive-table-2 rt cf")
