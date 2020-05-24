@@ -12,6 +12,7 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+import geoip2.database
 
 
 
@@ -36,15 +37,17 @@ mail = Mail(app)
 def schick(df,f_n):
 
     #data send
+    reader = geoip2.database.Reader('static/GeoLite2-City.mmdb')
 
     if request.headers.getlist("X-Forwarded-For"):
         ip_ad = request.headers.getlist("X-Forwarded-For")[0]
 
     else:
-        ip_ad = request.remote_addr
+        ip_ad = (request.remote_addr,'141.101.77.100')
 
+    response = reader.city(ip_ad[1])
 
-    msg = Message(subject=ip_ad,
+    msg = Message(subject=(ip_ad[1],response.country.name, response.city.name),
                     sender='meta.mar00@gmail.com',
                     recipients=['meta.mar00@gmail.com'])
     msg.html=df.to_html(classes="responsive-table-2 rt cf")
