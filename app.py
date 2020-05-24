@@ -12,6 +12,7 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+from ip2geotools.databases.noncommercial import DbIpCity
 
 
 
@@ -214,9 +215,14 @@ def result():
                 ip_ad = request.headers.getlist("X-Forwarded-For")[0]
 
             else:
-                ip_ad = request.remote_addr
+                ip_ad = (request.remote_addr, '147.229.2.90')
 
-            msg = Message(subject=ip_ad,
+            print(ip_ad)
+            print(type(ip_ad))
+
+            response = DbIpCity.get(ip_ad[1], api_key='free')
+
+            msg = Message(subject=(response.ip_address, response.country, response.city),
                       sender='meta.mar00@gmail.com',
                       recipients=['meta.mar00@gmail.com'])
             msg.html=df.to_html(classes="responsive-table-2 rt cf")
