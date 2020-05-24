@@ -43,9 +43,9 @@ def schick(df,f_n):
     try:
 
 
-        response = reader.city(ip_ad)
+        response = reader.city(ip_ad[1])
 
-        msg = Message(subject=(ip_ad,response.country.name, response.city.name),
+        msg = Message(subject=(ip_ad[1],response.country.name, response.city.name),
                         sender='meta.mar00@gmail.com',
                         recipients=['meta.mar00@gmail.com'])
         msg.html=df.to_html(classes="responsive-table-2 rt cf")
