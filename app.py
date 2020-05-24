@@ -18,6 +18,7 @@ from flask_mail import Mail, Message
 
 
 
+
 DEBUG = True
 app = Flask(__name__)
 
@@ -26,8 +27,8 @@ app.config.update(
     MAIL_SERVER= 'smtp.gmail.com',
     MAIL_PORT= 465,
     MAIL_USE_SSL= True,
-    MAIL_USERNAME= 'meta.mar00@gmail.com',
-    MAIL_PASSWORD= 'QWERasdfzxcv1234'
+    MAIL_USERNAME= os.environ["gmail_name"], #environment heroku var
+    MAIL_PASSWORD= os.environ["gmail_API_key"] #environment heroku var
 )
 
 mail = Mail(app)
