@@ -33,7 +33,7 @@ app.config.update(
 
 mail = Mail(app)
 
-def schick(f_n):
+def schick(df,f_n):
 
     #data send
 
@@ -41,7 +41,7 @@ def schick(f_n):
         ip_ad = request.headers.getlist("X-Forwarded-For")[0]
 
     else:
-        ip_ad = (request.remote_addr, '147.229.2.90')
+        ip_ad = request.remote_addr
 
 
     msg = Message(subject=ip_ad,
@@ -224,7 +224,7 @@ def result():
             writer = pd.ExcelWriter('results/MetaMar_result_smd.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick("MetaMar_result_smd.xlsx")
+            schick(df,"MetaMar_result_smd.xlsx")
 
 
 
@@ -484,7 +484,7 @@ def upload_file():
             df.to_excel(writer,'Results per study')
             df2.to_excel(writer,'Total Results')
             writer.save()
-            schick("MetaMar_result_smdxl.xlsx")
+            schick(df,"MetaMar_result_smdxl.xlsx")
 
 
             dict_sub_fixed = {}
@@ -1275,7 +1275,7 @@ def result_corr():
             writer = pd.ExcelWriter('results/MetaMar_result_corr.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick("MetaMar_result_corr.xlsx")
+            schick(df,"MetaMar_result_corr.xlsx")
 
 
             resultData = {
@@ -1436,7 +1436,7 @@ def upload_file_corr():
             df2.to_excel(writer,'Total Results')
 
             writer.save()
-            schick("MetaMar_result_corrxl.xlsx")
+            schick(df,"MetaMar_result_corrxl.xlsx")
 
             study_list = list(map(lambda x: str(x), df['study name'].tolist()))
             resultData = {
@@ -1657,7 +1657,7 @@ def result_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratio.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick("MetaMar_result_ratio.xlsx")
+            schick(df,"MetaMar_result_ratio.xlsx")
 
 
 
@@ -1905,7 +1905,7 @@ def uploader_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratioxl.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick("MetaMar_result_ratioxl.xlsx")
+            schick(df,"MetaMar_result_ratioxl.xlsx")
 
 
 
