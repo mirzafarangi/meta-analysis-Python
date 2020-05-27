@@ -1,8 +1,28 @@
 {% extends "layout.html" %}
 {% block app %}
-
-<a href="/return-file-corrxl/" target="blank"> <h4 align="center"><b>Download the results as an Excel file</h4></a>
+<h4> <a href="/corr">Back </a></h4>
 <p></p>
+<p></p>
+<script>
+  function printDiv(divName){
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+
+  }
+</script>
+<a href="/return-file-smdxl/" target="blank"><h5>Download the results as an Excel file</h5></a>
+<button onclick="printDiv('printMe')" align="center"><b>Save the results as pdf</b></button>
+<p></p>
+
+
+
+
 <h4>Table.1 summary of studies</h4>
 {{result_table}}
 <p></p>
@@ -80,7 +100,7 @@
 </div>
 
   <p></p>
-
+  <div id="printMe">
   <div class="forest">
         <h4> Fig.1 Forestplot - fixed and random effect models</h4>
 
@@ -96,6 +116,8 @@
         {{moder | safe}}
   </div></div>
   <p></p>
+  <p></p>
+  </div>
   <p></p>
   <hr>
   <p></p>

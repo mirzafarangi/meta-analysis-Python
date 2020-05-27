@@ -4,9 +4,26 @@
 <p></p>
 <p></p>
 
-<a href="/return-file-ratioxl/" target="blank">
-  <h5 align="center">Please Click to Download the results as an Excel file</h5>
-</a>
+<script>
+  function printDiv(divName){
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+
+  }
+</script>
+<a href="/return-file-smdxl/" target="blank"><h5>Download the results as an Excel file</h5></a>
+<button onclick="printDiv('printMe')" align="center"><b>Save the results as pdf</b></button>
+<p></p>
+
+
+
+
 <p></p>
 <h4>Table.1 summary of studies</h4>
 <div style="overflow-x:auto;">
@@ -158,7 +175,7 @@
     </tbody>
   </table>
 </div>
-
+<div id="printMe">
 <div class="forest">
       <h4> Figure.1 Forestplot - fixed and random effect models</h4>
       <h5>Y: Studies, X: Risk Ratio</h5>
@@ -239,7 +256,8 @@ References:<br>
 </div>
 <p></p>
 <p></p>
-
+</div>
+<p></p>
 <hr>
 <p></p>
 
