@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, flash, render_template, request
 import pandas as pd
 import numpy as np
 import math
@@ -12,6 +12,7 @@ import scipy.stats
 from decimal import Decimal
 import statistics
 from flask_mail import Mail, Message
+import random
 
 
 
@@ -19,6 +20,7 @@ from flask_mail import Mail, Message
 
 DEBUG = True
 app = Flask(__name__)
+
 
 #mail data
 app.config.update(
@@ -55,6 +57,8 @@ def schick(df,f_n):
                 msg.attach("results/"+f_n, "results/"+f_n, fp.read())
         mail.send(msg)
 
+captcha_list = [1856,1939, 1901,1981]
+captcha_value = random.choice(captcha_list)
 
 @app.route('/')
 def index():
@@ -2257,32 +2261,38 @@ def odds():
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+
+    return render_template('contact.html', captcha_value=captcha_value)
 
 
 @app.route('/submitcontact', methods = ['POST', 'GET'])
 def submitcontact():
 
     if request.method == 'POST':
-        if request.headers.getlist("X-Forwarded-For"):
-            ip_ad = request.headers.getlist("X-Forwarded-For")[0]
-
-        else:
-            ip_ad = request.remote_addr
-
         your_name = request.form['your_name']
         your_email = request.form['your_email']
         your_message = request.form['your_message']
+        captch = request.form['captch']
 
-                #email send
-        msg = Message(subject= "contact",
-                  sender= 'meta.mar00@gmail.com',
-                  recipients=['meta.mar00@gmail.com'])
+        if int(captch) == captcha_value:
+            #email send
+            msg = Message(subject= "contact",
+                sender= 'meta.mar00@gmail.com',
+                recipients=['meta.mar00@gmail.com'])
+            if request.headers.getlist("X-Forwarded-For"):
+                ip_ad = request.headers.getlist("X-Forwarded-For")[0]
 
-        msg.body= "ip: "+ip_ad+"\n"+"\n Name : "+your_name+"\n"+"\n Email: "+your_email+"\n"+"\n Message:  \n"+"\n"+your_message
-        mail.send(msg)
+            else:
+                ip_ad = request.remote_addr
 
-        return render_template("sent.html")
+            msg.body= "ip: "+ip_ad+"\n"+"\n Name : "+your_name+"\n"+"\n Email: "+your_email+"\n"+"\n Message:  \n"+"\n"+your_message
+            mail.send(msg)
+
+            return render_template("sent.html")
+        else:
+
+            return 'The entered number is not correct!'+'  <a href="/contact"> Try again </a>'
+
 
 
 if __name__ == '__main__':
