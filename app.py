@@ -57,8 +57,16 @@ def schick(df,f_n):
                 msg.attach("results/"+f_n, "results/"+f_n, fp.read())
         mail.send(msg)
 
-captcha_list = [1856,1939, 1901,1981]
-captcha_value = random.choice(captcha_list)
+captcha_dict = {1856: "/static/captch/1856.png",1939:"/static/captch/1939.png", 1901:"/static/captch/1901.png",1981:"/static/captch/1981.png"}
+list_captch = []
+for x in captcha_dict:
+    list_captch.append(x)
+
+
+
+captcha_value = random.choice(list_captch)
+captch_root = captcha_dict[captcha_value]
+
 
 @app.route('/')
 def index():
@@ -2262,7 +2270,7 @@ def odds():
 @app.route('/contact')
 def contact():
 
-    return render_template('contact.html', captcha_value=captcha_value)
+    return render_template('contact.html', captch_root=captch_root)
 
 
 @app.route('/submitcontact', methods = ['POST', 'GET'])
