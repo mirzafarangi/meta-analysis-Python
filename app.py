@@ -64,8 +64,7 @@ for x in captcha_dict:
 
 
 
-captcha_value = random.choice(list_captch)
-captch_root = captcha_dict[captcha_value]
+
 
 
 @app.route('/')
@@ -2269,7 +2268,10 @@ def odds():
 
 @app.route('/contact')
 def contact():
-
+    global captcha_value
+    global captch_root
+    captcha_value = random.choice(list_captch)
+    captch_root = captcha_dict[captcha_value]
     return render_template('contact.html', captch_root=captch_root)
 
 
