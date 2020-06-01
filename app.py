@@ -1197,10 +1197,6 @@ def result_corr():
 
             #fixed
             df.loc[df[2] < 4, 2] = 4
-            print(df[2])
-
-
-
 
 
             df['Var']=1/(df[2]-3)
@@ -1359,6 +1355,7 @@ def upload_file_corr():
             df.columns = ['Study','N', 'r', 'Moderator']
 
             #fixed
+            df.loc[df['N'] < 4, 'N'] = 4
 
             df['Var']=1/(df['N']-3)
             df['SE']=df['Var']**0.5
