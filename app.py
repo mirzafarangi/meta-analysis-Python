@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, render_template, request
+from flask import Flask, flash, render_template, requestو  jsonify, send_file
 import pandas as pd
 import numpy as np
 import math
