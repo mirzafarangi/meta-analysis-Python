@@ -1183,6 +1183,7 @@ def result_corr():
                 if type(i) == str:
                     moderator[n] = 0
 
+
             df2=pd.DataFrame(table)
             df2 = df2.transpose()
 
@@ -1195,6 +1196,12 @@ def result_corr():
 
 
             #fixed
+            df.loc[df[2] < 4, 2] = 4
+            print(df[2])
+
+
+
+
 
             df['Var']=1/(df[2]-3)
             df['SE']=df['Var']**0.5
