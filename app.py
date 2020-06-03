@@ -1526,6 +1526,11 @@ def result_ratios():
 
 
 
+            df.loc[df[1] == 0, 1] = 0.0001
+            df.loc[df[3] == 0, 3] = 0.0001
+
+
+
 
 
             df['RiskRatio']=(df[1]/(df[1]+df[2]))/(df[3]/(df[3]+df[4]))
@@ -1772,6 +1777,8 @@ def uploader_ratios():
 
 
             df.columns = ['Study name','Events (g1)', 'Non-Events (g1)', 'Events (g2)', 'Non-Events (g2)', 'Moderator']
+            df.loc[df['Events (g1)'] == 0, 'Events (g1)'] = 0.0001
+            df.loc[df['Events (g2)'] == 0, 'Events (g2)'] = 0.0001
             df['RiskRatio']=(df['Events (g1)']/(df['Events (g1)']+df['Non-Events (g1)']))/(df['Events (g2)']/(df['Events (g2)']+df['Non-Events (g2)']))
             df['LnRR']=np.log(df['RiskRatio'])
             df['V']=(1/df['Events (g1)'])-(1/(df['Events (g1)']+df['Non-Events (g1)']))+(1/df['Events (g2)'])-(1/(df['Events (g2)']+df['Non-Events (g2)']))
