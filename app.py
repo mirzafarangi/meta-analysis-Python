@@ -238,7 +238,7 @@ def result():
             writer = pd.ExcelWriter('results/MetaMar_result_smd.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick(df,"MetaMar_result_smd.xlsx")
+
 
 
 
@@ -498,7 +498,7 @@ def upload_file():
             df.to_excel(writer,'Results per study')
             df2.to_excel(writer,'Total Results')
             writer.save()
-            schick(df,"MetaMar_result_smdxl.xlsx")
+
 
 
             dict_sub_fixed = {}
@@ -1292,7 +1292,7 @@ def result_corr():
             writer = pd.ExcelWriter('results/MetaMar_result_corr.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick(df,"MetaMar_result_corr.xlsx")
+
 
 
             resultData = {
@@ -1454,7 +1454,7 @@ def upload_file_corr():
             df2.to_excel(writer,'Total Results')
 
             writer.save()
-            schick(df,"MetaMar_result_corrxl.xlsx")
+
 
             study_list = list(map(lambda x: str(x), df['study name'].tolist()))
             resultData = {
@@ -1679,7 +1679,7 @@ def result_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratio.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick(df,"MetaMar_result_ratio.xlsx")
+
 
 
 
@@ -1929,7 +1929,7 @@ def uploader_ratios():
             writer = pd.ExcelWriter('results/MetaMar_result_ratioxl.xlsx')
             df.to_excel(writer,'Sheet1')
             writer.save()
-            schick(df,"MetaMar_result_ratioxl.xlsx")
+
 
 
 
