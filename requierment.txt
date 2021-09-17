@@ -54,7 +54,7 @@ prompt-toolkit==3.0.5
 ptyprocess==0.6.0
 pycodestyle==2.6.0
 pygeoip==0.3.2
-Pygments==2.6.1
+Pygments==2.7.4
 pylint==2.5.2
 pyparsing==2.4.7
 pyquery==1.4.1
