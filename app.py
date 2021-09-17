@@ -18,6 +18,7 @@ import random
 
 
 
+
 DEBUG = True
 app = Flask(__name__)
 
