@@ -2,7 +2,10 @@
 {% block app %}
 
 <h4>Drop us a line!</h4></p>
-  <p>Email me at <a href="mailto:s.ashkan.beheshti@gmail.com?subject=feedback">s.ashkan.beheshti @ gmail.com</a> or use following form. </p>
+  <p>Email: <a href="mailto:s.ashkan.beheshti@gmail.com?subject=feedback">s.ashkan.beheshti @ gmail.com</a>. </p>
+
+<div id="Email" style="visibility: hidden">
+     or use following form.
         <form action="/submitcontact" method="post">
           <div class="form_settings">
             <p><span>Name</span><input class="contact" type="text" name="your_name" value="" required/></p>
@@ -15,6 +18,6 @@
         </form>
 
 
-
+</div>
 
 {% endblock %}
